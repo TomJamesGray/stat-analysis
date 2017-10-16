@@ -13,11 +13,13 @@ class ActionsScroller(ScrollView):
         super().__init__(**kwargs)
         self.size_hint = (1,None)
         self.bar_width = 5
-        layout = GridLayout(cols=1,spacing=10,size_hint_x = 0.3,size_hint_y=None)
+        layout = GridLayout(cols=1,spacing=10,size_hint_x = 1,size_hint_y=None)
         layout.bind(minimum_height=layout.setter("height"))
+        layout.bind(width=lambda *args: self.width)
         for i in range(100):
             btn = Button(text=str(i),size_hint_y=None,height=40)
             layout.add_widget(btn)
+            btn.bind(width=lambda *args: self.width)
         self.add_widget(layout)
 
 class StatApp(App):

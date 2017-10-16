@@ -1,6 +1,31 @@
 <StatAnalysis>:
     width:root.width
     height:root.height
-    ActionsScroller:
+    ActionBar:
         width:root.width
-        height:root.height
+        height:40
+        size_hint_x:1
+        pos:0,root.height-self.height
+        ActionView:
+            use_seperator:True
+            ActionPrevious:
+                with_previous:False
+                size_hint_x:None
+                width:0
+                app_icon_width:1
+                app_icon_height:0
+            ActionButton:
+                text:"Home"
+            ActionButton:
+                text:"Save"
+
+
+    GridLayout:
+        cols:2
+        width:root.width
+        height:root.height-40
+        ActionsScroller:
+            size_hint_y:1
+            size_hint_x:0.4
+        Button:
+            text:"hi"
