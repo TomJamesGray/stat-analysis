@@ -8,10 +8,18 @@ from kivy.uix.label import Label
 from kivy.core.window import Window
 from kivy.properties import StringProperty
 
+
 class StatAnalysis(Widget):
+    """
+    Root widget for the app
+    """
     pass
 
+
 class ActionsScroller(ScrollView):
+    """
+    Widget that displays the available actions in a tree format
+    """
     def __init__(self,**kwargs):
         super().__init__(**kwargs)
         self.size_hint = (1,None)
@@ -26,6 +34,9 @@ class ActionsScroller(ScrollView):
 
 
 class HomeView(GridLayout):
+    """
+    Widget for the main home screen
+    """
     def __init__(self,**kwargs):
         super().__init__(**kwargs)
         self.cols = 1
@@ -34,22 +45,31 @@ class HomeView(GridLayout):
 
 
 class LogView(GridLayout):
+    """
+    Widget displays the log output
+    """
     def __init__(self,**kwargs):
         super().__init__(**kwargs)
         self.cols = 1
         self.add_widget(Label(text="Log",size_hint=(None,None),height=40,color=(0,0,0,1)))
         self.add_widget(ScrollableLabel(text="Hi\nHi\nHi\nHi\nHi\n\nWorld"))
 
+
 class ScrollableLabel(ScrollView):
+    """
+    Generic widget that displays text in a scrolling box
+    """
     text = StringProperty("")
+
 
 class StatApp(App):
     def build(self):
         self.title = "Stat Analysis"
-        Window.clearcolor = (1,1,1,1)
+        Window.clearcolor = (.85,.85,.85,1)
         Window.size = (1336,768)
         a = StatAnalysis()
         return a
+
 
 def main():
     StatApp().run()

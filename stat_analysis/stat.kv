@@ -25,22 +25,42 @@
         spacing:5,5
         width:root.width
         height:root.height-40
+        padding:5,5,0,5
         ActionsScroller:
+            canvas.before:
+                Color:
+                    rgba:(1,1,1,1)
+                Rectangle:
+                    pos:self.pos
+                    size:self.size
             size_hint_y:1
             size_hint_x:0.4
         GridLayout:
             cols:1
+            padding:5,0,5,0
             spacing:5,5
             HomeView:
+                canvas.before:
+                    Color:
+                        rgba:(1,1,1,1)
+                    Rectangle:
+                        pos:self.pos
+                        size:self.size
                 size_hint_y:0.8
             LogView:
+                canvas.before:
+                    Color:
+                        rgba:(1,1,1,1)
+                    Rectangle:
+                        pos:self.pos
+                        size:self.size
                 size_hint_y:0.2
 
 <ScrollableLabel>:
     Label:
         color:0,0,0,1
         text:root.text
-        font_size:18
+        font_size:12
         text_size:self.width,None
         size_hint_y:None
         height:self.texture_size[1]
