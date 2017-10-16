@@ -2,6 +2,7 @@ from kivy.app import App
 from kivy.uix.widget import Widget
 from kivy.uix.scrollview import ScrollView
 from kivy.uix.gridlayout import GridLayout
+from kivy.uix.treeview import TreeView,TreeViewLabel
 from kivy.uix.button import Button
 from kivy.core.window import Window
 
@@ -13,14 +14,13 @@ class ActionsScroller(ScrollView):
         super().__init__(**kwargs)
         self.size_hint = (1,None)
         self.bar_width = 5
-        layout = GridLayout(cols=1,spacing=10,size_hint_x = 1,size_hint_y=None)
-        layout.bind(minimum_height=layout.setter("height"))
-        layout.bind(width=lambda *args: self.width)
+        tv = TreeView(size_hint=(1,None),hide_root=True)
+        tv.bind(minimum_height=tv.setter("height"))
+        n1 = tv.add_node(TreeViewLabel(color=(0,0,0,1),text="Item 1"))
         for i in range(100):
-            btn = Button(text=str(i),size_hint_y=None,height=40)
-            layout.add_widget(btn)
-            btn.bind(width=lambda *args: self.width)
-        self.add_widget(layout)
+            tv.add_node(TreeViewLabel(color=(0,0,0,1),text="Sub-item {}".format(i)),n1)
+
+        self.add_widget(tv)
 
 class StatApp(App):
     def build(self):
