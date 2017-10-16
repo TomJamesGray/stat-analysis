@@ -7,7 +7,7 @@ from kivy.uix.button import Button
 from kivy.uix.label import Label
 from kivy.core.window import Window
 from kivy.properties import StringProperty
-
+from kivy.modules import inspector
 
 class StatAnalysis(Widget):
     """
@@ -68,6 +68,7 @@ class StatApp(App):
         Window.clearcolor = (.85,.85,.85,1)
         Window.size = (1336,768)
         a = StatAnalysis()
+        inspector.create_inspector(Window,a)
         return a
 
 
