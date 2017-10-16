@@ -28,5 +28,19 @@
         ActionsScroller:
             size_hint_y:1
             size_hint_x:0.4
-        Button:
-            text:"hi"
+        GridLayout:
+            cols:1
+            spacing:5,5
+            HomeView:
+                size_hint_y:0.8
+            LogView:
+                size_hint_y:0.2
+
+<ScrollableLabel>:
+    Label:
+        color:0,0,0,1
+        text:root.text
+        font_size:18
+        text_size:self.width,None
+        size_hint_y:None
+        height:self.texture_size[1]
