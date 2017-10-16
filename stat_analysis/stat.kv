@@ -20,33 +20,37 @@
                 text:"Save"
 
 
-    GridLayout:
-        cols:2
+    BoxLayout:
+        orientation:"horizontal"
         spacing:5,5
         width:root.width
         height:root.height-40
         padding:5,5,0,5
-        ActionsScroller:
-            canvas.before:
-                Color:
-                    rgba:(1,1,1,1)
-                Rectangle:
-                    pos:self.pos
-                    size:self.size
-            size_hint_y:1
-            size_hint_x:0.4
-        GridLayout:
-            cols:1
-            padding:5,0,5,0
-            spacing:5,5
-            HomeView:
+        Splitter:
+            sizable_from:"right"
+            ActionsScroller:
                 canvas.before:
                     Color:
                         rgba:(1,1,1,1)
                     Rectangle:
                         pos:self.pos
                         size:self.size
-                size_hint_y:0.8
+                size_hint_y:1
+                size_hint_x:0.4
+        GridLayout:
+            cols:1
+            padding:5,0,5,0
+            spacing:5,5
+            Splitter:
+                sizable_from:"bottom"
+                HomeView:
+                    canvas.before:
+                        Color:
+                            rgba:(1,1,1,1)
+                        Rectangle:
+                            pos:self.pos
+                            size:self.size
+                    size_hint_y:0.8
             LogView:
                 canvas.before:
                     Color:
