@@ -46,7 +46,7 @@
                 HomeView:
                     canvas.before:
                         Color:
-                            rgba:(1,1,1,1)
+                            rgba:app.accent_col
                         Rectangle:
                             pos:self.pos
                             size:self.size
@@ -68,3 +68,22 @@
         text_size:self.width,None
         size_hint_y:None
         height:self.texture_size[1]
+
+<LogView>:
+    cols:1
+    Label:
+        text:"Log"
+        text_size:self.size
+        valign:"middle"
+        height:30
+        size_hint_y:None
+        color:(0,0,0,1)
+        padding:5,0
+        canvas.before:
+            Color:
+                rgba:app.accent_col
+            Rectangle:
+                pos:self.pos
+                size:self.size
+    ScrollableLabel:
+        text:"HI"

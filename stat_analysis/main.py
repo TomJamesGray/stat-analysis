@@ -9,6 +9,9 @@ from kivy.core.window import Window
 from kivy.properties import StringProperty
 from kivy.modules import inspector
 
+accent_col = (243/255,119/255,66/255)
+
+
 class StatAnalysis(Widget):
     """
     Root widget for the app
@@ -48,11 +51,7 @@ class LogView(GridLayout):
     """
     Widget displays the log output
     """
-    def __init__(self,**kwargs):
-        super().__init__(**kwargs)
-        self.cols = 1
-        self.add_widget(Label(text="Log",size_hint=(None,None),height=40,color=(0,0,0,1)))
-        self.add_widget(ScrollableLabel(text="Hi\nHi\nHi\nHi\nHi\n\nWorld"))
+    pass
 
 
 class ScrollableLabel(ScrollView):
@@ -63,6 +62,7 @@ class ScrollableLabel(ScrollView):
 
 
 class StatApp(App):
+    accent_col = (243/255,119/255,66/255,1)
     def build(self):
         self.title = "Stat Analysis"
         Window.clearcolor = (.85,.85,.85,1)
