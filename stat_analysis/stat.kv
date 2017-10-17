@@ -71,12 +71,28 @@
 
 <LogView>:
     cols:1
-    Label:
-        text:"Log"
-        text_size:self.size
-        valign:"middle"
+    TitlePane:
+        title:"Log"
         height:30
         size_hint_y:None
+    ScrollableLabel:
+        text:"HI"
+
+<HomeView>:
+    cols:1
+    TitlePane:
+        title:"Home"
+        height:30
+        size_hint_y:None
+    Button
+
+<TitlePane>:
+    Label:
+        text:root.title
+        text_size:self.size
+        valign:"middle"
+        pos:root.pos
+        size:root.size
         color:(0,0,0,1)
         padding:5,0
         canvas.before:
@@ -85,5 +101,3 @@
             Rectangle:
                 pos:self.pos
                 size:self.size
-    ScrollableLabel:
-        text:"HI"

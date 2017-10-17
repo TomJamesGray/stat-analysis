@@ -40,11 +40,14 @@ class HomeView(GridLayout):
     """
     Widget for the main home screen
     """
-    def __init__(self,**kwargs):
-        super().__init__(**kwargs)
-        self.cols = 1
-        self.add_widget(Label(text="Home",size_hint=(None,None),height=40,color=(0,0,0,1)))
-        self.add_widget(Button())
+    pass
+
+
+class TitlePane(Label):
+    """
+    Generic Label for use in the titles of the sections
+    """
+    title = StringProperty("")
 
 
 class LogView(GridLayout):
