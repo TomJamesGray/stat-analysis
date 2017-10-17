@@ -85,12 +85,6 @@
         height:30
         size_hint_y:None
     GridLayout:
-        canvas.before:
-            Color:
-                rgba:.5,.5,.5,1
-            Rectangle:
-                size:self.size
-                pos:self.pos
         cols:1
         padding:5,5
         Button:
@@ -116,8 +110,8 @@
             row_default_height:40
             row_force_default:True
             BorderedLabel:
-                border_width:2
-                border_col:1,0,0,1
+                b_width:2
+                padding:2,2
                 size_hint_x:.4
                 color:0,0,0,1
                 text:"Name"
@@ -125,23 +119,37 @@
                 size:self.size
                 pos:self.pos
                 valign:"middle"
-            Label:
+            BorderedLabel:
+                b_width:2
+                padding:2,2
                 size_hint_x:.4
                 color:0,0,0,1
                 text:"Type"
                 text_size:self.size
                 valign:"middle"
-            Label:
+            BorderedLabel:
+                b_width:2
+                padding:2,2
                 size_hint_x:.2
                 color:0,0,0,1
                 text:"Status"
                 text_size:self.size
                 valign:"middle"
 
-<BorderedLabel>
-    canvas.after:
-        Line:
-            rectangle: self.x+1,self.y+1,self.border_width-1,self.height-1
+<BorderedLabel@Label>
+    canvas.before:
+        Color:
+            rgba:0,0,0,1
+#        Line:
+#            rectangle: self.x+1,self.y+1,self.width-1,self.height-1
+        Rectangle:
+            pos:self.x-self.b_width,self.y-self.b_width
+            size:self.width+self.b_width*2,self.height+self.b_width*2
+        Color:
+            rgba:1,1,1,1
+        Rectangle:
+            pos:self.x,self.y
+            size:self.width,self.height
 
 <TitlePane>:
     Label:

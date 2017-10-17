@@ -44,7 +44,8 @@ class HomeView(GridLayout):
 
 
 class BorderedLabel(Label):
-    border_width = NumericProperty(1)
+    b_width = NumericProperty(1)
+
 
 class TitlePane(Label):
     """
