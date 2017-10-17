@@ -85,6 +85,12 @@
         height:30
         size_hint_y:None
     GridLayout:
+        canvas.before:
+            Color:
+                rgba:.5,.5,.5,1
+            Rectangle:
+                size:self.size
+                pos:self.pos
         cols:1
         padding:5,5
         Button:
@@ -94,12 +100,14 @@
             height:35
             padding:10,10
         Label:
+
             color:0,0,0,1
             text:"Saved Actions"
             size_hint_y:None
             size_hint_x:None
             height:40
             font_size:18
+
         GridLayout:
             size_hint_y:None
             size_hint_x:None
@@ -107,11 +115,15 @@
             cols:3
             row_default_height:40
             row_force_default:True
-            Label:
+            BorderedLabel:
+                border_width:2
+                border_col:1,0,0,1
                 size_hint_x:.4
                 color:0,0,0,1
                 text:"Name"
                 text_size:self.size
+                size:self.size
+                pos:self.pos
                 valign:"middle"
             Label:
                 size_hint_x:.4
@@ -125,6 +137,11 @@
                 text:"Status"
                 text_size:self.size
                 valign:"middle"
+
+<BorderedLabel>
+    canvas.after:
+        Line:
+            rectangle: self.x+1,self.y+1,self.border_width-1,self.height-1
 
 <TitlePane>:
     Label:

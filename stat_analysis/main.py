@@ -6,7 +6,7 @@ from kivy.uix.treeview import TreeView,TreeViewLabel
 from kivy.uix.button import Button
 from kivy.uix.label import Label
 from kivy.core.window import Window
-from kivy.properties import StringProperty
+from kivy.properties import StringProperty,NumericProperty
 from kivy.modules import inspector
 
 accent_col = (243/255,119/255,66/255)
@@ -42,6 +42,9 @@ class HomeView(GridLayout):
     """
     pass
 
+
+class BorderedLabel(Label):
+    border_width = NumericProperty(1)
 
 class TitlePane(Label):
     """
