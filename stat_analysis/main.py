@@ -9,8 +9,6 @@ from kivy.core.window import Window
 from kivy.properties import StringProperty,NumericProperty
 from kivy.modules import inspector
 
-accent_col = (243/255,119/255,66/255)
-
 
 class StatAnalysis(Widget):
     """
@@ -70,6 +68,7 @@ class ScrollableLabel(ScrollView):
 
 class StatApp(App):
     accent_col = (243/255,119/255,66/255,1)
+
     def build(self):
         self.title = "Stat Analysis"
         Window.clearcolor = (.85,.85,.85,1)
