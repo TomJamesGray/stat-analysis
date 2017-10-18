@@ -43,14 +43,17 @@
             spacing:5,5
             Splitter:
                 sizable_from:"bottom"
-                HomeView:
-                    canvas.before:
-                        Color:
-                            rgba:(1,1,1,1)
-                        Rectangle:
-                            pos:self.pos
-                            size:self.size
-                    size_hint_y:0.8
+                PrimaryPane:
+                    id:app.primary_pane
+                    title:"Home"
+                    HomeView:
+                        canvas.before:
+                            Color:
+                                rgba:(1,1,1,1)
+                            Rectangle:
+                                pos:self.pos
+                                size:self.size
+                        size_hint_y:0.8
             LogView:
                 canvas.before:
                     Color:
@@ -78,12 +81,15 @@
     ScrollableLabel:
         text:"HI"
 
-<HomeView>:
+<PrimaryPane>:
     cols:1
     TitlePane:
-        title:"Home"
+        title:root.title
         height:30
         size_hint_y:None
+
+<HomeView>:
+    cols:1
     GridLayout:
         cols:1
         padding:15,15

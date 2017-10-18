@@ -6,8 +6,10 @@ from kivy.uix.treeview import TreeView,TreeViewLabel
 from kivy.uix.button import Button
 from kivy.uix.label import Label
 from kivy.core.window import Window
-from kivy.properties import StringProperty,NumericProperty
+from kivy.properties import StringProperty,NumericProperty,ObjectProperty
 from kivy.modules import inspector
+from stat_analysis.actions import stats
+from kivy.app import App
 
 
 class StatAnalysis(Widget):
@@ -27,9 +29,13 @@ class ActionsScroller(ScrollView):
         self.bar_width = 5
         tv = TreeView(size_hint=(1,None),hide_root=True)
         tv.bind(minimum_height=tv.setter("height"))
-        n1 = tv.add_node(TreeViewLabel(color=(0,0,0,1),text="Item 1"))
-        for i in range(100):
-            tv.add_node(TreeViewLabel(color=(0,0,0,1),text="Sub-item {}".format(i)),n1)
+        # n1 = tv.add_node(TreeViewLabel(color=(0,0,0,1),text="Item 1"))
+        # for i in range(100):
+        #     tv.add_node(TreeViewLabel(color=(0,0,0,1),text="Sub-item {}".format(i)),n1)
+        for action in App.get_running_app().actions:
+            x = TreeViewLabel(color=(0,0,0,1),text=action.type)
+            x.bind(on_press=lambda *args:print("HI"))
+            tv.add_node(x)
 
         self.add_widget(tv)
 
@@ -39,6 +45,13 @@ class HomeView(GridLayout):
     Widget for the main home screen
     """
     pass
+
+
+class PrimaryPane(GridLayout):
+    title = StringProperty("")
+
+    def refresh(self,*args):
+        pass
 
 
 class BorderedLabel(Label):
@@ -68,8 +81,11 @@ class ScrollableLabel(ScrollView):
 
 class StatApp(App):
     accent_col = (243/255,119/255,66/255,1)
+    primary_pane = StringProperty("JEFF")
 
     def build(self):
+        # print(stats.regression)
+        self.actions = [stats.regression.Regression]
         self.title = "Stat Analysis"
         Window.clearcolor = (.85,.85,.85,1)
         Window.size = (1336,768)
