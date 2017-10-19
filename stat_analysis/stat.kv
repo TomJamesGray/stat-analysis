@@ -48,13 +48,13 @@
                 PrimaryPane:
                     id:primary_pane
                     title:"Home"
+                    canvas.before:
+                        Color:
+                            rgba:(1,1,1,1)
+                        Rectangle:
+                            pos:self.pos
+                            size:self.size
                     HomeView:
-                        canvas.before:
-                            Color:
-                                rgba:(1,1,1,1)
-                            Rectangle:
-                                pos:self.pos
-                                size:self.size
                         size_hint_y:0.8
             LogView:
                 canvas.before:
