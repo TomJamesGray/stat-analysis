@@ -7,7 +7,7 @@ class FormDropDown(GridLayout):
     def __init__(self,label,inputs,*args):
         super().__init__(*args)
         self.cols=1
-        self.add_widget(Label(text=label,size_hint=(None,None),color=(0,0,0,1)))
+        self.add_widget(Label(text=label,size_hint=(None,None),height=20,color=(0,0,0,1)))
         self.dropdown = DropDown()
         for i in inputs:
             btn = Button(text=i["u_name"],size_hint_y=None,height=30)
