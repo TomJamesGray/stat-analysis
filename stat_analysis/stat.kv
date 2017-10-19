@@ -184,7 +184,7 @@
             pos:self.x,self.y
             size:self.width,self.height
 
-<BorderedButton>
+<BorderedSpinner>
     canvas.before:
         Color:
             rgba:0,0,0,1
@@ -193,6 +193,25 @@
         Rectangle:
             pos:self.x-self.b_width,self.y-self.b_width
             size:self.width+self.b_width*2,self.height+self.b_width*2
+        Color:
+            rgba:1,1,1,1
+        Rectangle:
+            pos:self.x,self.y
+            size:self.width,self.height
+
+<FormDropDownOption>
+    background_normal:""
+    background_color:1,1,1,1
+    color:0,0,0,1
+    height:20
+    canvas.before:
+        Color:
+            rgba:0,0,0,1
+#        Line:
+#            rectangle: self.x+1,self.y+1,self.width-1,self.height-1
+        Rectangle:
+            pos:self.x-1,self.y-1
+            size:self.width+2,self.height+2
         Color:
             rgba:1,1,1,1
         Rectangle:

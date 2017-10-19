@@ -2,8 +2,8 @@ from kivy.uix.dropdown import DropDown
 from kivy.uix.button import Button
 from kivy.uix.label import Label
 from kivy.uix.gridlayout import GridLayout
-from kivy.uix.spinner import Spinner
-# from stat_analysis.main import BorderedButton
+from kivy.uix.spinner import SpinnerOption
+# from stat_analysis.main import BorderedSpinner
 from stat_analysis import main
 
 
@@ -16,5 +16,9 @@ class FormDropDown(GridLayout):
         self.add_widget(input_label)
         input_vals = tuple([x["u_name"] for x in inputs])
 
-        self.spinner = Spinner(text=label,values=input_vals,size_hint=(None,None))
+        self.spinner = main.BorderedSpinner(text=label,values=input_vals,size_hint=(None,None),background_color=(1,1,1,1),
+                               background_normal="",color=(0,0,0,1),height=20,option_cls=FormDropDownOption)
         self.add_widget(self.spinner)
+
+class FormDropDownOption(SpinnerOption):
+    pass

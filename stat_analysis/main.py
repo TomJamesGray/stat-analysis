@@ -5,7 +5,7 @@ from kivy.uix.widget import Widget
 from kivy.uix.scrollview import ScrollView
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.treeview import TreeView,TreeViewLabel
-from kivy.uix.button import Button
+from kivy.uix.spinner import Spinner
 from kivy.uix.label import Label
 from kivy.core.window import Window
 from kivy.properties import StringProperty,NumericProperty,ObjectProperty
@@ -100,7 +100,7 @@ class BorderedLabel(Label):
     b_width = NumericProperty(1)
 
 
-class BorderedButton(Button):
+class BorderedSpinner(Spinner):
     b_width = NumericProperty(1)
 
 class TitlePane(Label):
