@@ -23,6 +23,7 @@ class ActionsScroller(ScrollView):
     """
     Widget that displays the available actions in a tree format
     """
+    primary_pane_edit = ObjectProperty(None)
     def __init__(self,**kwargs):
         super().__init__(**kwargs)
         self.size_hint = (1,None)
@@ -33,8 +34,8 @@ class ActionsScroller(ScrollView):
         # for i in range(100):
         #     tv.add_node(TreeViewLabel(color=(0,0,0,1),text="Sub-item {}".format(i)),n1)
         for action in App.get_running_app().actions:
-            x = TreeViewLabel(color=(0,0,0,1),text=action.type)
-            x.bind(on_press=lambda *args:print("HI"))
+            x = ActionTreeViewLabel(color=(0,0,0,1),text=action.type,stored_action=action)
+            x.bind(on_touch_down=lambda *args:self.primary_pane_edit.refresh(x.stored_action))
             tv.add_node(x)
 
         self.add_widget(tv)
@@ -46,12 +47,23 @@ class HomeView(GridLayout):
     """
     pass
 
+class ActionTreeViewLabel(TreeViewLabel):
+    stored_action = ObjectProperty(None)
+
 
 class PrimaryPane(GridLayout):
     title = StringProperty("")
 
-    def refresh(self,*args):
-        pass
+    def refresh(self,action,*args):
+        print(action.type)
+        for item in self.children:
+            # Remove all widgets that aren't the title pane
+            if type(item) != TitlePane:
+                self.remove_widget(item)
+        output_widget = Widget()
+        self.add_widget(output_widget)
+        self.active_action = action(output_widget)
+        self.active_action.render()
 
 
 class BorderedLabel(Label):
@@ -81,7 +93,7 @@ class ScrollableLabel(ScrollView):
 
 class StatApp(App):
     accent_col = (243/255,119/255,66/255,1)
-    primary_pane = StringProperty("JEFF")
+    primary_pane = ObjectProperty(None)
 
     def build(self):
         # print(stats.regression)

@@ -1,4 +1,5 @@
 <StatAnalysis>:
+    primary_pane:primary_pane
     width:root.width
     height:root.height
     ActionBar:
@@ -29,6 +30,7 @@
         Splitter:
             sizable_from:"right"
             ActionsScroller:
+                primary_pane_edit:primary_pane
                 canvas.before:
                     Color:
                         rgba:(1,1,1,1)
@@ -44,7 +46,7 @@
             Splitter:
                 sizable_from:"bottom"
                 PrimaryPane:
-                    id:app.primary_pane
+                    id:primary_pane
                     title:"Home"
                     HomeView:
                         canvas.before:
