@@ -100,6 +100,9 @@ class BorderedLabel(Label):
     b_width = NumericProperty(1)
 
 
+class BorderedButton(Button):
+    b_width = NumericProperty(1)
+
 class TitlePane(Label):
     """
     Generic Label for use in the titles of the sections
