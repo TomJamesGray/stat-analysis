@@ -10,7 +10,9 @@ from stat_analysis import main
 class FormDropDown(GridLayout):
     def __init__(self,label,inputs,*args):
         super().__init__(*args)
-        self.cols=1
+        self.cols = 1
+        self.height = 40
+        self.size_hint_y = None
         input_label = Label(text=label,halign="left",size_hint=(1,None),height=20,color=(0,0,0,1))
         input_label.bind(size=input_label.setter("text_size"))
         self.add_widget(input_label)

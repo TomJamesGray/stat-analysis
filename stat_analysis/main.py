@@ -90,7 +90,7 @@ class PrimaryPane(GridLayout):
             if type(item) != TitlePane:
                 self.remove_widget(item)
         self.title = action.type
-        output_widget = GridLayout(size_hint=(1,1),cols=1,padding=(5,5))
+        output_widget = GridLayout(size_hint=(1,1),cols=1,padding=(5,5),spacing=(10,10))
         self.add_widget(output_widget)
         self.active_action = action(output_widget)
         self.active_action.render()
