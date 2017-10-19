@@ -1,3 +1,5 @@
+import logging
+import logging.config
 from kivy.app import App
 from kivy.uix.widget import Widget
 from kivy.uix.scrollview import ScrollView
@@ -11,6 +13,36 @@ from kivy.modules import inspector
 from stat_analysis.actions import stats
 from kivy.app import App
 
+
+logging_config = {
+    "version":1,
+    "disable_existing_loggers":False,
+    "formatters":{
+        "main":{"format":"%(name)s-%(lineno)d: %(message)s"},
+    },
+    "handlers":{
+        "gui":{
+            "class":"logging.StreamHandler",
+            "formatter":"main",
+            "level":"INFO"},
+        "actions":{
+            "class":"logging.StreamHandler",
+            "formatter":"main",
+            "level":"INFO"},
+    },
+    "loggers":{
+        "stat_analysis.main":{
+            "handlers":["gui"],
+            "level":"INFO"
+        },
+        "stat_analysis.actions":{
+            "handlers":["actions"],
+            "level":"INFO"
+        }
+    }
+}
+logging.config.dictConfig(logging_config)
+logger = logging.getLogger(__name__)
 
 class StatAnalysis(Widget):
     """
@@ -30,9 +62,6 @@ class ActionsScroller(ScrollView):
         self.bar_width = 5
         tv = TreeView(size_hint=(1,None),hide_root=True)
         tv.bind(minimum_height=tv.setter("height"))
-        # n1 = tv.add_node(TreeViewLabel(color=(0,0,0,1),text="Item 1"))
-        # for i in range(100):
-        #     tv.add_node(TreeViewLabel(color=(0,0,0,1),text="Sub-item {}".format(i)),n1)
         for action in App.get_running_app().actions:
             x = ActionTreeViewLabel(color=(0,0,0,1),text=action.type,stored_action=action)
             x.bind(on_touch_down=lambda *args:self.primary_pane_edit.refresh(x.stored_action))
@@ -55,7 +84,7 @@ class PrimaryPane(GridLayout):
     title = StringProperty("")
 
     def refresh(self,action,*args):
-        print(action.type)
+        logger.info("Changing the active pane to: {}".format(action.type))
         for item in self.children:
             # Remove all widgets that aren't the title pane
             if type(item) != TitlePane:
