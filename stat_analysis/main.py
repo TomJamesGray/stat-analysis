@@ -125,7 +125,7 @@ class StatApp(App):
     primary_pane = ObjectProperty(None)
 
     def build(self):
-        # print(stats.regression)
+        logger.info("Initialising application")
         self.actions = [stats.regression.Regression]
         self.title = "Stat Analysis"
         Window.clearcolor = (.85,.85,.85,1)
