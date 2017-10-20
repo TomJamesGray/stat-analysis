@@ -1,11 +1,10 @@
 import logging
 import logging.config
-from kivy.app import App
 from kivy.uix.widget import Widget
 from kivy.uix.scrollview import ScrollView
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.treeview import TreeView,TreeViewLabel
-from kivy.uix.spinner import Spinner
+from kivy.uix.spinner import Button
 from kivy.uix.label import Label
 from kivy.core.window import Window
 from kivy.properties import StringProperty,NumericProperty,ObjectProperty
@@ -38,11 +37,16 @@ logging_config = {
         "stat_analysis.actions":{
             "handlers":["actions"],
             "level":"INFO"
+        },
+        "stat_analysis.form_inputs":{
+            "handlers":["gui"],
+            "level":"INFO"
         }
     }
 }
 logging.config.dictConfig(logging_config)
 logger = logging.getLogger(__name__)
+
 
 class StatAnalysis(Widget):
     """
@@ -99,9 +103,6 @@ class PrimaryPane(GridLayout):
 class BorderedLabel(Label):
     b_width = NumericProperty(1)
 
-
-class BorderedSpinner(Spinner):
-    b_width = NumericProperty(1)
 
 class TitlePane(Label):
     """
