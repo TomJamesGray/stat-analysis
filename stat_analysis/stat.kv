@@ -173,8 +173,6 @@
     canvas.before:
         Color:
             rgba:0,0,0,1
-#        Line:
-#            rectangle: self.x+1,self.y+1,self.width-1,self.height-1
         Rectangle:
             pos:self.x-self.b_width,self.y-self.b_width
             size:self.width+self.b_width*2,self.height+self.b_width*2
@@ -200,13 +198,12 @@
 
 <ButtonDropDown>
     background_normal:""
-    background_color:(0,1,1,1)
-
-<FormDropDownOption>
-    background_normal:""
     background_color:.9,.9,.9,1
     color:0,0,0,1
-    height:20
+    b_width:1
+    size_hint:None,None
+    height:25
+    size_hint_x:1
     canvas.before:
         Color:
             rgba:0,0,0,1
@@ -214,7 +211,7 @@
             pos:self.x-self.b_width,self.y-self.b_width
             size:self.width+self.b_width*2,self.height+self.b_width*2
         Color:
-            rgba:1,1,1,1
+            rgba:0,0,1,1
         Rectangle:
             pos:self.x,self.y
             size:self.width,self.height
