@@ -28,7 +28,11 @@
         height:root.height-40
         padding:5,5,0,5
         Splitter:
+            size_hint_x:None
             sizable_from:"right"
+            max_size:300
+            min_size:180
+            rescale_with_parent:True
             ActionsScroller:
                 primary_pane_edit:primary_pane
                 canvas.before:
@@ -38,7 +42,6 @@
                         pos:self.pos
                         size:self.size
                 size_hint_y:1
-                size_hint_x:0.4
         GridLayout:
             cols:1
             padding:5,0,5,0
