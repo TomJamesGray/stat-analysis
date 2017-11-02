@@ -126,7 +126,8 @@ class ScrollableLabel(ScrollView):
 
 
 class StatApp(App):
-    accent_col = (243/255,119/255,66/255,1)
+    accent_col = (219/255,46/255,52/255,1)
+    title_pane_col = (34/255,34/255,34/255,1)
     primary_pane = ObjectProperty(None)
 
     def build(self):

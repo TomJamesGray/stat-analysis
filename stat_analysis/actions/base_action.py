@@ -1,5 +1,6 @@
 import logging
 from kivy.uix.label import Label
+from kivy.app import App
 from stat_analysis.form_inputs import combo_box,check_box,numeric_bounded
 
 logger = logging.getLogger(__name__)
@@ -16,8 +17,8 @@ class BaseAction(object):
         logger.info("Rendering action {}".format(self.type))
         for group in self.form:
 
-            group_lbl = Label(text=group["group_name"],color=(0,0,0,1),size_hint=(1,None),
-                                                height=30,font_size="22")
+            group_lbl = Label(text=group["group_name"],size_hint=(1,None),
+                                                height=30,font_size="22",color=App.get_running_app().accent_col)
             group_lbl.bind(size=group_lbl.setter("text_size"))
             self.output_widget.add_widget(group_lbl)
 
