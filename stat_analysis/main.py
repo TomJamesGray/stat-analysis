@@ -60,16 +60,19 @@ class ActionsScroller(ScrollView):
     Widget that displays the available actions in a tree format
     """
     primary_pane_edit = ObjectProperty(None)
+
     def __init__(self,**kwargs):
         super().__init__(**kwargs)
         self.size_hint = (1,None)
         self.bar_width = 5
         tv = TreeView(size_hint=(1,None),hide_root=True)
         tv.bind(minimum_height=tv.setter("height"))
-        for action in App.get_running_app().actions:
-            x = ActionTreeViewLabel(color=(0,0,0,1),text=action.type,stored_action=action)
-            x.bind(on_touch_down=lambda *args:self.primary_pane_edit.refresh(x.stored_action))
-            tv.add_node(x)
+        for group in App.get_running_app().actions:
+            parent_node = tv.add_node(TreeViewLabel(text=group["group_name"],color=(0,0,0,1)))
+            for action in group["actions"]:
+                x = ActionTreeViewLabel(color=(0,0,0,1),text=action.type,stored_action=action)
+                x.bind(on_touch_down=lambda *args:self.primary_pane_edit.refresh(x.stored_action))
+                tv.add_node(x,parent_node)
 
         self.add_widget(tv)
 
@@ -79,6 +82,7 @@ class HomeView(GridLayout):
     Widget for the main home screen
     """
     pass
+
 
 class ActionTreeViewLabel(TreeViewLabel):
     stored_action = ObjectProperty(None)
@@ -132,7 +136,13 @@ class StatApp(App):
 
     def build(self):
         logger.info("Initialising application")
-        self.actions = [stats.regression.Regression]
+        # self.actions = [stats.regression.Regression]
+        self.actions = [
+            {
+                "group_name":"Stats",
+                "actions":[stats.regression.Regression]
+            }
+        ]
         self.title = "Stat Analysis"
         Window.clearcolor = (.85,.85,.85,1)
         Window.size = (1336,768)

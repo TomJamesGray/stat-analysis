@@ -3,6 +3,7 @@ from stat_analysis.actions import base_action
 
 class Regression(base_action.BaseAction):
     type = "stats.regression"
+    view_name = "Regression"
 
     def __init__(self,output_widget):
         self.user_name = "XYZ"
