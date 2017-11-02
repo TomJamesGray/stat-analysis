@@ -44,3 +44,5 @@ class BaseAction(object):
         result_lbl.bind(size=result_lbl.setter("text_size"))
         result_output.add_widget(result_lbl)
         self.output_widget.add_widget(result_output)
+        # Add property so that the result output can be added to when the action is run
+        self.result_output = result_output
