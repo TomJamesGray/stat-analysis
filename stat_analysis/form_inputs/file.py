@@ -25,7 +25,8 @@ class FormFile(GridLayout):
 
     def open_f_selector(self,*args):
         self.popup = Popup(title="Select file",size_hint=(None,None),size=(400,400))
-        f_chooser = FileChooserListViewCustom(popup=self.popup,file_chooser_btn=self.file_chooser_btn)
+        f_chooser = FileChooserListViewCustom(popup=self.popup,file_chooser_btn=self.file_chooser_btn,
+                                              filters=[lambda _,filename: filename.endswith(".csv")])
         self.popup.content = f_chooser
         self.popup.open()
 
