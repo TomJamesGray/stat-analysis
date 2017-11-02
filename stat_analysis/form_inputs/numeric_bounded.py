@@ -12,7 +12,7 @@ class FormNumericBounded(GridLayout):
         self.height = 70
         self.width = 200
         input_label = Label(text=input_dict["visible_name"],halign="left",size_hint=(1,None),height=30,color=(0,0,0,1),
-                            valign="middle")
+                            valign="middle",font_size="14")
         input_label.bind(size=input_label.setter("text_size"))
         container = GridLayout(rows=1,height=40,width=200,size_hint=(None,None))
         self.text_readout = TextInput(size_hint=(None,None),width=50,height=40,multiline=False,disabled=True)
