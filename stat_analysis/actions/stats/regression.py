@@ -44,7 +44,7 @@ class Regression(base_action.BaseAction):
                     "input_type": "numeric_bounded",
                     "default": 1,
                     "step":1,
-                    "min":0,
+                    "min":1,
                     "max":10,
                     "required": "false",
                     "name": "regression_degree",
