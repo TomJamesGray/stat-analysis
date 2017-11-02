@@ -9,7 +9,7 @@ from kivy.uix.label import Label
 from kivy.core.window import Window
 from kivy.properties import StringProperty,NumericProperty,ObjectProperty
 from kivy.modules import inspector
-from stat_analysis.actions import stats
+from stat_analysis.actions import stats,data
 from kivy.app import App
 
 
@@ -70,7 +70,7 @@ class ActionsScroller(ScrollView):
         for group in App.get_running_app().actions:
             parent_node = tv.add_node(TreeViewLabel(text=group["group_name"],color=(0,0,0,1)))
             for action in group["actions"]:
-                x = ActionTreeViewLabel(color=(0,0,0,1),text=action.type,stored_action=action)
+                x = ActionTreeViewLabel(color=(0,0,0,1),text=action.view_name,stored_action=action)
                 x.bind(on_touch_down=lambda *args:self.primary_pane_edit.refresh(x.stored_action))
                 tv.add_node(x,parent_node)
 
@@ -141,6 +141,10 @@ class StatApp(App):
             {
                 "group_name":"Stats",
                 "actions":[stats.regression.Regression]
+            },
+            {
+                "group_name":"Data",
+                "actions":[data.csv.ImportCSV]
             }
         ]
         self.title = "Stat Analysis"
