@@ -46,27 +46,30 @@
             cols:1
             padding:5,0,5,0
             spacing:5,5
-            Splitter:
-                sizable_from:"bottom"
-                PrimaryPane:
-                    id:primary_pane
-                    title:"Home"
-                    canvas.before:
-                        Color:
-                            rgba:(1,1,1,1)
-                        Rectangle:
-                            pos:self.pos
-                            size:self.size
-                    HomeView:
-                        size_hint_y:0.8
-            LogView:
+            PrimaryPane:
+                id:primary_pane
+                title:"Home"
                 canvas.before:
                     Color:
                         rgba:(1,1,1,1)
                     Rectangle:
                         pos:self.pos
                         size:self.size
-                size_hint_y:0.2
+                HomeView:
+                    size_hint_y:0.8
+            Splitter:
+                sizable_from:"top"
+                size_hint_y:None
+                min_size:100
+                max_size:250
+                LogView:
+                    canvas.before:
+                        Color:
+                            rgba:(1,1,1,1)
+                        Rectangle:
+                            pos:self.pos
+                            size:self.size
+                    size_hint_y:0.2
 
 <ScrollableLabel>:
     Label:
