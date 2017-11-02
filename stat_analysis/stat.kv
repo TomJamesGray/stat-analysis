@@ -236,3 +236,21 @@
             Rectangle:
                 pos:self.pos
                 size:self.size
+
+<ResultOutputWidget>:
+    cols:1
+    padding:5,5
+    canvas.before:
+        Color:
+            rgba:.6,.6,.6,1
+        Rectangle:
+            pos:self.x,self.y+10
+            size:1,self.height-20
+    Label:
+        text:"Result"
+        size_hint:1,None
+        text_size:self.size
+        color:app.accent_col
+        height:30
+        font_size:"22"
+        halign:"left"

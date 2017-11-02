@@ -18,7 +18,7 @@ form_input_maps = {
 class BaseAction(object):
     def render(self):
         logger.info("Rendering action {}".format(self.type))
-        form_layout = GridLayout(cols=1,padding=(5,5),spacing=(10,10),width=200,size_hint=(None,1))
+        form_layout = GridLayout(cols=1,padding=(5,5),spacing=(10,10),width=220,size_hint=(None,1))
         for group in self.form:
             group_lbl = Label(text=group["group_name"],size_hint=(1,None),
                               height=30,font_size="22",color=App.get_running_app().accent_col)
@@ -38,11 +38,10 @@ class BaseAction(object):
         self.output_widget.add_widget(form_layout)
 
         # Create the generic output area
-        result_output = GridLayout(cols=1)
-        result_lbl = Label(text="Result", size_hint=(1, None),
-                           height=30, font_size="22", color=App.get_running_app().accent_col)
-        result_lbl.bind(size=result_lbl.setter("text_size"))
-        result_output.add_widget(result_lbl)
+        result_output = ResultOutputWidget(cols=1)
         self.output_widget.add_widget(result_output)
         # Add property so that the result output can be added to when the action is run
         self.result_output = result_output
+
+class ResultOutputWidget(GridLayout):
+    pass
