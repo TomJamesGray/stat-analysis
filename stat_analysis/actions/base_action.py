@@ -18,11 +18,10 @@ form_input_maps = {
 class BaseAction(object):
     def render(self):
         logger.info("Rendering action {}".format(self.type))
-        form_layout = GridLayout(cols=1,padding=(5,5),spacing=(10,10))
+        form_layout = GridLayout(cols=1,padding=(5,5),spacing=(10,10),width=200,size_hint=(None,1))
         for group in self.form:
-
             group_lbl = Label(text=group["group_name"],size_hint=(1,None),
-                                                height=30,font_size="22",color=App.get_running_app().accent_col)
+                              height=30,font_size="22",color=App.get_running_app().accent_col)
             group_lbl.bind(size=group_lbl.setter("text_size"))
             form_layout.add_widget(group_lbl)
 
@@ -36,7 +35,12 @@ class BaseAction(object):
                 # Give the form widget the whole dict so it can parse the data there
                 form_layout.add_widget(cls(item))
 
-        splitter = Splitter(sizable_from="right")
-        splitter.add_widget(form_layout)
-        self.output_widget.add_widget(splitter)
-        self.output_widget.add_widget(Button())
+        self.output_widget.add_widget(form_layout)
+
+        # Create the generic output area
+        result_output = GridLayout(cols=1)
+        result_lbl = Label(text="Result", size_hint=(1, None),
+                           height=30, font_size="22", color=App.get_running_app().accent_col)
+        result_lbl.bind(size=result_lbl.setter("text_size"))
+        result_output.add_widget(result_lbl)
+        self.output_widget.add_widget(result_output)
