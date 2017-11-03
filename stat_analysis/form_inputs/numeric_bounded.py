@@ -12,6 +12,7 @@ class FormNumericBounded(GridLayout):
         self.size_hint_x = None
         self.height = 70
         self.width = 200
+        self.input_dict = input_dict
         input_label = Label(text=input_dict["visible_name"],halign="left",size_hint=(1,None),height=30,color=(0,0,0,1),
                             valign="middle",font_size="14")
         input_label.bind(size=input_label.setter("text_size"))
