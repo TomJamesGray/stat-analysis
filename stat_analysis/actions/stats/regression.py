@@ -58,3 +58,9 @@ class Regression(base_action.BaseAction):
              }
         ]
         self.output_widget = output_widget
+
+    def run(self):
+        print(self.form_items)
+        for item in self.form_items:
+            print(item)
+            print(item.get_val())

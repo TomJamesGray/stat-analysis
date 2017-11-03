@@ -18,3 +18,6 @@ class FormNumeric(GridLayout):
         self.num_input = TextInput(size_hint=(None,None),height=30,multiline=False)
         self.add_widget(input_label)
         self.add_widget(self.num_input)
+
+    def get_val(self):
+        return self.num_input.text

@@ -35,6 +35,9 @@ class FormDropDown(GridLayout):
         self.dropdown.bind(on_select=lambda instance,y:setattr(self.main_btn,'text',y))
         self.add_widget(self.main_btn)
 
+    def get_val(self):
+        return self.main_btn.text
+
 
 class BorderedButton(Button):
     b_width = NumericProperty(1)

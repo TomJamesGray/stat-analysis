@@ -23,6 +23,7 @@ class BaseAction(object):
         logger.info("Rendering action {}".format(self.type))
         form_layout = GridLayout(cols=1,padding=(5,5),spacing=(10,10),width=220,size_hint=(None,None))
         form_layout.bind(minimum_height=form_layout.setter("height"))
+        self.form_items = []
         for group in self.form:
             group_lbl = Label(text=group["group_name"],size_hint=(1,None),
                               height=30,font_size="22",color=App.get_running_app().accent_col)
@@ -37,7 +38,9 @@ class BaseAction(object):
                     # Go to next form input
                     continue
                 # Give the form widget the whole dict so it can parse the data there
-                form_layout.add_widget(cls(item))
+                form_cls = cls(item)
+                form_layout.add_widget(form_cls)
+                self.form_items.append(form_cls)
 
         scroller = ScrollView(size_hint=(None,1),width=220)
         scroller.add_widget(form_layout)

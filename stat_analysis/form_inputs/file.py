@@ -34,6 +34,9 @@ class FormFile(GridLayout):
         self.popup.content = f_chooser
         self.popup.open()
 
+    def get_val(self):
+        return self.file_location
+
 
 class FileChooserListViewCustom(FileChooserListView):
     popup = ObjectProperty(None)

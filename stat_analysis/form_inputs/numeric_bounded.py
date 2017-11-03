@@ -31,3 +31,6 @@ class FormNumericBounded(GridLayout):
 
     def on_slider_change(self,instance,value):
         self.text_readout.text = str(value)
+
+    def get_val(self):
+        return float(self.text_readout.text)
