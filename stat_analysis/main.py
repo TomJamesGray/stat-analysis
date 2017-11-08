@@ -92,16 +92,19 @@ class HomeView(GridLayout):
 class ActionsGrid(GridLayout):
     def __init__(self,**kwargs):
         super().__init__(**kwargs)
-        lbl_texts = [["Name","Type","Status"]] + App.get_running_app().saved_actions
-        for row in lbl_texts:
-            for item in row:
-                x = BorderedLabel(b_width=1,padding=(2,2),size_hint_x=0.4,color=(0,0,0,1),text=str(item),
-                                  valign="middle",halign="left")
-                x.bind(size=x.setter("text_size"))
-                self.add_widget(x)
+        headers = ["Name","Type","Status"]
+        for header in headers:
+            self.add_btn(header)
+        for action in App.get_running_app().saved_actions:
+            self.add_btn(action.save_name)
+            self.add_btn(action.type)
+            self.add_btn(action.status)
 
-
-
+    def add_btn(self,text):
+        x = BorderedLabel(b_width=1, padding=(2, 2), size_hint_x=0.4, color=(0, 0, 0, 1), text=str(text),
+                          valign="middle", halign="left")
+        x.bind(size=x.setter("text_size"))
+        self.add_widget(x)
 
 
 class ActionTreeViewLabel(TreeViewLabel):
@@ -123,6 +126,15 @@ class PrimaryPane(GridLayout):
         self.add_widget(output_widget)
         self.active_action = action(output_widget)
         self.active_action.render()
+
+    def go_home(self,*args):
+        logger.info("Changing active pane to home screen")
+        for item in self.children:
+            # Remove all widgets that aren't the title pane
+            if type(item) != TitlePane:
+                self.remove_widget(item)
+        self.title = "Home"
+        self.add_widget(HomeView())
 
 
 class TitlePane(Label):
@@ -164,7 +176,7 @@ class StatApp(App):
                 "actions":[data.csv.ImportCSV]
             }
         ]
-        self.saved_actions = [["a","b","c"]]
+        self.saved_actions = []
         self.title = "Stat Analysis"
         Window.clearcolor = (.85,.85,.85,1)
         Window.size = (1336,768)

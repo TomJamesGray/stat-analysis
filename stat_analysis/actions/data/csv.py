@@ -1,4 +1,5 @@
 import logging
+from kivy.app import App
 import csv
 from stat_analysis.actions import base_action
 from collections import OrderedDict
@@ -11,7 +12,7 @@ class ImportCSV(base_action.BaseAction):
     view_name = "CSV Import"
 
     def __init__(self,output_widget):
-        self.user_name = "XYZ"
+        self.save_name = "XYZ"
         self.status = "OK"
         self.form = [
             {
@@ -43,6 +44,17 @@ class ImportCSV(base_action.BaseAction):
                         "required": True,
                         "form_name": "start_line",
                         "visible_name": "Start reading at line:",
+                    }
+                ]
+            },
+            {
+                "group_name":"Save",
+                "inputs":[
+                    {
+                        "input_type":"string",
+                        "required":True,
+                        "form_name":"save_name",
+                        "visible_name":"Action save name"
                     }
                 ]
             }
@@ -77,7 +89,8 @@ class ImportCSV(base_action.BaseAction):
                     # TODO Add handling if there are more columns than expected
                     tmp[headers[i]] = item[i]
                 new_data.append(tmp)
-            print(new_data)
+            self.save_name = vals["save_name"]
+            App.get_running_app().saved_actions.append(self)
 
         else:
             logger.info("Form not validated, form errors: {}".format(self.form_errors))

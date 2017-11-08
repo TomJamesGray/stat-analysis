@@ -1,7 +1,7 @@
 import logging
 from kivy.uix.label import Label
 from kivy.app import App
-from stat_analysis.form_inputs import combo_box,check_box,numeric_bounded,numeric,file
+from stat_analysis.form_inputs import combo_box,check_box,numeric_bounded,numeric,file,string
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.scrollview import ScrollView
 from kivy.uix.splitter import Splitter
@@ -14,7 +14,8 @@ form_input_maps = {
     "check_box":check_box.FormCheckBox,
     "numeric_bounded":numeric_bounded.FormNumericBounded,
     "numeric":numeric.FormNumeric,
-    "file":file.FormFile
+    "file":file.FormFile,
+    "string":string.FormString
 }
 
 
