@@ -78,11 +78,30 @@ class ActionsScroller(ScrollView):
         self.add_widget(tv)
 
 
+class BorderedLabel(Label):
+    b_width = NumericProperty(1)
+
+
 class HomeView(GridLayout):
     """
     Widget for the main home screen
     """
     pass
+
+
+class ActionsGrid(GridLayout):
+    def __init__(self,**kwargs):
+        super().__init__(**kwargs)
+        lbl_texts = [["Name","Type","Status"]] + App.get_running_app().saved_actions
+        for row in lbl_texts:
+            for item in row:
+                x = BorderedLabel(b_width=1,padding=(2,2),size_hint_x=0.4,color=(0,0,0,1),text=str(item),
+                                  valign="middle",halign="left")
+                x.bind(size=x.setter("text_size"))
+                self.add_widget(x)
+
+
+
 
 
 class ActionTreeViewLabel(TreeViewLabel):
@@ -104,10 +123,6 @@ class PrimaryPane(GridLayout):
         self.add_widget(output_widget)
         self.active_action = action(output_widget)
         self.active_action.render()
-
-
-class BorderedLabel(Label):
-    b_width = NumericProperty(1)
 
 
 class TitlePane(Label):
@@ -149,6 +164,7 @@ class StatApp(App):
                 "actions":[data.csv.ImportCSV]
             }
         ]
+        self.saved_actions = [["a","b","c"]]
         self.title = "Stat Analysis"
         Window.clearcolor = (.85,.85,.85,1)
         Window.size = (1336,768)
