@@ -20,4 +20,8 @@ class FormNumeric(GridLayout):
         self.add_widget(self.num_input)
 
     def get_val(self):
-        return self.num_input.text
+        try:
+            val = float(self.num_input.text)
+        except ValueError:
+            raise ValueError("{} should be numeric".format(self.input_dict["visible_name"]))
+        return val
