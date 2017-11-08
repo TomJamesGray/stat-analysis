@@ -39,8 +39,8 @@ class ImportCSV(base_action.BaseAction):
                         "min": 1,
                         "max": 10,
                         "required": True,
-                        "name": "start_line",
-                        "visible_name": "Start reading at line:"
+                        "form_name": "start_line",
+                        "visible_name": "Start reading at line:",
                     }
                 ]
             }
@@ -49,4 +49,7 @@ class ImportCSV(base_action.BaseAction):
 
     def run(self):
         logger.info("Running action {}".format(self.type))
-        self.validate_form()
+        if self.validate_form():
+            logger.info("Form validated, form outputs: {}".format(self.form_outputs))
+        else:
+            logger.info("Form not validated, form errors: {}".format(self.form_errors))

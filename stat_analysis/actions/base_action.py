@@ -53,19 +53,32 @@ class BaseAction(object):
         self.result_output = result_output
 
     def validate_form(self):
-        to_validate = []
         output = {}
         errors = []
         for item in self.form_items:
-            val = item.get_val()
-            logger.info("Validating {}, value {}".format(item,val))
-            if item["required"] and val == None:
+            logger.info("Validating {}".format(item))
+            try:
+                # Handle errors that may be found in get_val method, ie can't cast to float
+                # in numeric input
+                val = item.get_val()
+            except Exception as e:
+                errors.append(str(e))
+                logger.warning(errors[-1])
+                continue
+
+            if item.input_dict["required"] and val == None:
                 errors.append("Field {} is required".format(item.input_dict["form_name"]))
                 logger.warning(errors[-1])
+
+            # Add the input value to the output dictionary
             output[item.input_dict["form_name"]] = val
 
-        if errors != []:
-            print(errors)
+        if errors == []:
+            self.form_outputs = output
+            return True
+        else:
+            self.form_errors = errors
+            return False
 
 
 class ResultOutputWidget(GridLayout):
