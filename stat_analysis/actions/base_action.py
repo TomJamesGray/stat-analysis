@@ -52,5 +52,21 @@ class BaseAction(object):
         # Add property so that the result output can be added to when the action is run
         self.result_output = result_output
 
+    def validate_form(self):
+        to_validate = []
+        output = {}
+        errors = []
+        for item in self.form_items:
+            val = item.get_val()
+            logger.info("Validating {}, value {}".format(item,val))
+            if item["required"] and val == None:
+                errors.append("Field {} is required".format(item.input_dict["form_name"]))
+                logger.warning(errors[-1])
+            output[item.input_dict["form_name"]] = val
+
+        if errors != []:
+            print(errors)
+
+
 class ResultOutputWidget(GridLayout):
     pass

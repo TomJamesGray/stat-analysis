@@ -1,5 +1,7 @@
+import logging
 from stat_analysis.actions import base_action
 
+logger = logging.getLogger(__name__)
 
 class Regression(base_action.BaseAction):
     type = "stats.regression"
@@ -60,7 +62,7 @@ class Regression(base_action.BaseAction):
         self.output_widget = output_widget
 
     def run(self):
-        print(self.form_items)
+        logger.info("Running action {}".format(self.type))
         for item in self.form_items:
             print(item)
             print(item.get_val())
