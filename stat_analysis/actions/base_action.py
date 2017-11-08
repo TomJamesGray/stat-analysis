@@ -53,6 +53,15 @@ class BaseAction(object):
         self.result_output = result_output
 
     def validate_form(self):
+        """
+        Validates the form based on the input dictionaries for each form input,
+        handles exceptions thrown by the individual form items on get_val method
+        and validation based on input dict criterion.
+        If the form is valid the values and form_name's of each input is stored in
+        a dict in form_inputs, if the form is invalid the errors are stored in
+        form_errors
+        :return: Boolean depending on whether form was filled out properly or not
+        """
         output = {}
         errors = []
         for item in self.form_items:
