@@ -10,6 +10,7 @@ from kivy.core.window import Window
 from kivy.properties import StringProperty,NumericProperty,ObjectProperty
 from kivy.modules import inspector
 from stat_analysis.actions import stats,data
+from stat_analysis.generic_widgets.bordered import BorderedButton
 from kivy.app import App
 
 
@@ -78,8 +79,6 @@ class ActionsScroller(ScrollView):
         self.add_widget(tv)
 
 
-class BorderedLabel(Label):
-    b_width = NumericProperty(1)
 
 
 class HomeView(GridLayout):
@@ -98,14 +97,15 @@ class ActionsGrid(GridLayout):
         for action in App.get_running_app().saved_actions:
             name_btn = self.add_btn(action.save_name)
             name_btn.saved_action = action
-            name_btn.bind(on_touch_down=lambda *args:App.get_running_app().root_widget.primary_pane.load_action(args))
+            name_btn.bind(on_press=
+                          lambda x,touch:App.get_running_app().root_widget.primary_pane.load_action(x,touch))
 
             self.add_btn(action.type)
             self.add_btn(action.status)
 
     def add_btn(self,text):
-        x = BorderedLabel(b_width=1, padding=(2, 2), size_hint_x=0.4, color=(0, 0, 0, 1), text=str(text),
-                          valign="middle", halign="left")
+        x = BorderedButton(b_width=1, padding=(2, 2), size_hint_x=0.4, color=(0, 0, 0, 1), text=str(text),
+                          valign="middle", halign="left",background_color=(1,1,1,1),background_normal="")
         x.bind(size=x.setter("text_size"))
         self.add_widget(x)
         return x
@@ -131,9 +131,8 @@ class PrimaryPane(GridLayout):
         self.active_action = action(output_widget)
         self.active_action.render()
 
-    def load_action(self,args):
-        # print
-        print(args)
+    def load_action(self,lbl,touch):
+        logger.info("Loading action {}".format(lbl.saved_action))
 
     def go_home(self,*args):
         logger.info("Changing active pane to home screen")

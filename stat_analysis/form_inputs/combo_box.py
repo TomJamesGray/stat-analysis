@@ -3,6 +3,7 @@ from kivy.uix.button import Button
 from kivy.uix.label import Label
 from kivy.uix.gridlayout import GridLayout
 from kivy.properties import NumericProperty
+from stat_analysis.generic_widgets.bordered import BorderedButton
 from kivy.graphics import Rectangle,Color
 
 
@@ -37,10 +38,6 @@ class FormDropDown(GridLayout):
 
     def get_val(self):
         return self.main_btn.text
-
-
-class BorderedButton(Button):
-    b_width = NumericProperty(1)
 
 
 class ButtonDropDown(BorderedButton):
