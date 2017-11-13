@@ -4,10 +4,9 @@ from kivy.uix.widget import Widget
 from kivy.uix.scrollview import ScrollView
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.treeview import TreeView,TreeViewLabel
-from kivy.uix.spinner import Button
 from kivy.uix.label import Label
 from kivy.core.window import Window
-from kivy.properties import StringProperty,NumericProperty,ObjectProperty
+from kivy.properties import StringProperty,ObjectProperty
 from kivy.modules import inspector
 from stat_analysis.actions import stats,data
 from stat_analysis.generic_widgets.bordered import BorderedButton
@@ -79,8 +78,6 @@ class ActionsScroller(ScrollView):
         self.add_widget(tv)
 
 
-
-
 class HomeView(GridLayout):
     """
     Widget for the main home screen
@@ -97,8 +94,7 @@ class ActionsGrid(GridLayout):
         for action in App.get_running_app().saved_actions:
             name_btn = self.add_btn(action.save_name)
             name_btn.saved_action = action
-            name_btn.bind(on_press=
-                          lambda x,touch:App.get_running_app().root_widget.primary_pane.load_action(x,touch))
+            name_btn.bind(on_press=lambda x:App.get_running_app().root_widget.primary_pane.load_action(x))
 
             self.add_btn(action.type)
             self.add_btn(action.status)
@@ -131,7 +127,7 @@ class PrimaryPane(GridLayout):
         self.active_action = action(output_widget)
         self.active_action.render()
 
-    def load_action(self,lbl,touch):
+    def load_action(self,lbl):
         logger.info("Loading action {}".format(lbl.saved_action))
 
     def go_home(self,*args):
