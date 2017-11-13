@@ -52,7 +52,7 @@ class StatAnalysis(Widget):
     """
     Root widget for the app
     """
-    pass
+    primary_pane = ObjectProperty(None)
 
 
 class ActionsScroller(ScrollView):
@@ -96,7 +96,10 @@ class ActionsGrid(GridLayout):
         for header in headers:
             self.add_btn(header)
         for action in App.get_running_app().saved_actions:
-            self.add_btn(action.save_name)
+            name_btn = self.add_btn(action.save_name)
+            name_btn.saved_action = action
+            name_btn.bind(on_touch_down=lambda *args:App.get_running_app().root_widget.primary_pane.load_action(args))
+
             self.add_btn(action.type)
             self.add_btn(action.status)
 
@@ -105,6 +108,7 @@ class ActionsGrid(GridLayout):
                           valign="middle", halign="left")
         x.bind(size=x.setter("text_size"))
         self.add_widget(x)
+        return x
 
 
 class ActionTreeViewLabel(TreeViewLabel):
@@ -126,6 +130,10 @@ class PrimaryPane(GridLayout):
         self.add_widget(output_widget)
         self.active_action = action(output_widget)
         self.active_action.render()
+
+    def load_action(self,args):
+        # print
+        print(args)
 
     def go_home(self,*args):
         logger.info("Changing active pane to home screen")
@@ -161,7 +169,6 @@ class ScrollableLabel(ScrollView):
 class StatApp(App):
     accent_col = (219/255,46/255,52/255,1)
     title_pane_col = (34/255,34/255,34/255,1)
-    primary_pane = ObjectProperty(None)
 
     def build(self):
         logger.info("Initialising application")
@@ -180,9 +187,9 @@ class StatApp(App):
         self.title = "Stat Analysis"
         Window.clearcolor = (.85,.85,.85,1)
         Window.size = (1336,768)
-        a = StatAnalysis()
-        inspector.create_inspector(Window,a)
-        return a
+        self.root_widget = StatAnalysis()
+        inspector.create_inspector(Window,self.root_widget)
+        return self.root_widget
 
 
 def main():
