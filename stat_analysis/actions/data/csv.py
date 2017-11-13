@@ -2,6 +2,7 @@ import logging
 from kivy.app import App
 import csv
 from stat_analysis.actions import base_action
+from stat_analysis.generic_widgets.bordered import BorderedTable
 from collections import OrderedDict
 
 logger = logging.getLogger(__name__)
@@ -92,5 +93,7 @@ class ImportCSV(base_action.BaseAction):
             self.save_name = vals["save_name"]
             App.get_running_app().saved_actions.append(self)
 
+            self.result_output.add_widget(BorderedTable(headers=["Records","Columns"],data=[[len(data)],[len(data[0])]],
+                                                        row_default_height=30, row_force_default=True))
         else:
             logger.info("Form not validated, form errors: {}".format(self.form_errors))

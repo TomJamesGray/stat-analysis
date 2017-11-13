@@ -41,6 +41,10 @@ logging_config = {
         "stat_analysis.form_inputs":{
             "handlers":["gui"],
             "level":"INFO"
+        },
+        "stat_analysis.generic_widgets":{
+            "handlers":["gui"],
+            "level":"INFO"
         }
     }
 }
