@@ -183,6 +183,7 @@ class StatApp(App):
             }
         ]
         self.saved_actions = []
+        self.data_sets = []
         self.title = "Stat Analysis"
         Window.clearcolor = (.85,.85,.85,1)
         Window.size = (1336,768)

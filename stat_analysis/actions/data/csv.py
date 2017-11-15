@@ -61,6 +61,7 @@ class ImportCSV(base_action.BaseAction):
             }
         ]
         self.output_widget = output_widget
+        self.stored_data = None
 
     def run(self):
         logger.info("Running action {}".format(self.type))
@@ -90,10 +91,18 @@ class ImportCSV(base_action.BaseAction):
                     # TODO Add handling if there are more columns than expected
                     tmp[headers[i]] = item[i]
                 new_data.append(tmp)
+            # Set stored data property to be used in get_data method
+            self.stored_data = new_data
+            # Set the save name that will be shown to user in the saved actions grid on the home screen
             self.save_name = vals["save_name"]
+            # Add action to saved_actions and to data sets
             App.get_running_app().saved_actions.append(self)
+            App.get_running_app().data_sets.append(self)
 
             self.result_output.add_widget(BorderedTable(headers=["Records","Columns"],data=[[len(data)],[len(data[0])]],
                                                         row_default_height=30, row_force_default=True))
         else:
             logger.info("Form not validated, form errors: {}".format(self.form_errors))
+
+    def get_data(self):
+        return self.stored_data
