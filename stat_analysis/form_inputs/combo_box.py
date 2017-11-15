@@ -1,5 +1,5 @@
 from kivy.uix.dropdown import DropDown
-from kivy.uix.button import Button
+from kivy.app import App
 from kivy.uix.label import Label
 from kivy.uix.gridlayout import GridLayout
 from kivy.properties import NumericProperty
@@ -21,8 +21,16 @@ class FormDropDown(GridLayout):
         input_label.bind(size=input_label.setter("text_size"))
         self.add_widget(input_label)
 
+        # Get the dropdown options
+        if type(input_dict["data_type"]) == list:
+            dropdown_options = input_dict["data"]
+        elif input_dict["data_type"] == "dataset":
+            dropdown_options = [x.save_name for x in App.get_running_app().data_sets]
+        else:
+            raise ValueError("Unrecognised data type {} in form layout".format(input_dict["data_type"]))
+
         self.dropdown = DropDown()
-        for i in ["1","2","3"]:
+        for i in dropdown_options:
             btn = ButtonDropDown(text=i)
             btn.bind(on_release=lambda btn: self.dropdown.select(btn.text))
             self.dropdown.add_widget(btn)
