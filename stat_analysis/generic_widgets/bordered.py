@@ -16,20 +16,36 @@ class BorderedLabel(Label):
 
 
 class BorderedTable(GridLayout):
-    headers = ListProperty(None)
+    headers = ListProperty([])
     orientation = StringProperty("vertical")
-    data = ListProperty(None)
+    data = ListProperty([])
+    raw_data = ListProperty([])
 
     def __init__(self,**kwargs):
         super(BorderedTable,self).__init__(**kwargs)
-        if len(self.headers) != len(self.data):
-            raise ValueError("Length of headers and data aren't equal")
+        # Raw_data is technically given priority
+        print(self.raw_data)
+        if self.raw_data != []:
+            headers = self.raw_data[0].keys()
+            if self.orientation == "vertical":
+                self.cols = len(headers)
+                for header in headers:
+                    self.add_widget(BorderedLabel(text=str(header), color=(.5, 0, 0, 1), size_hint_x=None))
 
-        if self.orientation == "vertical":
-            self.cols = len(self.data)
-            for header in self.headers:
-                self.add_widget(BorderedLabel(text=str(header),color=(.5,0,0,1),size_hint_x=None))
+                for row in self.raw_data:
+                        for _,val in row.items():
+                            self.add_widget(BorderedLabel(text=str(val), color=(0, 0, 0, 1), size_hint_x=None,
+                                                          height=30))
+        else:
+            if len(self.headers) != len(self.data):
+                raise ValueError("Length of headers and data aren't equal")
 
-            for x in range(0,len(self.data)):
-                for y in range(0,len(self.data[0])):
-                    self.add_widget(BorderedLabel(text=str(self.data[x][y]),color=(0,0,0,1),size_hint_x=None,height=30))
+            if self.orientation == "vertical":
+                self.cols = len(self.data)
+                for header in self.headers:
+                    self.add_widget(BorderedLabel(text=str(header),color=(.5,0,0,1),size_hint_x=None))
+
+                for x in range(0,len(self.data)):
+                    for y in range(0,len(self.data[0])):
+                        self.add_widget(BorderedLabel(text=str(self.data[x][y]),color=(0,0,0,1),size_hint_x=None,
+                                                      height=30))

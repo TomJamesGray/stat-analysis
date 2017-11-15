@@ -1,6 +1,7 @@
 import logging
 from kivy.app import App
 from stat_analysis.actions import base_action
+from stat_analysis.generic_widgets.bordered import BorderedTable
 
 logger = logging.getLogger(__name__)
 
@@ -33,8 +34,19 @@ class ViewData(base_action.BaseAction):
         if self.validate_form():
             logger.info("Form validated, form outputs: {}".format(self.form_outputs))
             vals = self.form_outputs
+            cur_set = None
+            # From the name selected in the combo box get the actual stored data set
+            # TODO: What if the name of data set is repeated?
             for d_set in App.get_running_app().data_sets:
                 if d_set.save_name == vals["data_set"]:
                     cur_set = d_set
                     break
-            print(cur_set)
+            if cur_set == None:
+                # This should never happen
+                logger.error("Data set selected in combo box doesn't exist in app's data_sets")
+                raise ValueError("Data set selected in combo box doesn't exist in app's data_sets")
+            logger.info("Using {} as cur_set".format(cur_set))
+            print(cur_set.get_data())
+
+            self.output_widget.add_widget(BorderedTable(raw_data=cur_set.get_data(),row_default_height=30,
+                                                        row_force_default=True))
