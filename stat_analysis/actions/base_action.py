@@ -39,7 +39,8 @@ class BaseAction(object):
                     # Go to next form input
                     continue
                 # Give the form widget the whole dict so it can parse the data there
-                form_cls = cls(item)
+                print(cls)
+                form_cls = cls(item,parent_action=self)
                 form_layout.add_widget(form_cls)
                 self.form_items.append(form_cls)
 

@@ -19,7 +19,8 @@ class Regression(base_action.BaseAction):
                         "data_type":"dataset",
                         "required":True,
                         "form_name":"dataset",
-                        "visible_name":"Data Set"
+                        "visible_name":"Data Set",
+                        "on_change":lambda val:self.parent.set_tmp_dataset(val)
                     },
                     {
                         "input_type": "combo_box",
@@ -60,6 +61,10 @@ class Regression(base_action.BaseAction):
              }
         ]
         self.output_widget = output_widget
+        self.tmp_dataset = None
+
+    def set_tmp_dataset(self,val):
+        self.tmp_dataset = val
 
     def run(self):
         logger.info("Running action {}".format(self.type))

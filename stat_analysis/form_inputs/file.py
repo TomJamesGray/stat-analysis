@@ -8,7 +8,7 @@ from kivy.properties import ObjectProperty
 
 
 class FormFile(GridLayout):
-    def __init__(self,input_dict,*args):
+    def __init__(self,input_dict,*args,**kwargs):
         super().__init__(*args)
         self.cols = 1
         self.size_hint_y = None

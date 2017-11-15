@@ -37,7 +37,7 @@ class ViewData(base_action.BaseAction):
             cur_set = None
             # From the name selected in the combo box get the actual stored data set
             # TODO: What if the name of data set is repeated?
-            for d_set in App.get_running_app().data_sets:
+            for d_set in App.get_running_app().datasets:
                 if d_set.save_name == vals["data_set"]:
                     cur_set = d_set
                     break

@@ -97,7 +97,7 @@ class ImportCSV(base_action.BaseAction):
             self.save_name = vals["save_name"]
             # Add action to saved_actions and to data sets
             App.get_running_app().saved_actions.append(self)
-            App.get_running_app().data_sets.append(self)
+            App.get_running_app().datasets.append(self)
 
             self.result_output.add_widget(BorderedTable(headers=["Records","Columns"],data=[[len(data)],[len(data[0])]],
                                                         row_default_height=30, row_force_default=True))

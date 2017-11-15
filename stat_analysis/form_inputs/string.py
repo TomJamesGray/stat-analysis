@@ -4,7 +4,7 @@ from kivy.uix.checkbox import CheckBox
 from kivy.uix.textinput import TextInput
 
 class FormString(GridLayout):
-    def __init__(self,input_dict,*args):
+    def __init__(self,input_dict,parent_action,*args):
         super().__init__(*args)
         self.cols = 1
         self.size_hint_y = None

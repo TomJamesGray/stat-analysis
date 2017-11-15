@@ -8,8 +8,9 @@ from kivy.graphics import Rectangle,Color
 
 
 class FormDropDown(GridLayout):
-    def __init__(self,input_dict,*args):
+    def __init__(self,input_dict,parent_action,*args):
         super().__init__(*args)
+        print(parent_action)
         self.cols = 1
         self.size_hint_y = None
         self.size_hint_x = None
@@ -25,7 +26,7 @@ class FormDropDown(GridLayout):
         if type(input_dict["data_type"]) == list:
             dropdown_options = input_dict["data"]
         elif input_dict["data_type"] == "dataset":
-            dropdown_options = [x.save_name for x in App.get_running_app().data_sets]
+            dropdown_options = [x.save_name for x in App.get_running_app().datasets]
         else:
             raise ValueError("Unrecognised data type {} in form layout".format(input_dict["data_type"]))
 
