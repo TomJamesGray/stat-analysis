@@ -20,12 +20,12 @@ class Regression(base_action.BaseAction):
                         "required":True,
                         "form_name":"dataset",
                         "visible_name":"Data Set",
-                        "on_change":lambda val:self.parent_action.set_tmp_dataset(val)
+                        "on_change":lambda x,val:x.parent_action.set_tmp_dataset(val)
                     },
                     {
                         "input_type": "combo_box",
                         "data_type": "column_numeric",
-                        "get_cols_from":lambda :self.parent_action.tmp_dataset,
+                        "get_cols_from":lambda :parent_action.tmp_dataset,
                         "required": True,
                         "form_name": "x_var",
                         "visible_name": "X Variable"
@@ -33,6 +33,7 @@ class Regression(base_action.BaseAction):
                     {
                         "input_type": "combo_box",
                         "data_type": "column_numeric",
+                        "get_cols_from": lambda: parent_action.tmp_dataset,
                         "required": True,
                         "form_name": "y_var",
                         "visible_name": "Y Variable"
@@ -54,10 +55,9 @@ class Regression(base_action.BaseAction):
                         "min":1,
                         "max":10,
                         "required": "false",
-                        "name": "regression_degree",
+                        "form_name": "regression_degree",
                         "required_if": "regression=True",
                         "visible_name":"Regression Degree:"
-
                     }]
              }
         ]
