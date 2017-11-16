@@ -21,6 +21,26 @@ form_input_maps = {
 
 class BaseAction(object):
     def render(self):
+        """
+        This is the basic method that renders an action by going through the form property.
+        The form property should be structured as a list of form groups. The form group is purely
+        for aesthetic reasons currently. The following is an example of a form group:
+         {
+            "group_name":"Regression",
+            "inputs":[
+                {
+                    "input_type": "check_box",
+                    "form_name": "regression",
+                    "visible_name": "Regression"
+                }
+            ]
+        }
+        The inputs property is a list of dictionaries defining each individual input. Input_type is
+        the type of input to be used and will be looked up in form_input_maps. Form name is the
+        key for the value in the form_outputs that will be set by the validate method. Visible name
+        is the label that will be shown to the user
+        :return:
+        """
         logger.info("Rendering action {}".format(self.type))
         form_layout = GridLayout(cols=1,padding=(5,5),spacing=(10,10),width=220,size_hint=(None,None))
         form_layout.bind(minimum_height=form_layout.setter("height"))
@@ -39,7 +59,7 @@ class BaseAction(object):
                     # Go to next form input
                     continue
                 # Give the form widget the whole dict so it can parse the data there
-                print(cls)
+                logger.info("Adding form item {}".format(cls))
                 form_cls = cls(item,parent_action=self)
                 form_layout.add_widget(form_cls)
                 self.form_items.append(form_cls)
