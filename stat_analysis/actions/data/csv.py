@@ -78,10 +78,10 @@ class ImportCSV(base_action.BaseAction):
 
             if vals["use_headers"]:
                 # Get the header values from the first row if headers are being used
-                headers = data[0]
+                self.headers = data[0]
             else:
                 # If user doesn't want headers just use numbers
-                headers = list(range(1,len(data[0])+1))
+                self.headers = list(range(1,len(data[0])+1))
             # Get rid of data before user specified start line
             data = data[int(vals["start_line"])-1:]
             new_data = []
@@ -89,7 +89,7 @@ class ImportCSV(base_action.BaseAction):
                 tmp = OrderedDict()
                 for i in range(0,len(item)):
                     # TODO Add handling if there are more columns than expected
-                    tmp[headers[i]] = item[i]
+                    tmp[self.headers[i]] = item[i]
                 new_data.append(tmp)
             # Set stored data property to be used in get_data method
             self.stored_data = new_data
@@ -106,3 +106,6 @@ class ImportCSV(base_action.BaseAction):
 
     def get_data(self):
         return self.stored_data
+
+    def get_headers(self):
+        return self.headers

@@ -10,6 +10,7 @@ from kivy.graphics import Rectangle,Color
 
 logger = logging.getLogger(__name__)
 
+
 class FormDropDown(GridLayout):
     def __init__(self,input_dict,parent_action,*args):
         super().__init__(*args)
@@ -31,18 +32,23 @@ class FormDropDown(GridLayout):
                                        padding=(5,5))
         self.main_btn.bind(size=self.main_btn.setter("text_size"))
         self.add_widget(self.main_btn)
+
         # Get the dropdown options
         if type(input_dict["data_type"]) == list:
+            # Dropdown options is just a set of values in a list
             dropdown_options = input_dict["data"]
         elif input_dict["data_type"] == "dataset":
             dropdown_options = [x.save_name for x in App.get_running_app().datasets]
         elif input_dict["data_type"] == "column_numeric":
-            dropdown_options = ["1","2","3"]
+            # Data type is numeric columns. This data_type relies on a get_cols_from key
+            #  being set, so the column names for the dataset can be retrieved
             if "get_cols_from" not in input_dict.keys():
                 raise ValueError("To use column_numeric data type get_cols_from must be set")
             elif isinstance(input_dict["get_cols_from"],base_action.BaseAction):
                 raise ValueError("get_cols_from {} is not an action".format(input_dict["get_cols_from"]))
 
+            # Bind the try_populate_dropdown method to the main_btn as there will currently be
+            # no possible values for the dropdown
             self.main_btn.bind(on_release=self.try_populate_dropdown)
             logger.info("Not adding dropdown as first one so no data set will be selected")
             main_btn_text = "Select data set first"
@@ -50,33 +56,54 @@ class FormDropDown(GridLayout):
         else:
             raise ValueError("Unrecognised data type {} in form layout".format(input_dict["data_type"]))
 
-
         self.main_btn.text = main_btn_text
+
         # If dropdown options hasn't been set, ie if data set needs to be selected don't
         # create dropdown
         if dropdown_options != None:
-            self.dropdown = DropDown()
-            for i in dropdown_options:
-                btn = ButtonDropDown(text=i)
-                btn.bind(on_release=lambda btn: self.dropdown.select(btn.text))
-                self.dropdown.add_widget(btn)
-                self.main_btn.bind(on_release=self.dropdown.open)
-                # Support for on_change attribute in input_dict
-                if "on_change" in input_dict.keys():
-                    self.dropdown.bind(on_select=lambda instance,y:[setattr(self.main_btn,'text',y),
-                                                                    input_dict["on_change"](self,y)])
-                self.dropdown.bind(on_select=lambda instance,y:setattr(self.main_btn,'text',y))
-        elif dropdown_options == None:
-            print("No dropdown options")
+            self.mk_dropdown(dropdown_options)
 
     def try_populate_dropdown(self,*args):
+        """
+        Try and populate the dropdown with values from the specified data set.
+        The specified data set will be referenced by name in the get_cols_from key
+        in the input dict
+        """
         if self.input_dict["get_cols_from"](self) == None:
-            logger.debug("get_cols_from property is still none, not populating dropdown")
+            logger.info("get_cols_from property is still none, not populating dropdown")
             return True
         else:
-            dataset = self.input_dict["get_cols_from"](self)
-            logger.debug("Populating dropdown with data set {}".format(dataset))
+            dataset_name = self.input_dict["get_cols_from"](self)
+            logger.info("Populating dropdown with data set {}".format(dataset_name))
+            # Find the data set
+            dataset = None
+            for d in App.get_running_app().datasets:
+                if d.save_name == dataset_name:
+                    dataset = d
+                    break
+            if dataset == None:
+                # This should never happen
+                logger.error("Dataset name {} from get_cols_from not found".format(dataset_name))
+                return True
+            headers = dataset.get_headers()
+            self.main_btn.unbind(on_release=self.try_populate_dropdown)
+            logger.info("Populating dropdown with {}".format(headers))
+            self.mk_dropdown(headers)
+            self.dropdown.open(self.main_btn)
 
+    def mk_dropdown(self,dropdown_options):
+        self.dropdown = DropDown()
+        for i in dropdown_options:
+            btn = ButtonDropDown(text=i)
+            btn.bind(on_release=lambda btn: self.dropdown.select(btn.text))
+            self.dropdown.add_widget(btn)
+            self.main_btn.bind(on_release=self.dropdown.open)
+            # Support for on_change attribute in input_dict
+            if "on_change" in self.input_dict.keys():
+                self.dropdown.bind(on_select=lambda instance, y: [setattr(self.main_btn, 'text', y),
+                                                                  self.input_dict["on_change"](self, y)])
+            else:
+                self.dropdown.bind(on_select=lambda instance, y: setattr(self.main_btn, 'text', y))
 
     def get_val(self):
         return self.main_btn.text
