@@ -25,7 +25,7 @@ class Regression(base_action.BaseAction):
                     {
                         "input_type": "combo_box",
                         "data_type": "column_numeric",
-                        "get_cols_from":lambda :parent_action.tmp_dataset,
+                        "get_cols_from":lambda x: x.parent_action.tmp_dataset,
                         "required": True,
                         "form_name": "x_var",
                         "visible_name": "X Variable"
@@ -33,7 +33,7 @@ class Regression(base_action.BaseAction):
                     {
                         "input_type": "combo_box",
                         "data_type": "column_numeric",
-                        "get_cols_from": lambda: parent_action.tmp_dataset,
+                        "get_cols_from": lambda x: x.parent_action.tmp_dataset,
                         "required": True,
                         "form_name": "y_var",
                         "visible_name": "Y Variable"

@@ -26,6 +26,11 @@ class FormDropDown(GridLayout):
         self.add_widget(input_label)
 
         main_btn_text = ""
+        self.main_btn = BorderedButton(text=main_btn_text, size_hint=(1,None), height=30, background_normal="",
+                                       color=(0,0,0,1),background_color=(1,1,1,1),halign="left",valign="middle",
+                                       padding=(5,5))
+        self.main_btn.bind(size=self.main_btn.setter("text_size"))
+        self.add_widget(self.main_btn)
         # Get the dropdown options
         if type(input_dict["data_type"]) == list:
             dropdown_options = input_dict["data"]
@@ -38,18 +43,15 @@ class FormDropDown(GridLayout):
             elif isinstance(input_dict["get_cols_from"],base_action.BaseAction):
                 raise ValueError("get_cols_from {} is not an action".format(input_dict["get_cols_from"]))
 
+            self.main_btn.bind(on_release=self.try_populate_dropdown)
             logger.info("Not adding dropdown as first one so no data set will be selected")
             main_btn_text = "Select data set first"
             dropdown_options = None
         else:
             raise ValueError("Unrecognised data type {} in form layout".format(input_dict["data_type"]))
 
-        self.main_btn = BorderedButton(text=main_btn_text, size_hint=(1,None), height=30, background_normal="",
-                                       color=(0,0,0,1),background_color=(1,1,1,1),halign="left",valign="middle",
-                                       padding=(5,5))
-        self.main_btn.bind(size=self.main_btn.setter("text_size"))
-        self.add_widget(self.main_btn)
 
+        self.main_btn.text = main_btn_text
         # If dropdown options hasn't been set, ie if data set needs to be selected don't
         # create dropdown
         if dropdown_options != None:
@@ -64,6 +66,16 @@ class FormDropDown(GridLayout):
                     self.dropdown.bind(on_select=lambda instance,y:[setattr(self.main_btn,'text',y),
                                                                     input_dict["on_change"](self,y)])
                 self.dropdown.bind(on_select=lambda instance,y:setattr(self.main_btn,'text',y))
+        elif dropdown_options == None:
+            print("No dropdown options")
+
+    def try_populate_dropdown(self,*args):
+        if self.input_dict["get_cols_from"](self) == None:
+            logger.debug("get_cols_from property is still none, not populating dropdown")
+            return True
+        else:
+            dataset = self.input_dict["get_cols_from"](self)
+            logger.debug("Populating dropdown with data set {}".format(dataset))
 
 
     def get_val(self):
