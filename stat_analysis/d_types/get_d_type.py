@@ -1,15 +1,22 @@
 def guess_d_type(sample):
     """
     Tries to guess the data type that should be used for the column and where
-    neccessary the structure of that data type such as DD/MM/YYYY for dates
+    necessary the structure of that data type such as DD/MM/YYYY for dates
     :param sample: A list of the values for that column, can be of any length
-    :return: A reference to the class the function thinks is the best data type
+    :return: Tuple with d_type name and a reference to a lambda that converts the
+    imported string to the chosen data type
     """
     probs = {
         "int":1.0,
         "float":1.0,
         "datetime":1.0,
         "string":1.0
+    }
+    convert_maps = {
+        "int":lambda x:int(x),
+        "float":lambda x:float(x),
+        "string":lambda x:str(x),
+        "datetime":lambda x:str(x)
     }
     for val in sample:
         points = 0
@@ -44,7 +51,13 @@ def guess_d_type(sample):
         if len(val) < 20 and date_time_chars >= 1:
             probs["datetime"] *= 1.5
 
+        if others == len(val):
+            probs["string"] *= 1.5
+        elif others > 0:
+            probs["string"] *= 1.05
+
         print(probs)
 
-
-    return "String"
+    # Return maximum value
+    chosen_type = max(probs,key=probs.get)
+    return (chosen_type, convert_maps[chosen_type])
