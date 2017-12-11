@@ -75,6 +75,7 @@ class FormDropDown(GridLayout):
         else:
             dataset_name = self.input_dict["get_cols_from"](self)
             logger.info("Populating dropdown with data set {}".format(dataset_name))
+
             # Find the data set
             dataset = None
             for d in App.get_running_app().datasets:
@@ -85,7 +86,15 @@ class FormDropDown(GridLayout):
                 # This should never happen
                 logger.error("Dataset name {} from get_cols_from not found".format(dataset_name))
                 return True
-            headers = dataset.get_headers()
+
+            # Only get columns for the specified data type
+            headers = []
+            allowed_types = base_action.column_d_type_maps[self.input_dict["data_type"]]
+
+            for name,desc in dataset.get_header_structure().items():
+                if desc[0] in allowed_types:
+                    headers.append(name)
+
             self.main_btn.unbind(on_release=self.try_populate_dropdown)
             logger.info("Populating dropdown with {}".format(headers))
             self.mk_dropdown(headers)

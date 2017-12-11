@@ -115,7 +115,7 @@ class ImportCSV(base_action.BaseAction):
                 add_to_smpl = False
 
             logger.info("Guessing d_types, sample length: {}".format(len(smpl_data)))
-            col_d_types = {}
+            col_d_types = OrderedDict()
             for col_name,col_data in smpl_data.items():
                 col_d_types[col_name] = guess_d_type(col_data)
 
@@ -123,12 +123,16 @@ class ImportCSV(base_action.BaseAction):
 
             # Set stored data property to be used in get_data method
             self.stored_data = new_data
+            # Set the columns property, this is an OrderedDict, eg
+            # {"col_name":("d_type_name", function to convert string to useful data type}
+            self.cols_structure = col_d_types
             # Set the save name that will be shown to user in the saved actions grid on the home screen
             self.save_name = vals["save_name"]
             # Add action to saved_actions and to data sets
             App.get_running_app().saved_actions.append(self)
             App.get_running_app().datasets.append(self)
-            print(", ".join((["{} -> {}".format(x,y[0]) for x,y in col_d_types.items()])))
+
+            # Add table for the output displaying records, columns and guessed data types
             self.result_output.add_widget(BorderedTable(
                 headers=["Records","Columns","Data types"],data=[[len(data)],[len(data[0])],
                 [str((", ".join((["{} -> {}".format(x,y[0]) for x,y in col_d_types.items()]))))]],
@@ -142,3 +146,5 @@ class ImportCSV(base_action.BaseAction):
     def get_headers(self):
         return self.headers
 
+    def get_header_structure(self):
+        return self.cols_structure
