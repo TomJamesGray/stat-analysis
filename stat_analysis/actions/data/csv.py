@@ -129,10 +129,10 @@ class ImportCSV(base_action.BaseAction):
             App.get_running_app().saved_actions.append(self)
             App.get_running_app().datasets.append(self)
             print(", ".join((["{} -> {}".format(x,y[0]) for x,y in col_d_types.items()])))
-            self.result_output.add_widget(BorderedTable(headers=["Records","Columns","Data types"],
-                                                        data=[[len(data)],[len(data[0])],
-                                                              [str((", ".join((["{} -> {}".format(x,y[0]) for x,y in col_d_types.items()]))))]],
-                                                        row_default_height=30, row_force_default=True))
+            self.result_output.add_widget(BorderedTable(
+                headers=["Records","Columns","Data types"],data=[[len(data)],[len(data[0])],
+                [str((", ".join((["{} -> {}".format(x,y[0]) for x,y in col_d_types.items()]))))]],
+                row_default_height=30, row_force_default=True,orientation="horizontal"))
         else:
             logger.info("Form not validated, form errors: {}".format(self.form_errors))
 

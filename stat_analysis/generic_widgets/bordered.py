@@ -36,10 +36,7 @@ class BorderedTable(GridLayout):
                         for _,val in row.items():
                             self.add_widget(BorderedLabel(text=str(val), color=(0, 0, 0, 1), size_hint_x=None,
                                                           height=30))
-        else:
-            if len(self.headers) != len(self.data):
-                raise ValueError("Length of headers and data aren't equal")
-
+        elif self.data != []:
             if self.orientation == "vertical":
                 self.cols = len(self.data)
                 for header in self.headers:
@@ -49,3 +46,19 @@ class BorderedTable(GridLayout):
                     for y in range(0,len(self.data[0])):
                         self.add_widget(BorderedLabel(text=str(self.data[x][y]),color=(0,0,0,1),size_hint_x=None,
                                                       height=30))
+            elif self.orientation == "horizontal":
+                self.rows = len(self.headers)
+                for x in range(0, len(self.data)):
+                    self.add_widget(
+                        BorderedLabel(text=str(self.headers[x]), color=(.5, 0, 0, 1), size_hint_x=None))
+
+                    for y in range(0, len(self.data[0])):
+                        x = BorderedLabel(text=str(self.data[x][y]), color=(0, 0, 0, 1), size_hint_x=1,height=30,
+                                          halign="left",valign="middle")
+                        x.bind(size=x.setter("text_size"))
+                        self.add_widget(x)
+
+        else:
+            if len(self.headers) != len(self.data):
+                raise ValueError("Length of headers and data aren't equal")
+

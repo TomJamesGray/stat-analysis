@@ -56,8 +56,6 @@ def guess_d_type(sample):
         elif others > 0:
             probs["string"] *= 1.05
 
-        print(probs)
-
     # Return maximum value
     chosen_type = max(probs,key=probs.get)
     return (chosen_type, convert_maps[chosen_type])
