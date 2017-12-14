@@ -191,6 +191,20 @@ class StatApp(App):
         inspector.create_inspector(Window,self.root_widget)
         return self.root_widget
 
+    def get_dataset_by_name(self,name):
+        # Find the data set
+        dataset = None
+        for d in self.datasets:
+            if d.save_name == name:
+                dataset = d
+                break
+        if dataset == None:
+            # This should never happen
+            logger.error("Dataset name {} from get_cols_from not found".format(dataset_name))
+            return False
+
+        return dataset
+
 
 def main():
     StatApp().run()
