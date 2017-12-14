@@ -4,6 +4,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 from stat_analysis.actions import base_action
 from kivy.app import App
+from kivy.uix.image import Image
 
 logger = logging.getLogger(__name__)
 
@@ -101,4 +102,7 @@ class Regression(base_action.BaseAction):
             axis.scatter(x,y)
             axis.plot(x_line,y_line)
             axis.legend()
-            fig.savefig("test.png")
+            fig.savefig("tmp/plot.png")
+
+            self.result_output.clear_widgets()
+            self.result_output.add_widget(Image(source="tmp/plot.png",nocache=True))
