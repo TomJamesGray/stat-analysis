@@ -6,7 +6,9 @@ from stat_analysis.generic_widgets.bordered import BorderedTable
 from stat_analysis.d_types.get_d_type import guess_d_type
 from collections import OrderedDict
 from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.gridlayout import GridLayout
 from kivy.uix.label import Label
+from kivy.uix.widget import Widget
 
 logger = logging.getLogger(__name__)
 
@@ -71,17 +73,16 @@ class ImportCSV(base_action.BaseAction):
         # Bigger samples will increase accuracy, but slow the program down
         max_sample_length = 50
 
-        logger.info("Running action {}".format(self.type))
-        # self.result_output.cols=3
-        # [self.result_output.add_widget(Label(text=str(x),color=(1,0,0,1),size_hint_x=1,size_hint_y=None)) for x in range(100)]
+        a = GridLayout(size_hint_x=1, size_hint_y=None, cols=1)
+        a.bind(minimum_height=a.setter("height"))
         for i in range(100):
-            l = BoxLayout(orientation="horizontal",height=50,size_hint_y=None,size_hint_x=1)
-            l.add_widget(Label(text="__{}__".format(str(i)),color=(0,0,0,1),size_hint_x=0.3))
-            l.add_widget(Label(text="Value {}".format(str(i)),color=(0,0,0,1),size_hint_x=0.7))
-            self.result_output.add_widget(l)
+            l = BoxLayout(orientation="horizontal", height=50, size_hint_y=None, size_hint_x=1)
+            l.add_widget(Label(text="__{}__".format(str(i)), color=(0, 0, 0, 1), size_hint_x=0.3))
+            l.add_widget(Label(text="Value {}".format(str(i)), color=(0, 0, 0, 1), size_hint_x=0.7))
+            a.add_widget(l)
+        self.result_output.add_widget(a)
 
-
-
+        logger.info("Running action {}".format(self.type))
         if self.validate_form():
             logger.info("Form validated, form outputs: {}".format(self.form_outputs))
             # Get the values from the form validation
@@ -145,10 +146,12 @@ class ImportCSV(base_action.BaseAction):
             App.get_running_app().datasets.append(self)
 
             # Add table for the output displaying records, columns and guessed data types
-            self.result_output.add_widget(BorderedTable(
-                headers=["Records","Columns","Data types"],data=[[len(data)],[len(data[0])],
-                [str((", ".join((["{} -> {}".format(x,y[0]) for x,y in col_d_types.items()]))))]],
-                row_default_height=30, row_force_default=True,orientation="horizontal"))
+            # self.result_output.add_widget(BorderedTable(
+            #     headers=["Records","Columns","Data types"],data=[[len(data)],[len(data[0])],
+            #     [str((", ".join((["{} -> {}".format(x,y[0]) for x,y in col_d_types.items()]))))]],
+            #     row_default_height=30, row_force_default=True,orientation="horizontal",height=100))
+
+
         else:
             logger.info("Form not validated, form errors: {}".format(self.form_errors))
 
