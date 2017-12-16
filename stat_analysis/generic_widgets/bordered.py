@@ -21,20 +21,23 @@ class BorderedTable(GridLayout):
     data = ListProperty([])
     raw_data = ListProperty([])
 
-    def __init__(self,**kwargs):
+    def __init__(self,for_scroller=False,**kwargs):
         super(BorderedTable,self).__init__(**kwargs)
         # Raw_data is technically given priority
         print(self.raw_data)
+        if for_scroller:
+            self.bind(minimum_height=self.setter("height"))
+
         if self.raw_data != []:
             headers = self.raw_data[0].keys()
             if self.orientation == "vertical":
                 self.cols = len(headers)
                 for header in headers:
-                    self.add_widget(BorderedLabel(text=str(header), color=(.5, 0, 0, 1), size_hint_x=None))
+                    self.add_widget(BorderedLabel(text=str(header), color=(.5, 0, 0, 1), size_hint_x=None,size_hint_y=None,height=30))
 
                 for row in self.raw_data:
                         for _,val in row.items():
-                            self.add_widget(BorderedLabel(text=str(val), color=(0, 0, 0, 1), size_hint_x=None,
+                            self.add_widget(BorderedLabel(text=str(val), color=(0, 0, 0, 1), size_hint_x=None,size_hint_y=None,
                                                           height=30))
         elif self.data != []:
             if self.orientation == "vertical":

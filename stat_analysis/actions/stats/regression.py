@@ -128,6 +128,8 @@ class Regression(base_action.BaseAction):
             self.result_output.clear_widgets()
             self.result_output.add_widget(BorderedTable(
                 headers=["Function"],data=[[func]],row_default_height=30,row_force_default=True,
-                orientation="horizontal",size_hint_y=None
+                orientation="horizontal",size_hint_y=None,size_hint_x=1,for_scroller=True
             ))
-            self.result_output.add_widget(Image(source="tmp/plot.png",nocache=True))
+
+            self.result_output.add_widget(Image(source="tmp/plot.png",nocache=True,size_hint_x=1,size_hint_y=None,
+                                                height=500))

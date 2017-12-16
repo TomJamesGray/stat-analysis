@@ -73,15 +73,6 @@ class ImportCSV(base_action.BaseAction):
         # Bigger samples will increase accuracy, but slow the program down
         max_sample_length = 50
 
-        a = GridLayout(size_hint_x=1, size_hint_y=None, cols=1)
-        a.bind(minimum_height=a.setter("height"))
-        for i in range(100):
-            l = BoxLayout(orientation="horizontal", height=50, size_hint_y=None, size_hint_x=1)
-            l.add_widget(Label(text="__{}__".format(str(i)), color=(0, 0, 0, 1), size_hint_x=0.3))
-            l.add_widget(Label(text="Value {}".format(str(i)), color=(0, 0, 0, 1), size_hint_x=0.7))
-            a.add_widget(l)
-        self.result_output.add_widget(a)
-
         logger.info("Running action {}".format(self.type))
         if self.validate_form():
             logger.info("Form validated, form outputs: {}".format(self.form_outputs))
@@ -146,12 +137,11 @@ class ImportCSV(base_action.BaseAction):
             App.get_running_app().datasets.append(self)
 
             # Add table for the output displaying records, columns and guessed data types
-            # self.result_output.add_widget(BorderedTable(
-            #     headers=["Records","Columns","Data types"],data=[[len(data)],[len(data[0])],
-            #     [str((", ".join((["{} -> {}".format(x,y[0]) for x,y in col_d_types.items()]))))]],
-            #     row_default_height=30, row_force_default=True,orientation="horizontal",height=100))
-
-
+            self.result_output.add_widget(BorderedTable(
+                headers=["Records","Columns","Data types"],data=[[len(data)],[len(data[0])],
+                [str((", ".join((["{} -> {}".format(x,y[0]) for x,y in col_d_types.items()]))))]],
+                row_default_height=30, row_force_default=True,orientation="horizontal",for_scroller=True,
+                size_hint_x=1,size_hint_y=None))
         else:
             logger.info("Form not validated, form errors: {}".format(self.form_errors))
 

@@ -48,5 +48,7 @@ class ViewData(base_action.BaseAction):
             logger.info("Using {} as cur_set".format(cur_set))
             print(cur_set.get_data())
 
-            self.result_output.add_widget(BorderedTable(raw_data=cur_set.get_data(),row_default_height=30,
-                                                        row_force_default=True))
+            # out = BorderedTable(raw_data=cur_set.get_data(),row_default_height=30,row_force_default=True)
+            # out.bind(minimum_height=out.setter("height"))
+            # self.result_output.add_widget(out)
+            # out = GridLayout(cols=len)
