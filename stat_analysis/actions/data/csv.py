@@ -5,6 +5,8 @@ from stat_analysis.actions import base_action
 from stat_analysis.generic_widgets.bordered import BorderedTable
 from stat_analysis.d_types.get_d_type import guess_d_type
 from collections import OrderedDict
+from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.label import Label
 
 logger = logging.getLogger(__name__)
 
@@ -70,6 +72,16 @@ class ImportCSV(base_action.BaseAction):
         max_sample_length = 50
 
         logger.info("Running action {}".format(self.type))
+        # self.result_output.cols=3
+        # [self.result_output.add_widget(Label(text=str(x),color=(1,0,0,1),size_hint_x=1,size_hint_y=None)) for x in range(100)]
+        for i in range(100):
+            l = BoxLayout(orientation="horizontal",height=50,size_hint_y=None,size_hint_x=1)
+            l.add_widget(Label(text="__{}__".format(str(i)),color=(0,0,0,1),size_hint_x=0.3))
+            l.add_widget(Label(text="Value {}".format(str(i)),color=(0,0,0,1),size_hint_x=0.7))
+            self.result_output.add_widget(l)
+
+
+
         if self.validate_form():
             logger.info("Form validated, form outputs: {}".format(self.form_outputs))
             # Get the values from the form validation

@@ -72,8 +72,13 @@ class BaseAction(object):
         self.output_widget.add_widget(scroller)
 
         # Create the generic output area
-        result_output = ResultOutputWidget(cols=1)
-        self.output_widget.add_widget(result_output)
+        result_output_scroller = ScrollView(size_hint=(1,1))
+
+        result_output = ResultOutputWidget(cols=1,size_hint=(1,None))
+        result_output.bind(minimum_height=result_output.setter('height'))
+
+        result_output_scroller.add_widget(result_output)
+        self.output_widget.add_widget(result_output_scroller)
         # Add property so that the result output can be added to when the action is run
         self.result_output = result_output
 
