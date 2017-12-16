@@ -34,7 +34,7 @@ class SetColTypes(base_action.BaseAction):
 
     def form_add_cols(self,dataset_name):
         dataset = App.get_running_app().get_dataset_by_name(dataset_name)
-        self.form = self.base_form
+        self.form = self.base_form[:]
         # Set the default for the dataset selector to the currently selected dataset
         self.form[0]["inputs"][0]["default"] = dataset_name
 
@@ -47,7 +47,7 @@ class SetColTypes(base_action.BaseAction):
                         "required": True,
                         "data_type":list(data_types.keys()),
                         "form_name": "type_{}".format(col_name),
-                        "visible_name": "{} data type".format(col_name),
+                        "visible_name": "{} Data Type:".format(col_name),
                         "default":col_struc[0]
                     }
                 ]
@@ -59,10 +59,5 @@ class SetColTypes(base_action.BaseAction):
         logger.info("Running action {}".format(self.type))
         if self.validate_form():
             logger.info("Form validated, form outputs: {}".format(self.form_outputs))
-            # vals = self.form_outputs
-            # cur_set = App.get_running_app()
-            # logger.info("Using {} as cur_set".format(cur_set))
-            #
-            # self.result_output.add_widget(BorderedTable(raw_data=cur_set.get_data(),row_default_height=30,
-            #                                             row_force_default=True,for_scroller=True,size_hint_x=1,
-            #                                             size_hint_y=None))
+            vals = self.form_outputs
+
