@@ -34,6 +34,7 @@ class SetColTypes(base_action.BaseAction):
 
     def form_add_cols(self,dataset_name):
         dataset = App.get_running_app().get_dataset_by_name(dataset_name)
+        # Copy the base_form, don't reference it
         self.form = self.base_form[:]
         # Set the default for the dataset selector to the currently selected dataset
         self.form[0]["inputs"][0]["default"] = dataset_name
