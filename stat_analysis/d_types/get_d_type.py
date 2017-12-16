@@ -1,3 +1,10 @@
+convert_maps = {
+        "int":lambda x:int(x),
+        "float":lambda x:float(x),
+        "string":lambda x:str(x),
+        "datetime":lambda x:str(x)
+}
+
 def guess_d_type(sample):
     """
     Tries to guess the data type that should be used for the column and where
@@ -12,12 +19,7 @@ def guess_d_type(sample):
         "datetime":1.0,
         "string":1.0
     }
-    convert_maps = {
-        "int":lambda x:int(x),
-        "float":lambda x:float(x),
-        "string":lambda x:str(x),
-        "datetime":lambda x:str(x)
-    }
+
     for val in sample:
         points = 0
         numbers = 0

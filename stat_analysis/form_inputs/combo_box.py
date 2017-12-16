@@ -26,7 +26,11 @@ class FormDropDown(GridLayout):
         input_label.bind(size=input_label.setter("text_size"))
         self.add_widget(input_label)
 
-        main_btn_text = ""
+        if "default" in input_dict.keys():
+            main_btn_text = input_dict["default"]
+        else:
+            main_btn_text = ""
+
         self.main_btn = BorderedButton(text=main_btn_text, size_hint=(1,None), height=30, background_normal="",
                                        color=(0,0,0,1),background_color=(1,1,1,1),halign="left",valign="middle",
                                        padding=(5,5))
@@ -36,7 +40,7 @@ class FormDropDown(GridLayout):
         # Get the dropdown options
         if type(input_dict["data_type"]) == list:
             # Dropdown options is just a set of values in a list
-            dropdown_options = input_dict["data"]
+            dropdown_options = input_dict["data_type"]
         elif input_dict["data_type"] == "dataset":
             dropdown_options = [x.save_name for x in App.get_running_app().datasets]
         elif input_dict["data_type"] == "column_numeric":

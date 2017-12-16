@@ -179,7 +179,7 @@ class StatApp(App):
             },
             {
                 "group_name":"Data",
-                "actions":[data.csv.ImportCSV,data.view_data.ViewData]
+                "actions":[data.csv.ImportCSV,data.view_data.ViewData,data.set_col_types.SetColTypes]
             }
         ]
         self.saved_actions = []
