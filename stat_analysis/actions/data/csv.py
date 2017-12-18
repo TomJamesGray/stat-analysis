@@ -93,12 +93,11 @@ class ImportCSV(base_action.BaseAction):
                 self.headers = list(range(1,len(data[0])+1))
             # Get rid of data before user specified start line
             data = data[int(vals["start_line"])-1:]
-            new_data = []
             smpl_data = {}
             for header in self.headers:
                 smpl_data[header] = []
             print(smpl_data)
-            # Set the sample rate for the d_type sample\
+            # Set the sample rate for the d_type sample
             smpl_rate = int(len(data)/max_sample_length)
             # Smpl_rate should be larger than 2 or 1
             if smpl_rate < 2:
@@ -106,19 +105,15 @@ class ImportCSV(base_action.BaseAction):
 
             add_to_smpl = False
             for x,item in enumerate(data):
-                tmp = OrderedDict()
-                if x % smpl_rate == 0 and len(smpl_data) > max_sample_length:
+                if x % smpl_rate == 0 and len(smpl_data) < max_sample_length:
                     # Add the columns to the smpl_data
-                    add_to_smpl = True
+                    for i in range(0,len(item)):
+                        # TODO Add handling if there are more columns than expected
+                        smpl_data[self.headers[i]].append(item[i])
 
-                for i in range(0,len(item)):
-                    # TODO Add handling if there are more columns than expected
-                    tmp[self.headers[i]] = item[i]
-                    smpl_data[self.headers[i]].append(item[i])
-                new_data.append(tmp)
-                add_to_smpl = False
 
-            logger.info("Guessing d_types, sample length: {}".format(len(smpl_data)))
+            logger.info("Data read in: {}".format(data))
+            logger.info("Guessing d_types, sample: {}".format(smpl_data))
             col_d_types = OrderedDict()
             for col_name,col_data in smpl_data.items():
                 col_d_types[col_name] = guess_d_type(col_data)
@@ -126,9 +121,11 @@ class ImportCSV(base_action.BaseAction):
             logger.info("Guessed d_types: {}".format(col_d_types))
 
             # Set stored data property to be used in get_data method
-            self.stored_data = new_data
+            self.stored_data = data
             # Set the columns property, this is an OrderedDict, eg
             # {"col_name":("d_type_name", function to convert string to useful data type}
+            # At this point this is only a suggestion and as such the data shouldn't be
+            # modified to to reflect this as it'll be confirmed at the next step
             self.cols_structure = col_d_types
             # Set the save name that will be shown to user in the saved actions grid on the home screen
             self.save_name = vals["save_name"]

@@ -94,9 +94,12 @@ class Regression(base_action.BaseAction):
             x,y = [],[]
             x_parse = dataset.get_header_structure()[vals["x_var"]][1]
             y_parse = dataset.get_header_structure()[vals["y_var"]][1]
+            # Get's the position in each row for the desired columns
+            x_pos = list(dataset.get_header_structure().keys()).index(vals["x_var"])
+            y_pos = list(dataset.get_header_structure().keys()).index(vals["y_var"])
             for row in dataset.get_data():
-                x.append(x_parse(row[vals["x_var"]]))
-                y.append(y_parse(row[vals["y_var"]]))
+                x.append(x_parse(row[x_pos]))
+                y.append(y_parse(row[y_pos]))
 
             coeffs = numpy.polyfit(x,y,vals["regression_degree"])
             # Generate x and y values for the regression line to be displayed
