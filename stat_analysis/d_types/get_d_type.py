@@ -1,9 +1,4 @@
-convert_maps = {
-        "int":lambda x:int(x),
-        "float":lambda x:float(x),
-        "string":lambda x:str(x),
-        "datetime":lambda x:str(x)
-}
+from stat_analysis.d_types.setup import types
 
 def guess_d_type(sample):
     """
@@ -60,4 +55,4 @@ def guess_d_type(sample):
 
     # Return maximum value
     chosen_type = max(probs,key=probs.get)
-    return (chosen_type, convert_maps[chosen_type])
+    return (chosen_type, types[chosen_type]["convert"])

@@ -2,7 +2,7 @@ import logging
 from kivy.app import App
 from stat_analysis.actions import base_action
 from stat_analysis.generic_widgets.bordered import BorderedTable
-from stat_analysis.d_types.get_d_type import convert_maps as data_types
+from stat_analysis.d_types import types
 
 logger = logging.getLogger(__name__)
 
@@ -46,7 +46,7 @@ class SetColTypes(base_action.BaseAction):
                     {
                         "input_type": "combo_box",
                         "required": True,
-                        "data_type":list(data_types.keys()),
+                        "data_type":list(types.keys()),
                         "form_name": "type_{}".format(col_name),
                         "visible_name": "{} Data Type:".format(col_name),
                         "default":col_struc[0]
