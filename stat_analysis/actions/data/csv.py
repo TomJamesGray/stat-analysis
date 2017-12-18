@@ -146,7 +146,7 @@ class ImportCSV(base_action.BaseAction):
         return self.stored_data
 
     def get_headers(self):
-        return self.headers
+        return list(self.cols_structure.keys())
 
     def get_header_structure(self):
         return self.cols_structure

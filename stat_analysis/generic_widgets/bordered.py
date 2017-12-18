@@ -18,25 +18,29 @@ class BorderedLabel(Label):
 class BorderedTable(GridLayout):
     headers = ListProperty([])
     orientation = StringProperty("vertical")
+    # Using this as an example:
+    # Col1     Col2     Col3
+    #   1        2        3
+    #   4        5        6
+    #   7        8        9
+    # Structure for data to produce this table would be [[1,4,7],[2,5,8],[3,6,9]
     data = ListProperty([])
-    raw_data = ListProperty([])
+    # Structure for table_data would be [[1,4,7],[4,5,6],[7,8,9]]
+    table_data = ListProperty([])
 
     def __init__(self,for_scroller=False,**kwargs):
         super(BorderedTable,self).__init__(**kwargs)
-        # Raw_data is technically given priority
-        print(self.raw_data)
         if for_scroller:
             self.bind(minimum_height=self.setter("height"))
 
-        if self.raw_data != []:
-            headers = self.raw_data[0].keys()
+        if self.table_data != []:
             if self.orientation == "vertical":
-                self.cols = len(headers)
-                for header in headers:
+                self.cols = len(self.headers)
+                for header in self.headers:
                     self.add_widget(BorderedLabel(text=str(header), color=(.5, 0, 0, 1), size_hint_x=None,size_hint_y=None,height=30))
 
-                for row in self.raw_data:
-                        for _,val in row.items():
+                for row in self.table_data:
+                        for val in row:
                             self.add_widget(BorderedLabel(text=str(val), color=(0, 0, 0, 1), size_hint_x=None,size_hint_y=None,
                                                           height=30))
         elif self.data != []:
