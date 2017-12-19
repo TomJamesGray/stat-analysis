@@ -16,6 +16,10 @@ class FormString(GridLayout):
                             valign="middle",font_size="14")
         input_label.bind(size=input_label.setter("text_size"))
         self.str_input = TextInput(size_hint=(1,None),height=30,multiline=False)
+
+        if "default" in input_dict.keys():
+            self.str_input.text = input_dict["default"]
+
         self.add_widget(input_label)
         self.add_widget(self.str_input)
 
