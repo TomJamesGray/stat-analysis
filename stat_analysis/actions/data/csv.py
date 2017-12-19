@@ -112,7 +112,6 @@ class ImportCSV(base_action.BaseAction):
                         # TODO Add handling if there are more columns than expected
                         smpl_data[self.headers[i]].append(item[i])
 
-
             logger.info("Data read in: {}".format(data))
             logger.info("Guessing d_types, sample: {}".format(smpl_data))
             col_d_types = OrderedDict()
@@ -165,5 +164,3 @@ class ImportCSV(base_action.BaseAction):
         for row in range(0,len(self.stored_data)):
             for col in range(0,len(self.stored_data[0])):
                 self.stored_data[row][col] = converters[col](self.stored_data[row][col])
-
-        print(self.stored_data)

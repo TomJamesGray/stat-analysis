@@ -44,7 +44,7 @@ class SetColTypes(base_action.BaseAction):
         col_pos = 0
         for col_name,col_struc in self.dataset.get_header_structure().items():
             self.form.append({
-                "group_name":"Column: {}".format(col_pos),
+                "group_name":"Column {}".format(col_pos),
                 "inputs":[
                     {
                         "input_type":"string",
