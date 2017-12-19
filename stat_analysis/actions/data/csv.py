@@ -154,3 +154,16 @@ class ImportCSV(base_action.BaseAction):
 
     def get_header_structure(self):
         return self.cols_structure
+
+    def set_header_structure(self,struct):
+        self.cols_structure = struct
+        # Get converter functions in a list
+        converters = []
+        for _,x in self.cols_structure.items():
+            converters.append(x[1])
+
+        for row in range(0,len(self.stored_data)):
+            for col in range(0,len(self.stored_data[0])):
+                self.stored_data[row][col] = converters[col](self.stored_data[row][col])
+
+        print(self.stored_data)

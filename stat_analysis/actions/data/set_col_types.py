@@ -81,3 +81,4 @@ class SetColTypes(base_action.BaseAction):
                 header_struct[vals["{}_name".format(i)]] = (vals["{}_type".format(i)],convert)
 
             logger.info("Header structure generated: {}".format(header_struct))
+            self.dataset.set_header_structure(header_struct)
