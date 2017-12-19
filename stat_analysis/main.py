@@ -76,7 +76,7 @@ class ActionsScroller(ScrollView):
             tv.add_node(parent_node)
             for action in group["actions"]:
                 x = ActionTreeViewLabel(color=(0,0,0,1),text=action.view_name,stored_action=action)
-                x.bind(on_touch_down=lambda *args:self.primary_pane_edit.refresh(args))
+                x.bind(on_touch_down=lambda *args:self.primary_pane_edit.refresh(args[0].stored_action))
                 tv.add_node(x,parent_node)
 
         self.add_widget(tv)
@@ -118,8 +118,7 @@ class ActionTreeViewLabel(TreeViewLabel):
 class PrimaryPane(GridLayout):
     title = StringProperty("")
 
-    def refresh(self,args):
-        action = args[0].stored_action
+    def refresh(self,action,**kwargs):
         logger.info("Changing the active pane to: {}".format(action.type))
         for item in self.children:
             # Remove all widgets that aren't the title pane
@@ -128,7 +127,7 @@ class PrimaryPane(GridLayout):
         self.title = action.type
         output_widget = GridLayout(size_hint=(1,1),cols=2)
         self.add_widget(output_widget)
-        self.active_action = action(output_widget)
+        self.active_action = action(output_widget,**kwargs)
         self.active_action.render()
 
     def load_action(self,lbl):

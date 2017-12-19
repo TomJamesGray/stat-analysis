@@ -5,6 +5,7 @@ from stat_analysis.actions import base_action
 from stat_analysis.generic_widgets.bordered import BorderedTable
 from stat_analysis.d_types.get_d_type import guess_d_type
 from collections import OrderedDict
+from stat_analysis.actions.data.import_set_col_types import ImportSetColTypes
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.label import Label
@@ -139,6 +140,9 @@ class ImportCSV(base_action.BaseAction):
                 [str((", ".join((["{} -> {}".format(x,y[0]) for x,y in col_d_types.items()]))))]],
                 row_default_height=30, row_force_default=True,orientation="horizontal",for_scroller=True,
                 size_hint_x=1,size_hint_y=None))
+
+            print(self.output_widget.parent)
+            self.output_widget.parent.refresh(ImportSetColTypes,dataset_name=vals["save_name"])
         else:
             logger.info("Form not validated, form errors: {}".format(self.form_errors))
 

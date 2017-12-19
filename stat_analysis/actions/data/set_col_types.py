@@ -32,12 +32,13 @@ class SetColTypes(base_action.BaseAction):
         self.form = self.base_form
         self.output_widget = output_widget
 
-    def form_add_cols(self,dataset_name):
+    def form_add_cols(self,dataset_name,set_dataset_selector=True,re_render=True):
         dataset = App.get_running_app().get_dataset_by_name(dataset_name)
         # Copy the base_form, don't reference it
         self.form = self.base_form[:]
-        # Set the default for the dataset selector to the currently selected dataset
-        self.form[0]["inputs"][0]["default"] = dataset_name
+        if set_dataset_selector:
+            # Set the default for the dataset selector to the currently selected dataset
+            self.form[0]["inputs"][0]["default"] = dataset_name
 
         for col_name,col_struc in dataset.get_header_structure().items():
             self.form.append({
@@ -54,7 +55,8 @@ class SetColTypes(base_action.BaseAction):
                 ]
             })
         self.output_widget.clear_widgets()
-        self.render()
+        if re_render:
+            self.render()
 
     def run(self):
         logger.info("Running action {}".format(self.type))
