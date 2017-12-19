@@ -133,16 +133,8 @@ class ImportCSV(base_action.BaseAction):
             App.get_running_app().saved_actions.append(self)
             App.get_running_app().datasets.append(self)
 
-            # # Add table for the output displaying records, columns and guessed data types
-            # self.result_output.add_widget(BorderedTable(
-            #     headers=["Records","Columns","Data types"],data=[[len(data)],[len(data[0])],
-            #     [str((", ".join((["{} -> {}".format(x,y[0]) for x,y in col_d_types.items()]))))]],
-            #     row_default_height=30, row_force_default=True,orientation="horizontal",for_scroller=True,
-            #     size_hint_x=1,size_hint_y=None))
-
             print(self.output_widget.parent)
-            self.output_widget.parent.refresh(ImportSetColTypes,dataset_name=vals["save_name"],records=len(data),
-                                              columns=len(data[0]))
+            self.output_widget.parent.refresh(ImportSetColTypes,dataset_name=vals["save_name"])
         else:
             logger.info("Form not validated, form errors: {}".format(self.form_errors))
 
@@ -165,3 +157,11 @@ class ImportCSV(base_action.BaseAction):
         for row in range(0,len(self.stored_data)):
             for col in range(0,len(self.stored_data[0])):
                 self.stored_data[row][col] = converters[col](self.stored_data[row][col])
+
+    @property
+    def records(self):
+        return len(self.stored_data)
+
+    @property
+    def columns(self):
+        return len(self.stored_data[0])

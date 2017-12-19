@@ -82,3 +82,9 @@ class SetColTypes(base_action.BaseAction):
 
             logger.info("Header structure generated: {}".format(header_struct))
             self.dataset.set_header_structure(header_struct)
+
+            self.result_output.add_widget(BorderedTable(
+                headers=["Records","Columns","Data types"],data=[[str(self.dataset.records)],[str(self.dataset.columns)],
+                [str((", ".join((["{} -> {}".format(x,y[0]) for x,y in header_struct.items()]))))]],
+                row_default_height=30, row_force_default=True,orientation="horizontal",for_scroller=True,
+                size_hint_x=1,size_hint_y=None))
