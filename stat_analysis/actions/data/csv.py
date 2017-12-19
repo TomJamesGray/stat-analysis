@@ -133,15 +133,16 @@ class ImportCSV(base_action.BaseAction):
             App.get_running_app().saved_actions.append(self)
             App.get_running_app().datasets.append(self)
 
-            # Add table for the output displaying records, columns and guessed data types
-            self.result_output.add_widget(BorderedTable(
-                headers=["Records","Columns","Data types"],data=[[len(data)],[len(data[0])],
-                [str((", ".join((["{} -> {}".format(x,y[0]) for x,y in col_d_types.items()]))))]],
-                row_default_height=30, row_force_default=True,orientation="horizontal",for_scroller=True,
-                size_hint_x=1,size_hint_y=None))
+            # # Add table for the output displaying records, columns and guessed data types
+            # self.result_output.add_widget(BorderedTable(
+            #     headers=["Records","Columns","Data types"],data=[[len(data)],[len(data[0])],
+            #     [str((", ".join((["{} -> {}".format(x,y[0]) for x,y in col_d_types.items()]))))]],
+            #     row_default_height=30, row_force_default=True,orientation="horizontal",for_scroller=True,
+            #     size_hint_x=1,size_hint_y=None))
 
             print(self.output_widget.parent)
-            self.output_widget.parent.refresh(ImportSetColTypes,dataset_name=vals["save_name"])
+            self.output_widget.parent.refresh(ImportSetColTypes,dataset_name=vals["save_name"],records=len(data),
+                                              columns=len(data[0]))
         else:
             logger.info("Form not validated, form errors: {}".format(self.form_errors))
 
