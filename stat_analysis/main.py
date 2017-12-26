@@ -220,9 +220,27 @@ class StatApp(App):
             pickle.dump(to_save,f)
 
     def load(self,*args):
+        actions = []
+        for group in self.actions:
+            for action in group["actions"]:
+                actions.append(action)
+        print(actions)
         with open("save_file","rb") as f:
-            stuff = pickle.load(f)
-        print(stuff)
+            dump = pickle.load(f)
+
+        for item in dump:
+            # Find the correct action specified by "type"
+            type_action = None
+            for action in actions:
+                if action.type == item[1]["type"]:
+                    type_action = action(None)
+                    break
+            if type_action == None:
+                logger.error("In loading save file action type {} not found, stopping load".format(item[1]["type"]))
+                return False
+
+            type_action.load(item[1])
+
 
 
 def main():
