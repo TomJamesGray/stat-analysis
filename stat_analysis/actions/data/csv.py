@@ -44,10 +44,6 @@ class ImportCSV(base_action.BaseAction):
                     },
                     {
                         "input_type": "numeric",
-                        "default": 1,
-                        "step": 1,
-                        "min": 1,
-                        "max": 10,
                         "required": True,
                         "form_name": "start_line",
                         "visible_name": "Start reading at line:",
