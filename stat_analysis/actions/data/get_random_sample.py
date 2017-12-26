@@ -1,4 +1,10 @@
+import logging
+import random
+import copy
+from kivy.app import App
 from stat_analysis.actions.base_action import BaseAction
+
+logger = logging.getLogger(__name__)
 
 class DataSample(BaseAction):
     type = "data.sample"
@@ -15,7 +21,7 @@ class DataSample(BaseAction):
                         "input_type":"combo_box",
                         "required":True,
                         "data_type":"dataset",
-                        "form_name":"data_set",
+                        "form_name":"dataset",
                         "visible_name":"Data set"
                     },
                     {
@@ -27,9 +33,77 @@ class DataSample(BaseAction):
                     {
                         "input_type":"check_box",
                         "visible_name":"Random Sampling",
-                        "form_name":"random_sample"
+                        "form_name":"random_sample",
+                        "required":True
+                    },
+                    {
+                        "input_type":"string",
+                        "required":True,
+                        "form_name":"save_name",
+                        "visible_name":"Dataset save name"
                     }
                 ]
             }
         ]
         self.output_widget = output_widget
+        self.base_dataset,self.cols_structure = None,None
+
+    def run(self):
+        logger.info("Running action {}".format(self.type))
+        if self.validate_form():
+            logger.info("Form validated, form outputs: {}".format(self.form_outputs))
+            vals = self.form_outputs
+            self.base_dataset = App.get_running_app().get_dataset_by_name(vals["dataset"])
+            # Store a copy of the cols_structure of the base dataset, so modifications to the
+            # base dataset don't change this dataset since it should be independent
+            self.cols_structure = copy.copy(self.base_dataset.get_header_structure())
+
+            if vals["n_records"] > self.base_dataset.records:
+                logger.error("Number of records desired is greater than number of records in dataset")
+                return False
+
+            self.stored_data = []
+            dataset_data = self.base_dataset.get_data()
+
+            if vals["random_sample"]:
+                self.stored_data = random.sample(dataset_data,int(vals["n_records"]))
+            else:
+                smpl_rate = int(self.base_dataset.records/vals["n_records"])
+                for i in range(0,self.base_dataset.records):
+                    if i % smpl_rate == 0 and len(self.stored_data) < vals["n_records"]:
+                        self.stored_data.append(dataset_data[i])
+
+            self.save_name = vals["save_name"]
+            # Add action to saved_actions and data sets
+            App.get_running_app().saved_actions.append(self)
+            App.get_running_app().datasets.append(self)
+        else:
+            logger.info("Form not validated, form errors: {}".format(self.form_errors))
+
+    def get_data(self):
+        return self.stored_data
+
+    def get_headers(self):
+        return list(self.cols_structure.keys())
+
+    def get_header_structure(self):
+        return self.cols_structure
+
+    def set_header_structure(self,struct):
+        self.cols_structure = struct
+        # Get converter functions in a list
+        converters = []
+        for _,x in self.cols_structure.items():
+            converters.append(x[1])
+
+        for row in range(0,len(self.stored_data)):
+            for col in range(0,len(self.stored_data[0])):
+                self.stored_data[row][col] = converters[col](self.stored_data[row][col])
+
+    @property
+    def records(self):
+        return len(self.stored_data)
+
+    @property
+    def columns(self):
+        return len(self.stored_data[0])
