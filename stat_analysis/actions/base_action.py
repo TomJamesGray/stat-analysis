@@ -121,7 +121,7 @@ class BaseAction(object):
             return False
 
     def serialize(self):
-        return self.form_outputs
+        return {"type":self.type,"form_outputs":self.form_outputs}
 
 class ResultOutputWidget(GridLayout):
     pass

@@ -1,5 +1,6 @@
 import logging
 import logging.config
+import pickle
 from kivy.uix.widget import Widget
 from kivy.uix.scrollview import ScrollView
 from kivy.uix.gridlayout import GridLayout
@@ -206,11 +207,22 @@ class StatApp(App):
         return dataset
 
     def save(self,*args):
-        for action in self.saved_actions:
-            print("Action: {}".format(action.serialize()))
-
+        to_save = []
         for dataset in self.datasets:
-            print("Datset: {}".format(dataset.serialize()))
+            print(dataset.serialize())
+            to_save.append(("dataset",dataset.serialize()))
+
+        for action in self.saved_actions:
+            print(action.serialize())
+            to_save.append(("action",action.serialize()))
+
+        with open("save_file","wb") as f:
+            pickle.dump(to_save,f)
+
+    def load(self,*args):
+        with open("save_file","rb") as f:
+            stuff = pickle.load(f)
+        print(stuff)
 
 
 def main():

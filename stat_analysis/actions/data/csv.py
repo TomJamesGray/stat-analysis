@@ -162,7 +162,13 @@ class ImportCSV(base_action.BaseAction):
         return len(self.stored_data[0])
 
     def serialize(self):
+        # Get rid of the converter functions in cols structure
+        col_struct = OrderedDict()
+        for key,value in self.cols_structure.items():
+            col_struct[key] = value[0]
+
         return {
             "form_outputs":self.form_outputs,
-            "header_structure":self.cols_structure
+            "header_structure":col_struct,
+            "type":self.type
         }
