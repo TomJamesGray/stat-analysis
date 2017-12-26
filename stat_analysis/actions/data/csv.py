@@ -180,3 +180,4 @@ class ImportCSV(base_action.BaseAction):
     def load(self,state):
         self.form_outputs = state["form_outputs"]
         self.run(validate=False,quiet=True)
+        self.set_header_structure(state["header_structure"])

@@ -238,7 +238,6 @@ class StatApp(App):
             if type_action == None:
                 logger.error("In loading save file action type {} not found, stopping load".format(item[1]["type"]))
                 return False
-
             type_action.load(item[1])
 
 
