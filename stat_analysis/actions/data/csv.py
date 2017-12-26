@@ -125,8 +125,7 @@ class ImportCSV(base_action.BaseAction):
             self.cols_structure = col_d_types
             # Set the save name that will be shown to user in the saved actions grid on the home screen
             self.save_name = vals["save_name"]
-            # Add action to saved_actions and to data sets
-            App.get_running_app().saved_actions.append(self)
+            # Add action to data sets
             App.get_running_app().datasets.append(self)
 
             print(self.output_widget.parent)
@@ -161,3 +160,9 @@ class ImportCSV(base_action.BaseAction):
     @property
     def columns(self):
         return len(self.stored_data[0])
+
+    def serialize(self):
+        return {
+            "form_outputs":self.form_outputs,
+            "header_structure":self.cols_structure
+        }

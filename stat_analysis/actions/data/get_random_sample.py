@@ -74,8 +74,7 @@ class DataSample(BaseAction):
                         self.stored_data.append(dataset_data[i])
 
             self.save_name = vals["save_name"]
-            # Add action to saved_actions and data sets
-            App.get_running_app().saved_actions.append(self)
+            # Add action to data sets
             App.get_running_app().datasets.append(self)
         else:
             logger.info("Form not validated, form errors: {}".format(self.form_errors))

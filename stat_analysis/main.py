@@ -200,10 +200,17 @@ class StatApp(App):
                 break
         if dataset == None:
             # This should never happen
-            logger.error("Dataset name {} from get_cols_from not found".format(dataset_name))
+            logger.error("Dataset name {} from get_cols_from not found".format(name))
             return False
 
         return dataset
+
+    def save(self,*args):
+        for action in self.saved_actions:
+            print("Action: {}".format(action.serialize()))
+
+        for dataset in self.datasets:
+            print("Datset: {}".format(dataset.serialize()))
 
 
 def main():

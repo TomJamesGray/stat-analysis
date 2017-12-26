@@ -120,6 +120,8 @@ class BaseAction(object):
             self.form_errors = errors
             return False
 
+    def serialize(self):
+        return self.form_outputs
 
 class ResultOutputWidget(GridLayout):
     pass
