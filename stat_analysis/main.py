@@ -241,11 +241,9 @@ class StatApp(App):
 
     def load(self,*args):
         actions = []
-        self.log_this("HELLOHELLO")
         for group in self.actions:
             for action in group["actions"]:
                 actions.append(action)
-        print(actions)
         with open("save_file","rb") as f:
             dump = pickle.load(f)
 

@@ -4,6 +4,7 @@ import csv
 from stat_analysis.actions import base_action
 from stat_analysis.generic_widgets.bordered import BorderedTable
 from stat_analysis.d_types.get_d_type import guess_d_type
+from stat_analysis.d_types.setup import types
 from collections import OrderedDict
 from stat_analysis.actions.data.import_set_col_types import ImportSetColTypes
 from kivy.uix.boxlayout import BoxLayout
@@ -178,4 +179,8 @@ class ImportCSV(base_action.BaseAction):
     def load(self,state):
         self.form_outputs = state["form_outputs"]
         self.run(validate=False,quiet=True)
-        self.set_header_structure(state["header_structure"])
+        # Add back the converter functions to header strucure
+        header_struct = OrderedDict()
+        for key,value in state["header_structure"].items():
+            header_struct[key] = (value,types[value]["convert"])
+        self.set_header_structure(header_struct)
