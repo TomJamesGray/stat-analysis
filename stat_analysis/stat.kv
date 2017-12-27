@@ -1,5 +1,6 @@
 <StatAnalysis>:
     primary_pane:primary_pane
+    log_view:log_view
     width:root.width
     height:root.height
     ActionBar:
@@ -73,6 +74,7 @@
                 min_size:100
                 max_size:250
                 LogView:
+                    id:log_view
                     canvas.before:
                         Color:
                             rgba:(1,1,1,1)
@@ -92,12 +94,13 @@
 
 <LogView>:
     cols:1
+    output:output
     TitlePane:
         title:"Log"
         height:30
         size_hint_y:None
     ScrollableLabel:
-        text:"HI"
+        id:output
 
 <PrimaryPane>:
     cols:1

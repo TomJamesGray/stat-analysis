@@ -1,4 +1,5 @@
 import logging
+import logging.handlers
 import logging.config
 import pickle
 from kivy.uix.widget import Widget
@@ -13,6 +14,13 @@ from stat_analysis.actions import stats,data
 from stat_analysis.generic_widgets.bordered import BorderedButton
 from kivy.app import App
 
+
+class LogViewOutputHandler(logging.StreamHandler):
+    def emit(self,record):
+        App.get_running_app().log_this(str(record))
+
+
+logging.handlers.log_view_output_handler = LogViewOutputHandler
 
 logging_config = {
     "version":1,
@@ -29,6 +37,10 @@ logging_config = {
             "class":"logging.StreamHandler",
             "formatter":"main",
             "level":"INFO"},
+        "log_view":{
+            "class":"logging.handlers.log_view_output_handler",
+            "formatter":"main",
+            "level":"INFO"}
     },
     "loggers":{
         "stat_analysis.main":{
@@ -36,7 +48,7 @@ logging_config = {
             "level":"INFO"
         },
         "stat_analysis.actions":{
-            "handlers":["actions"],
+            "handlers":["actions","log_view"],
             "level":"INFO"
         },
         "stat_analysis.form_inputs":{
@@ -52,12 +64,14 @@ logging_config = {
 logging.config.dictConfig(logging_config)
 logger = logging.getLogger(__name__)
 
+# x_log =
 
 class StatAnalysis(Widget):
     """
     Root widget for the app
     """
     primary_pane = ObjectProperty(None)
+    log_view = ObjectProperty(None)
 
 
 class ActionsScroller(ScrollView):
@@ -155,7 +169,10 @@ class LogView(GridLayout):
     """
     Widget displays the log output
     """
-    pass
+    output = ObjectProperty(None)
+
+    def log_msg(self,msg):
+        self.output.text += "\n" + msg
 
 
 class ScrollableLabel(ScrollView):
@@ -221,6 +238,7 @@ class StatApp(App):
 
     def load(self,*args):
         actions = []
+        self.log_this("HELLOHELLO")
         for group in self.actions:
             for action in group["actions"]:
                 actions.append(action)
@@ -240,6 +258,8 @@ class StatApp(App):
                 return False
             type_action.load(item[1])
 
+    def log_this(self,msg):
+        self.root_widget.log_view.log_msg(msg)
 
 
 def main():
