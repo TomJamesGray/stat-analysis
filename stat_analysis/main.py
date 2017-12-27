@@ -3,6 +3,8 @@ import logging.handlers
 import os
 import logging.config
 import pickle
+import argparse
+import sys
 from kivy.uix.widget import Widget
 from kivy.uix.popup import Popup
 from kivy.uix.scrollview import ScrollView
@@ -20,7 +22,10 @@ from kivy.app import App
 
 class LogViewOutputHandler(logging.StreamHandler):
     def emit(self,record):
-        App.get_running_app().log_this(record.msg)
+        try:
+            App.get_running_app().log_this(record.msg)
+        except:
+            pass
 
 
 logging.handlers.log_view_output_handler = LogViewOutputHandler
@@ -191,21 +196,24 @@ class StatApp(App):
     accent_col = (219/255,46/255,52/255,1)
     title_pane_col = (34/255,34/255,34/255,1)
 
-    def build(self):
-        # self.actions = [stats.regression.Regression]
+    def __init__(self,**kwargs):
+        super().__init__(**kwargs)
+        self.load_popup,self.save_popup = None, None
         self.actions = [
             {
-                "group_name":"Stats",
-                "actions":[stats.regression.Regression,stats.summary.Summary]
+                "group_name": "Stats",
+                "actions": [stats.regression.Regression, stats.summary.Summary]
             },
             {
-                "group_name":"Data",
-                "actions":[data.csv.ImportCSV,data.view_data.ViewData,data.set_col_types.SetColTypes,
-                           data.get_random_sample.DataSample]
+                "group_name": "Data",
+                "actions": [data.csv.ImportCSV, data.view_data.ViewData, data.set_col_types.SetColTypes,
+                            data.get_random_sample.DataSample]
             }
         ]
         self.saved_actions = []
         self.datasets = []
+
+    def build(self):
         self.title = "Stat Analysis"
         Window.clearcolor = (.85,.85,.85,1)
         Window.size = (1336,768)
@@ -235,13 +243,16 @@ class StatApp(App):
         self.load_popup.open()
 
     def do_load(self,path,filename):
-        self.load_popup.dismiss()
-        logger.info("Loading file {}".format(filename[0]))
+        self.load_file(os.path.join(path,filename[0]))
+
+    def load_file(self,fpath):
+        if self.load_popup != None:
+            self.load_popup.dismiss()
         actions = []
         for group in self.actions:
             for action in group["actions"]:
                 actions.append(action)
-        with open(os.path.join(path,filename[0]), "rb") as f:
+        with open(fpath, "rb") as f:
             dump = pickle.load(f)
 
         actions_loaded = 0
@@ -292,4 +303,12 @@ class StatApp(App):
 
 
 def main():
-    StatApp().run()
+    parser = argparse.ArgumentParser(description="Stat Analysis")
+    parser.add_argument("save_file",nargs="?",default=None,type=str)
+    results = parser.parse_args()
+
+    app = StatApp()
+    if results.save_file != None:
+        print(results.save_file)
+        app.load_file(results.save_file)
+    app.run()
