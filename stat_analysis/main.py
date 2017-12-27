@@ -47,7 +47,7 @@ logging_config = {
     },
     "loggers":{
         "stat_analysis.main":{
-            "handlers":["gui"],
+            "handlers":["gui","log_view"],
             "level":"INFO"
         },
         "stat_analysis.actions":{
@@ -192,12 +192,11 @@ class StatApp(App):
     title_pane_col = (34/255,34/255,34/255,1)
 
     def build(self):
-        logger.info("Initialising application")
         # self.actions = [stats.regression.Regression]
         self.actions = [
             {
                 "group_name":"Stats",
-                "actions":[stats.regression.Regression]
+                "actions":[stats.regression.Regression,stats.summary.Summary]
             },
             {
                 "group_name":"Data",
@@ -237,6 +236,7 @@ class StatApp(App):
 
     def do_load(self,path,filename):
         self.load_popup.dismiss()
+        logger.info("Loading file {}".format(filename[0]))
         actions = []
         for group in self.actions:
             for action in group["actions"]:
@@ -244,6 +244,7 @@ class StatApp(App):
         with open(os.path.join(path,filename[0]), "rb") as f:
             dump = pickle.load(f)
 
+        actions_loaded = 0
         for item in dump:
             # Find the correct action specified by "type"
             type_action = None
@@ -253,8 +254,10 @@ class StatApp(App):
                     break
             if type_action == None:
                 logger.error("In loading save file action type {} not found, stopping load".format(item[1]["type"]))
-                return False
+                continue
             type_action.load(item[1])
+            actions_loaded += 1
+        logger.info("Loading completed, {} actions/datasets loaded".format(actions_loaded))
 
     def save_btn(self,*args):
         self.save_popup = Popup(size_hint=(None,None),size=(400,400))
@@ -276,7 +279,6 @@ class StatApp(App):
 
         with open(os.path.join(path,filename),"wb") as f:
             pickle.dump(to_save,f)
-
 
     def log_this(self,msg):
         self.root_widget.log_view.log_msg(msg)
