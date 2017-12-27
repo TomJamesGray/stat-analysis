@@ -45,7 +45,7 @@ class BaseAction(object):
         is the label that will be shown to the user
         :return:
         """
-        logger.info("Rendering action {}".format(self.type))
+        logger.debug("Rendering action {}".format(self.type))
         form_layout = GridLayout(cols=1,padding=(5,5),spacing=(10,10),width=220,size_hint=(None,None))
         form_layout.bind(minimum_height=form_layout.setter("height"))
         self.form_items = []
@@ -63,7 +63,7 @@ class BaseAction(object):
                     # Go to next form input
                     continue
                 # Give the form widget the whole dict so it can parse the data there
-                logger.info("Adding form item {} for {}".format(cls,item["form_name"]))
+                logger.debug("Adding form item {} for {}".format(cls,item["form_name"]))
                 form_cls = cls(item,parent_action=self)
                 form_layout.add_widget(form_cls)
                 self.form_items.append(form_cls)

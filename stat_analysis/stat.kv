@@ -77,7 +77,7 @@
                     id:log_view
                     canvas.before:
                         Color:
-                            rgba:(1,1,1,1)
+                            rgba:(.9,.9,.9,1)
                         Rectangle:
                             pos:self.pos
                             size:self.size
@@ -91,6 +91,8 @@
         text_size:self.width,None
         size_hint_y:None
         height:self.texture_size[1]
+        # Hack Font - http://sourcefoundry.org/hack/
+        font_name:"res/Hack-Regular.ttf"
 
 <LogView>:
     cols:1
@@ -101,6 +103,7 @@
         size_hint_y:None
     ScrollableLabel:
         id:output
+        markup:True
 
 <PrimaryPane>:
     cols:1

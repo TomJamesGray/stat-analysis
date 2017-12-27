@@ -17,7 +17,7 @@ from kivy.app import App
 
 class LogViewOutputHandler(logging.StreamHandler):
     def emit(self,record):
-        App.get_running_app().log_this(str(record))
+        App.get_running_app().log_this(record.msg)
 
 
 logging.handlers.log_view_output_handler = LogViewOutputHandler
@@ -172,7 +172,10 @@ class LogView(GridLayout):
     output = ObjectProperty(None)
 
     def log_msg(self,msg):
-        self.output.text += "\n" + msg
+        if self.output.text != "":
+            self.output.text += "\n" + msg
+        else:
+            self.output.text  += msg
 
 
 class ScrollableLabel(ScrollView):
