@@ -26,7 +26,7 @@
                 on_press:primary_pane.active_action.run()
             ActionButton:
                 text:"Save"
-                on_press:app.save()
+                on_press:app.save_btn()
             ActionButton:
                 text:"Load"
                 on_press:app.load()
@@ -225,3 +225,29 @@
         height:30
         font_size:"22"
         halign:"left"
+
+<FileChooserSaveDialog>
+    text_input:text_input
+    size_hint:1,1
+#    size:400,400
+    orientation:"vertical"
+    FileChooserListView:
+        id:filechooser
+        path:root.initial_path
+    TextInput:
+        id: text_input
+        size_hint_y: None
+        height: 30
+        multiline: False
+        text:root.default_file_name
+        select_text:0,3
+
+    BoxLayout:
+        size_hint_y: None
+        height: 30
+        Button:
+            text: "Cancel"
+        Button:
+            text: "Save"
+            on_release: root.on_save(filechooser.path,text_input.text)
+#            on_release:root.x()

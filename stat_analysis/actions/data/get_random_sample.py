@@ -74,8 +74,12 @@ class DataSample(BaseAction):
                         self.stored_data.append(dataset_data[i])
 
             self.save_name = vals["save_name"]
-            # Add action to data sets
-            App.get_running_app().datasets.append(self)
+            try:
+                # Add action to data sets
+                App.get_running_app().add_dataset(self)
+            except ValueError:
+                logger.error("Dataset with name '{}' already exists, please choose a different name".format(self.save_name))
+                return False
         else:
             logger.info("Form not validated, form errors: {}".format(self.form_errors))
 

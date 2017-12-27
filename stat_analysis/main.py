@@ -1,8 +1,10 @@
 import logging
 import logging.handlers
+import os
 import logging.config
 import pickle
 from kivy.uix.widget import Widget
+from kivy.uix.popup import Popup
 from kivy.uix.scrollview import ScrollView
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.treeview import TreeView,TreeViewLabel
@@ -12,6 +14,7 @@ from kivy.properties import StringProperty,ObjectProperty
 from kivy.modules import inspector
 from stat_analysis.actions import stats,data
 from stat_analysis.generic_widgets.bordered import BorderedButton
+from stat_analysis.generic_widgets.files import FileChooserSaveDialog
 from kivy.app import App
 
 
@@ -64,7 +67,6 @@ logging_config = {
 logging.config.dictConfig(logging_config)
 logger = logging.getLogger(__name__)
 
-# x_log =
 
 class StatAnalysis(Widget):
     """
@@ -226,7 +228,15 @@ class StatApp(App):
 
         return dataset
 
-    def save(self,*args):
+    def save_btn(self,*args):
+        self.save_popup = Popup(size_hint=(None,None),size=(400,400))
+        f_chooser = FileChooserSaveDialog(default_file_name="Project.stat")
+        f_chooser.on_save = self.do_save
+        self.save_popup.content = f_chooser
+        self.save_popup.open()
+
+    def do_save(self,path,filename):
+        self.save_popup.dismiss()
         to_save = []
         for dataset in self.datasets:
             print(dataset.serialize())
@@ -236,7 +246,7 @@ class StatApp(App):
             print(action.serialize())
             to_save.append(("action",action.serialize()))
 
-        with open("save_file","wb") as f:
+        with open(os.path.join(path,filename),"wb") as f:
             pickle.dump(to_save,f)
 
     def load(self,*args):
