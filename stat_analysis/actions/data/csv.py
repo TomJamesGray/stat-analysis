@@ -73,10 +73,10 @@ class ImportCSV(base_action.BaseAction):
         logger.info("Running action {}".format(self.type))
         if validate:
             if not self.validate_form():
-                logger.info("Form not validated, form errors: {}".format(self.form_errors))
+                logger.warning("Form not validated, form errors: {}".format(self.form_errors))
                 return False
             else:
-                logger.info("Form validated, form outputs: {}".format(self.form_outputs))
+                logger.debug("Form validated, form outputs: {}".format(self.form_outputs))
         # Get the values from the form validation
         vals = self.form_outputs
         with open(vals["file"]) as f:
@@ -112,13 +112,11 @@ class ImportCSV(base_action.BaseAction):
                     # TODO Add handling if there are more columns than expected
                     smpl_data[self.headers[i]].append(item[i])
 
-        logger.info("Data read in: {}".format(data))
-        logger.info("Guessing d_types, sample: {}".format(smpl_data))
         col_d_types = OrderedDict()
         for col_name,col_data in smpl_data.items():
             col_d_types[col_name] = guess_d_type(col_data)
 
-        logger.info("Guessed d_types: {}".format(col_d_types))
+        logger.debug("Guessed d_types: {}".format(col_d_types))
 
         # Set stored data property to be used in get_data method
         self.stored_data = data

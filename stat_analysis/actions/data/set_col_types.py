@@ -69,10 +69,10 @@ class SetColTypes(base_action.BaseAction):
             self.render()
 
     def run(self):
-        logger.info("Running action {}".format(self.type))
+        logger.debug("Running action {}".format(self.type))
         if self.validate_form():
             vals = self.form_outputs
-            logger.info("Form validated, form outputs: {}".format(vals))
+            logger.debug("Form validated, form outputs: {}".format(vals))
 
             n_cols = len(self.dataset.get_headers())
             header_struct = OrderedDict()

@@ -96,13 +96,13 @@ class BaseAction(object):
         output = {}
         errors = []
         for item in self.form_items:
-            logger.info("Validating {}".format(item))
+            logger.debug("Validating {}".format(item))
             try:
                 # Handle errors that may be found in get_val method, ie can't cast to float
                 # in numeric input
                 val = item.get_val()
             except Exception as e:
-                errors.append(str(e))
+                errors.append(repr(e))
                 logger.warning(errors[-1])
                 continue
 
