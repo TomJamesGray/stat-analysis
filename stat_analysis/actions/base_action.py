@@ -4,6 +4,7 @@ from kivy.app import App
 from stat_analysis.form_inputs import combo_box,check_box,numeric_bounded,numeric,file,string
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.scrollview import ScrollView
+from kivy.properties import ObjectProperty
 from kivy.uix.splitter import Splitter
 from kivy.uix.button import Button
 
@@ -125,4 +126,9 @@ class BaseAction(object):
 
 
 class ResultOutputWidget(GridLayout):
-    pass
+    label_header = ObjectProperty(None)
+
+    def clear_outputs(self):
+        for item in self.children:
+            if item != self.label_header:
+                self.remove_widget(item)
