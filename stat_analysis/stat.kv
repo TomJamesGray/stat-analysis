@@ -113,7 +113,10 @@
         size_hint_y:None
 
 <HomeView>:
+    datasets_grid:datasets_grid
+    actions_grid:actions_grid
     cols:1
+    on_parent:self.post_init()
     GridLayout:
         cols:1
         padding:15,15
@@ -124,6 +127,23 @@
             height:35
             width:150
             padding:5,5
+        Label:
+            color:0,0,0,1
+            text:"Datasets"
+            size_hint_y:None
+            valign:"middle"
+            text_size:self.size
+            height:40
+            font_size:18
+
+        ActionsGrid:
+            size_hint_y:None
+            size_hint_x:None
+            width:400
+            cols:3
+            row_default_height:30
+            row_force_default:True
+            id:datasets_grid
         Label:
             color:0,0,0,1
             text:"Saved Actions"
@@ -140,6 +160,7 @@
             cols:3
             row_default_height:30
             row_force_default:True
+            id:actions_grid
 
 
 <BorderedLabel>

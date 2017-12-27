@@ -12,7 +12,7 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.uix.treeview import TreeView,TreeViewLabel
 from kivy.uix.label import Label
 from kivy.core.window import Window
-from kivy.properties import StringProperty,ObjectProperty
+from kivy.properties import StringProperty,ObjectProperty,ListProperty
 from kivy.modules import inspector
 from stat_analysis.actions import stats,data
 from stat_analysis.generic_widgets.bordered import BorderedButton
@@ -108,7 +108,12 @@ class HomeView(GridLayout):
     """
     Widget for the main home screen
     """
-    pass
+    datasets_grid = ObjectProperty(None)
+    actions_grid = ObjectProperty(None)
+
+    def post_init(self,**kwargs):
+        self.datasets_grid.render(App.get_running_app().datasets)
+        self.actions_grid.render(App.get_running_app().saved_actions)
 
 
 class ActionsGrid(GridLayout):
@@ -117,13 +122,6 @@ class ActionsGrid(GridLayout):
         headers = ["Name","Type","Status"]
         for header in headers:
             self.add_btn(header)
-        for action in App.get_running_app().saved_actions:
-            name_btn = self.add_btn(action.save_name)
-            name_btn.saved_action = action
-            name_btn.bind(on_press=lambda x:App.get_running_app().root_widget.primary_pane.load_action(x))
-
-            self.add_btn(action.type)
-            self.add_btn(action.status)
 
     def add_btn(self,text):
         x = BorderedButton(b_width=1, padding=(2, 2), size_hint_x=0.4, color=(0, 0, 0, 1), text=str(text),
@@ -131,6 +129,16 @@ class ActionsGrid(GridLayout):
         x.bind(size=x.setter("text_size"))
         self.add_widget(x)
         return x
+
+    def render(self,tbl):
+        print(tbl)
+        for action in tbl:
+            name_btn = self.add_btn(action.save_name)
+            name_btn.saved_action = action
+            name_btn.bind(on_press=lambda x:App.get_running_app().root_widget.primary_pane.load_action(x))
+
+            self.add_btn(action.type)
+            self.add_btn(action.status)
 
 
 class ActionTreeViewLabel(TreeViewLabel):
@@ -309,6 +317,5 @@ def main():
 
     app = StatApp()
     if results.save_file != None:
-        print(results.save_file)
         app.load_file(results.save_file)
     app.run()
