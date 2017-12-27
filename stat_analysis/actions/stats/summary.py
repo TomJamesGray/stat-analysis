@@ -76,6 +76,6 @@ class Summary(BaseAction):
             val = self.action_maps[vals["action"]](col_vals)
             self.result_output.clear_widgets()
             self.result_output.add_widget(BorderedTable(
-                headers=[vals["action"].replace(" ","\n")],data=[[str(val)]],row_default_height=60,
+                headers=[vals["action"].replace(" ","\n")],data=[[str(round(val,5))]],row_default_height=60,
                 row_force_default=True,orientation="horizontal",size_hint_y=None,size_hint_x=1,for_scroller=True
             ))
