@@ -30,9 +30,9 @@ class ViewData(base_action.BaseAction):
         self.output_widget = output_widget
 
     def run(self):
-        logger.info("Running action {}".format(self.type))
+        logger.debug("Running action {}".format(self.type))
         if self.validate_form():
-            logger.info("Form validated, form outputs: {}".format(self.form_outputs))
+            logger.debug("Form validated, form outputs: {}".format(self.form_outputs))
             vals = self.form_outputs
             cur_set = None
             # From the name selected in the combo box get the actual stored data set
@@ -45,7 +45,7 @@ class ViewData(base_action.BaseAction):
                 # This should never happen
                 logger.error("Data set selected in combo box doesn't exist in app's data_sets")
                 raise ValueError("Data set selected in combo box doesn't exist in app's data_sets")
-            logger.info("Using {} as cur_set".format(cur_set))
+            logger.debug("Using {} as cur_set".format(cur_set))
 
             self.result_output.add_widget(BorderedTable(headers=cur_set.get_headers(),table_data=cur_set.get_data(),
                                                         row_default_height=30,row_force_default=True,for_scroller=True,

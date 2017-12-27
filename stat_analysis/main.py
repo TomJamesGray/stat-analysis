@@ -262,6 +262,13 @@ class StatApp(App):
     def log_this(self,msg):
         self.root_widget.log_view.log_msg(msg)
 
+    def add_dataset(self,dataset):
+        for set in self.datasets:
+            if dataset.save_name == set.save_name:
+                raise ValueError("A dataset with that name already exists")
+
+        self.datasets.append(dataset)
+
 
 def main():
     StatApp().run()
