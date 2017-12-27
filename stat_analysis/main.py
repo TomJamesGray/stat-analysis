@@ -14,7 +14,7 @@ from kivy.properties import StringProperty,ObjectProperty
 from kivy.modules import inspector
 from stat_analysis.actions import stats,data
 from stat_analysis.generic_widgets.bordered import BorderedButton
-from stat_analysis.generic_widgets.files import FileChooserSaveDialog
+from stat_analysis.generic_widgets.files import FileChooserSaveDialog,FileChooserLoadDialog
 from kivy.app import App
 
 
@@ -228,6 +228,34 @@ class StatApp(App):
 
         return dataset
 
+    def load_btn(self,*args):
+        self.load_popup = Popup(size_hint=(None,None),size=(400,400))
+        f_chooser = FileChooserLoadDialog()
+        f_chooser.on_load = self.do_load
+        self.load_popup.content = f_chooser
+        self.load_popup.open()
+
+    def do_load(self,path,filename):
+        self.load_popup.dismiss()
+        actions = []
+        for group in self.actions:
+            for action in group["actions"]:
+                actions.append(action)
+        with open(os.path.join(path,filename[0]), "rb") as f:
+            dump = pickle.load(f)
+
+        for item in dump:
+            # Find the correct action specified by "type"
+            type_action = None
+            for action in actions:
+                if action.type == item[1]["type"]:
+                    type_action = action(None)
+                    break
+            if type_action == None:
+                logger.error("In loading save file action type {} not found, stopping load".format(item[1]["type"]))
+                return False
+            type_action.load(item[1])
+
     def save_btn(self,*args):
         self.save_popup = Popup(size_hint=(None,None),size=(400,400))
         f_chooser = FileChooserSaveDialog(default_file_name="Project.stat")
@@ -249,25 +277,6 @@ class StatApp(App):
         with open(os.path.join(path,filename),"wb") as f:
             pickle.dump(to_save,f)
 
-    def load(self,*args):
-        actions = []
-        for group in self.actions:
-            for action in group["actions"]:
-                actions.append(action)
-        with open("save_file","rb") as f:
-            dump = pickle.load(f)
-
-        for item in dump:
-            # Find the correct action specified by "type"
-            type_action = None
-            for action in actions:
-                if action.type == item[1]["type"]:
-                    type_action = action(None)
-                    break
-            if type_action == None:
-                logger.error("In loading save file action type {} not found, stopping load".format(item[1]["type"]))
-                return False
-            type_action.load(item[1])
 
     def log_this(self,msg):
         self.root_widget.log_view.log_msg(msg)

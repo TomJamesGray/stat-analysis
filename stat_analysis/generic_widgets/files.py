@@ -24,3 +24,7 @@ class FileChooserSaveDialog(BoxLayout):
     initial_path = os.path.expanduser("~")
     default_file_name = StringProperty("Untitled")
     on_save = None
+
+class FileChooserLoadDialog(BoxLayout):
+    initial_path = os.path.expanduser("~")
+    on_load = None
