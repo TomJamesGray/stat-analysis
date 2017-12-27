@@ -46,7 +46,7 @@ class ViewData(base_action.BaseAction):
                 logger.error("Data set selected in combo box doesn't exist in app's data_sets")
                 raise ValueError("Data set selected in combo box doesn't exist in app's data_sets")
             logger.debug("Using {} as cur_set".format(cur_set))
-
+            self.result_output.clear_outputs()
             self.result_output.add_widget(BorderedTable(headers=cur_set.get_headers(),table_data=cur_set.get_data(),
                                                         row_default_height=30,row_force_default=True,for_scroller=True,
                                                         size_hint_x=1,size_hint_y=None))

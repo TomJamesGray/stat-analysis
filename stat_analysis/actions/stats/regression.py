@@ -129,7 +129,7 @@ class Regression(base_action.BaseAction):
             axis.legend()
             fig.savefig("tmp/plot.png")
 
-            self.result_output.clear_widgets()
+            self.result_output.clear_outputs()
             self.result_output.add_widget(BorderedTable(
                 headers=["Function"],data=[[func]],row_default_height=30,row_force_default=True,
                 orientation="horizontal",size_hint_y=None,size_hint_x=1,for_scroller=True
