@@ -131,7 +131,6 @@ class ActionsGrid(GridLayout):
         return x
 
     def render(self,tbl):
-        print(tbl)
         for action in tbl:
             name_btn = self.add_btn(action.save_name)
             name_btn.saved_action = action
@@ -290,11 +289,9 @@ class StatApp(App):
         self.save_popup.dismiss()
         to_save = []
         for dataset in self.datasets:
-            print(dataset.serialize())
             to_save.append(("dataset",dataset.serialize()))
 
         for action in self.saved_actions:
-            print(action.serialize())
             to_save.append(("action",action.serialize()))
 
         with open(os.path.join(path,filename),"wb") as f:

@@ -98,7 +98,6 @@ class ImportCSV(base_action.BaseAction):
         smpl_data = {}
         for header in self.headers:
             smpl_data[header] = []
-        print(smpl_data)
         # Set the sample rate for the d_type sample
         smpl_rate = int(len(data)/max_sample_length)
         # Smpl_rate should be larger than 2 or 1
