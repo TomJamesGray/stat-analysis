@@ -210,7 +210,8 @@ class StatApp(App):
         self.actions = [
             {
                 "group_name": "Stats",
-                "actions": [stats.regression.Regression, stats.summary.Summary]
+                "actions": [stats.regression.Regression, stats.summary.Summary,
+                            stats.logistic_regression.LogisticRegression]
             },
             {
                 "group_name": "Data",
