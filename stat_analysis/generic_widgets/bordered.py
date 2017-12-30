@@ -25,7 +25,7 @@ class BorderedTable(GridLayout):
     #   7        8        9
     # Structure for data to produce this table would be [[1,4,7],[2,5,8],[3,6,9]
     data = ListProperty([])
-    # Structure for table_data would be [[1,4,7],[4,5,6],[7,8,9]]
+    # Structure for table_data would be [[1,2,3],[4,5,6],[7,8,9]]
     table_data = ListProperty([])
 
     def __init__(self,for_scroller=False,**kwargs):
@@ -45,14 +45,15 @@ class BorderedTable(GridLayout):
                                                           height=30))
         elif self.data != []:
             if self.orientation == "vertical":
-                self.cols = len(self.data)
+                self.cols = len(self.headers)
                 for header in self.headers:
                     self.add_widget(BorderedLabel(text=str(header),color=(.5,0,0,1),size_hint_x=None))
 
-                for x in range(0,len(self.data)):
-                    for y in range(0,len(self.data[0])):
+                for y in range(0,len(self.data[0])):
+                    for x in range(0, len(self.data)):
                         self.add_widget(BorderedLabel(text=str(self.data[x][y]),color=(0,0,0,1),size_hint_x=None,
                                                       height=30))
+
             elif self.orientation == "horizontal":
                 self.rows = len(self.headers)
                 for x in range(0, len(self.data)):
