@@ -3,6 +3,7 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.uix.checkbox import CheckBox
 from kivy.uix.textinput import TextInput
 
+
 class FormNumeric(GridLayout):
     def __init__(self,input_dict,parent_action,*args):
         super().__init__(*args)
@@ -20,8 +21,20 @@ class FormNumeric(GridLayout):
         self.add_widget(self.num_input)
 
     def get_val(self):
-        try:
-            val = float(self.num_input.text)
-        except ValueError:
-            raise ValueError("{} should be numeric".format(self.input_dict["visible_name"]))
-        return val
+        def __get_val(x):
+            try:
+                val = float(x)
+            except ValueError:
+                raise ValueError("{} should be numeric".format(self.input_dict["visible_name"]))
+            return val
+
+        if self.num_input.text == "":
+            return None
+
+        if self.input_dict["allow_comma_separated"]:
+            out = []
+            for x in self.num_input.text.split(","):
+                out.append(__get_val(x))
+            return out
+        else:
+            return __get_val(self.num_input.text)
