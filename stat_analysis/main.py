@@ -14,7 +14,7 @@ from kivy.uix.label import Label
 from kivy.core.window import Window
 from kivy.properties import StringProperty,ObjectProperty,ListProperty
 from kivy.modules import inspector
-from stat_analysis.actions import stats,data
+from stat_analysis.actions import stats,data,graph
 from stat_analysis.generic_widgets.bordered import BorderedButton
 from stat_analysis.generic_widgets.files import FileChooserSaveDialog,FileChooserLoadDialog
 from kivy.app import App
@@ -216,6 +216,10 @@ class StatApp(App):
                 "group_name": "Data",
                 "actions": [data.csv.ImportCSV, data.view_data.ViewData, data.set_col_types.SetColTypes,
                             data.get_random_sample.DataSample,data.transform_data.TransformData]
+            },
+            {
+                "group_name": "Graph",
+                "actions": [graph.bar_chart.BarChart]
             }
         ]
         self.saved_actions = []

@@ -27,11 +27,11 @@ class FormDropDown(GridLayout):
         self.add_widget(input_label)
 
         if "default" in input_dict.keys():
-            main_btn_text = input_dict["default"]
+            self.main_btn_text = input_dict["default"]
         else:
-            main_btn_text = ""
+            self.main_btn_text = ""
 
-        self.main_btn = BorderedButton(text=main_btn_text, size_hint=(1,None), height=30, background_normal="",
+        self.main_btn = BorderedButton(text=self.main_btn_text, size_hint=(1,None), height=30, background_normal="",
                                        color=(0,0,0,1),background_color=(1,1,1,1),halign="left",valign="middle",
                                        padding=(5,5))
         self.main_btn.bind(size=self.main_btn.setter("text_size"))
@@ -43,11 +43,11 @@ class FormDropDown(GridLayout):
             dropdown_options = input_dict["data_type"]
         elif input_dict["data_type"] == "dataset":
             dropdown_options = [x.save_name for x in App.get_running_app().datasets]
-        elif input_dict["data_type"] == "column_numeric":
+        elif input_dict["data_type"] == "column_numeric" or input_dict["data_type"] == "column":
             # Data type is numeric columns. This data_type relies on a get_cols_from key
             #  being set, so the column names for the dataset can be retrieved
             if "get_cols_from" not in input_dict.keys():
-                raise ValueError("To use column_numeric data type get_cols_from must be set")
+                raise ValueError("To use column data type get_cols_from must be set")
             elif isinstance(input_dict["get_cols_from"],base_action.BaseAction):
                 raise ValueError("get_cols_from {} is not an action".format(input_dict["get_cols_from"]))
 
@@ -55,12 +55,12 @@ class FormDropDown(GridLayout):
             # no possible values for the dropdown
             self.main_btn.bind(on_release=self.try_populate_dropdown)
             logger.info("Not adding dropdown as first one so no data set will be selected")
-            main_btn_text = "Select data set first"
+            self.main_btn_text = "Select data set first"
             dropdown_options = None
         else:
             raise ValueError("Unrecognised data type {} in form layout".format(input_dict["data_type"]))
 
-        self.main_btn.text = main_btn_text
+        self.main_btn.text = self.main_btn_text
 
         # If dropdown options hasn't been set, ie if data set needs to be selected don't
         # create dropdown
@@ -110,6 +110,9 @@ class FormDropDown(GridLayout):
                 self.dropdown.bind(on_select=lambda instance, y: setattr(self.main_btn, 'text', y))
 
     def get_val(self):
+        if self.main_btn_text == self.main_btn.text:
+            # Main button hasn't been changed therefore combo box isn't selected
+            return None
         return self.main_btn.text
 
 

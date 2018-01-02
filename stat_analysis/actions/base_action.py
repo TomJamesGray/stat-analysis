@@ -2,6 +2,7 @@ import logging
 from kivy.uix.label import Label
 from kivy.app import App
 from stat_analysis.form_inputs import combo_box,check_box,numeric_bounded,numeric,file,string
+from stat_analysis.d_types.setup import types
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.scrollview import ScrollView
 from kivy.properties import ObjectProperty
@@ -20,7 +21,8 @@ form_input_maps = {
 }
 
 column_d_type_maps = {
-    "column_numeric":["int","float"]
+    "column_numeric":["int","float"],
+    "column":list(types.keys())
 }
 
 

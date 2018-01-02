@@ -6,6 +6,7 @@ from stat_analysis.generic_widgets.bordered import BorderedTable
 
 logger = logging.getLogger(__name__)
 
+
 class TransformData(BaseAction):
     type = "data.transform_data"
     view_name  = "Transform Data"
