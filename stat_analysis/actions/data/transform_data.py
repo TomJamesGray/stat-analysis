@@ -40,6 +40,18 @@ class TransformData(BaseAction):
                         "form_name": "transform_col",
                         "visible_name": "Column to transform"
                     },
+                    {
+                        "input_type": "check_box",
+                        "required":True,
+                        "form_name":"overwrite_existing_set",
+                        "visible_name":"Add column to existing dataset"
+                    },
+                    {
+                        "input_type":"string",
+                        "required":False,
+                        "form_name":"new_name",
+                        "visible_name":"Save name for new dataset (required if existing dataset is not being modified)"
+                    }
                 ]
             },
             {
@@ -67,9 +79,15 @@ class TransformData(BaseAction):
     def set_tmp_dataset(self,val):
         self.tmp_dataset = val
 
-
     def run(self):
         logger.debug("Running action {}".format(self.type))
         if self.validate_form():
             logger.debug("Form validated, form outputs: {}".format(self.form_outputs))
             vals = self.form_outputs
+            dataset = App.get_running_app().get_dataset_by_name(vals["dataset"])
+            # Get the position in each row for the column
+            col_pos = list(dataset.get_header_structure().keys()).index(vals["transform_col"])
+            transform_func = self.simple_transforms[vals["transform_name"]]
+
+            new_data = [transform_func(x[col_pos]) for x in dataset.get_data()]
+            dataset.add_column(new_data,col_type="float",col_name=vals["new_col_name"])

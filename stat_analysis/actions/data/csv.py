@@ -159,6 +159,14 @@ class ImportCSV(base_action.BaseAction):
             for col in range(0,len(self.stored_data[0])):
                 self.stored_data[row][col] = converters[col](self.stored_data[row][col])
 
+    def add_column(self,col_data,col_type,col_name):
+        if len(col_data) != self.records:
+            raise ValueError("Length of additional column is not equal to length of existing data")
+        for i in range(0,self.records):
+            self.stored_data[i].append(col_data[i])
+
+        self.cols_structure[col_name] = (col_type,types[col_type]["convert"])
+
     @property
     def records(self):
         return len(self.stored_data)
