@@ -7,6 +7,9 @@ from kivy.uix.textinput import TextInput
 class FormNumeric(GridLayout):
     def __init__(self,input_dict,parent_action,*args):
         super().__init__(*args)
+        if "allow_comma_separated" not in input_dict.keys():
+            input_dict["allow_comma_separated"] = False
+
         self.cols = 1
         self.size_hint_y = None
         self.size_hint_x = None
