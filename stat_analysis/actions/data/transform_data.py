@@ -55,7 +55,7 @@ class TransformData(BaseAction):
                     {
                         "input_type":"string",
                         "required":True,
-                        "form_name":"new_col_name"
+                        "form_name":"new_col_name",
                         "visible_name":"New Column Name"
                     }
                 ]

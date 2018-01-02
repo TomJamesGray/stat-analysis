@@ -34,13 +34,7 @@ class ViewData(base_action.BaseAction):
         if self.validate_form():
             logger.debug("Form validated, form outputs: {}".format(self.form_outputs))
             vals = self.form_outputs
-            cur_set = None
-            # From the name selected in the combo box get the actual stored data set
-            # TODO: What if the name of data set is repeated?
-            for d_set in App.get_running_app().datasets:
-                if d_set.save_name == vals["data_set"]:
-                    cur_set = d_set
-                    break
+            cur_set = App.get_running_app().get_dataset_by_name(vals["data_set"])
             if cur_set == None:
                 # This should never happen
                 logger.error("Data set selected in combo box doesn't exist in app's data_sets")
