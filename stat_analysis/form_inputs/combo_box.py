@@ -37,6 +37,11 @@ class FormDropDown(GridLayout):
         self.main_btn.bind(size=self.main_btn.setter("text_size"))
         self.add_widget(self.main_btn)
 
+        # Add the form item to any specified listeners
+        if "add_dataset_listener" in input_dict.keys():
+            logger.info("Adding form item to dataset listener group")
+            input_dict["add_dataset_listener"](self)
+
         # Get the dropdown options
         if type(input_dict["data_type"]) == list:
             # Dropdown options is just a set of values in a list
@@ -67,7 +72,7 @@ class FormDropDown(GridLayout):
         if dropdown_options != None:
             self.mk_dropdown(dropdown_options)
 
-    def try_populate_dropdown(self,*args):
+    def try_populate_dropdown(self,quiet=False,*args):
         """
         Try and populate the dropdown with values from the specified data set.
         The specified data set will be referenced by name in the get_cols_from key
@@ -95,11 +100,23 @@ class FormDropDown(GridLayout):
             logger.info("Populating dropdown with {}".format(headers))
             self.prev_dataset_name = dataset_name
             self.mk_dropdown(headers)
-            self.dropdown.open(self.main_btn)
+            if not quiet:
+                self.dropdown.open(self.main_btn)
+            else:
+                logger.debug("Parent dataset has been changed, resetting main_btn_text")
+                self.main_btn.text = ""
+                self.main_btn_text = ""
         else:
-            self.dropdown.open(self.main_btn)
+            if not quiet:
+                # Dataset hasn't been changed so re open dropdown without repopulating
+                self.dropdown.open(self.main_btn)
 
     def dropdown_open(self,*args):
+        """
+        Generic function to open the dropdown, done so that if the drop down is
+        using "get_cols_from" it can try and repopulate the options if the dataset
+        changes
+        """
         if "get_cols_from" in self.input_dict.keys():
             self.try_populate_dropdown()
         else:
