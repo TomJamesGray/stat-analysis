@@ -90,8 +90,6 @@ class BarChart(BaseAction):
             else:
                 y_data = raw_data
 
-            print(y_data)
-
             fig = plt.figure()
             axis = plt.subplot(111)
             axis.bar(x_data,y_data.values())
