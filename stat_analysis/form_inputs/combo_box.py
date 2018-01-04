@@ -25,7 +25,7 @@ class FormDropDown(GridLayout):
                             font_size="14")
         input_label.bind(size=input_label.setter("text_size"))
         self.add_widget(input_label)
-
+        self.prev_dataset_name = None
         if "default" in input_dict.keys():
             self.main_btn_text = input_dict["default"]
         else:
@@ -53,7 +53,7 @@ class FormDropDown(GridLayout):
 
             # Bind the try_populate_dropdown method to the main_btn as there will currently be
             # no possible values for the dropdown
-            self.main_btn.bind(on_release=self.try_populate_dropdown)
+            self.main_btn.bind(on_release=self.dropdown_open)
             logger.info("Not adding dropdown as first one so no data set will be selected")
             self.main_btn_text = "Select data set first"
             dropdown_options = None
@@ -73,13 +73,14 @@ class FormDropDown(GridLayout):
         The specified data set will be referenced by name in the get_cols_from key
         in the input dict
         """
-        if self.input_dict["get_cols_from"](self) == None:
+        dataset_name = self.input_dict["get_cols_from"](self)
+
+        if dataset_name == None:
             logger.info("get_cols_from property is still none, not populating dropdown")
             return True
-        else:
-            dataset_name = self.input_dict["get_cols_from"](self)
+        elif self.prev_dataset_name != dataset_name:
+            # Dataset has been changed so repopulate dropdown
             logger.info("Populating dropdown with data set {}".format(dataset_name))
-
             dataset = App.get_running_app().get_dataset_by_name(dataset_name)
 
             # Only get columns for the specified data type
@@ -92,8 +93,18 @@ class FormDropDown(GridLayout):
 
             self.main_btn.unbind(on_release=self.try_populate_dropdown)
             logger.info("Populating dropdown with {}".format(headers))
+            self.prev_dataset_name = dataset_name
             self.mk_dropdown(headers)
             self.dropdown.open(self.main_btn)
+        else:
+            self.dropdown.open(self.main_btn)
+
+    def dropdown_open(self,*args):
+        if "get_cols_from" in self.input_dict.keys():
+            self.try_populate_dropdown()
+        else:
+            self.dropdown.open(self.main_btn)
+
 
     def mk_dropdown(self,dropdown_options):
         self.dropdown = DropDown()
@@ -101,7 +112,7 @@ class FormDropDown(GridLayout):
             btn = ButtonDropDown(text=i)
             btn.bind(on_release=lambda btn: self.dropdown.select(btn.text))
             self.dropdown.add_widget(btn)
-            self.main_btn.bind(on_release=self.dropdown.open)
+            self.main_btn.bind(on_release=self.dropdown_open)
             # Support for on_change attribute in input_dict
             if "on_change" in self.input_dict.keys():
                 self.dropdown.bind(on_select=lambda instance, y: [setattr(self.main_btn, 'text', y),
