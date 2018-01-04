@@ -110,7 +110,7 @@ class FormDropDown(GridLayout):
                 self.dropdown.bind(on_select=lambda instance, y: setattr(self.main_btn, 'text', y))
 
     def get_val(self):
-        if self.main_btn_text == self.main_btn.text:
+        if self.main_btn_text == self.main_btn.text and "default" not in self.input_dict.keys():
             # Main button hasn't been changed therefore combo box isn't selected
             return None
         return self.main_btn.text

@@ -39,7 +39,7 @@ class LogisticRegression(BaseAction):
                     },
                     {
                         "input_type": "combo_box",
-                        "data_type": "column_numeric",
+                        "data_type": "column",
                         "get_cols_from": lambda x: x.parent_action.tmp_dataset,
                         "required": True,
                         "form_name": "bin_var",
