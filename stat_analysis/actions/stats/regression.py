@@ -126,6 +126,11 @@ class Regression(base_action.BaseAction):
             axis = plt.subplot(111)
             axis.scatter(x,y)
             axis.plot(x_line,y_line)
+
+            # Set axis labels
+            plt.xlabel(vals["x_var"])
+            plt.ylabel(vals["y_var"])
+
             axis.legend()
             fig.savefig("tmp/plot.png")
 

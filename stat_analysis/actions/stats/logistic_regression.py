@@ -134,6 +134,11 @@ class LogisticRegression(BaseAction):
                 axis.set_ylim([0,1])
                 axis.scatter([a[0] for a in x],y)
                 axis.plot(x_line,y_line)
+
+                # Set axis labels
+                plt.xlabel(vals["x_var"])
+                plt.ylabel(vals["bin_var"])
+
                 axis.legend()
                 fig.savefig("tmp/plot.png")
 
