@@ -307,6 +307,12 @@ class StatApp(App):
 
         self.datasets.append(dataset)
 
+    def add_action(self,action):
+        for set in self.saved_actions:
+            if action.save_name == set.save_name and action.save_name != None:
+                raise ValueError("A dataset with that name already exists")
+
+        self.saved_actions.append(action)
 
 def main():
     parser = argparse.ArgumentParser(description="Stat Analysis")
