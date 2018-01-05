@@ -92,7 +92,8 @@ class ImportCSV(base_action.BaseAction):
             self.headers = data[0]
         else:
             # If user doesn't want headers just use numbers
-            self.headers = list(range(1,len(data[0])+1))
+            self.headers = [str(x) for x in range(1,len(data[0])+1)]
+
         # Get rid of data before user specified start line
         data = data[int(vals["start_line"])-1:]
         smpl_data = {}
