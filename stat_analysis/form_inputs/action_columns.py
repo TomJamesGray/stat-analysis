@@ -2,7 +2,7 @@ import logging
 from kivy.app import App
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.label import Label
-from kivy.uix.spinner import Spinner
+from kivy.uix.spinner import Spinner,SpinnerOption
 
 logger = logging.getLogger(__name__)
 
@@ -39,6 +39,6 @@ class ActionColumns(GridLayout):
             for header in dataset.get_headers():
                 self.cols_container.add_widget(Label(text=header,color=(0,0,0,1)))
                 self.cols_container.add_widget(
-                    Spinner(text=self.input_dict["actions"][0],values=self.input_dict["actions"]))
+                    Spinner(text=self.input_dict["actions"][0],values=self.input_dict["actions"],sync_height=True))
 
             self.prev_dataset_name = dataset_name
