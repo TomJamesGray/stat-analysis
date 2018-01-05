@@ -10,6 +10,7 @@ class GroupData(BaseAction):
     view_name  = "Group Data"
 
     def __init__(self,output_widget):
+        self.form_width = 300
         self.save_name = ""
         self.status = "OK"
         self.form = [
@@ -61,6 +62,15 @@ class GroupData(BaseAction):
                         "required":False,
                         "form_name":"group_width",
                         "visible_name":"Width for the groups"
+                    },
+                    {
+                        "input_type":"action_columns",
+                        "required":False,
+                        "form_name":"group_on_width_action_cols",
+                        "visible_name": "Column to group on",
+                        "get_cols_from": lambda x: x.parent_action.tmp_dataset,
+                        "add_dataset_listener": lambda x: x.parent_action.add_dataset_listener(x),
+                        "actions":["Sum","Average"]
                     }
                 ]
             }
@@ -72,7 +82,7 @@ class GroupData(BaseAction):
 
     def set_tmp_dataset(self, val):
         self.tmp_dataset = val
-        [form_item.try_populate_dropdown(quiet=True) for form_item in self.tmp_dataset_listeners]
+        [form_item.try_populate(quiet=True) for form_item in self.tmp_dataset_listeners]
 
     def add_dataset_listener(self, val):
         self.tmp_dataset_listeners.append(val)

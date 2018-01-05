@@ -85,7 +85,7 @@ class Regression(base_action.BaseAction):
 
     def set_tmp_dataset(self,val):
         self.tmp_dataset = val
-        [form_item.try_populate_dropdown(quiet=True) for form_item in self.tmp_dataset_listeners]
+        [form_item.try_populate(quiet=True) for form_item in self.tmp_dataset_listeners]
 
     def add_dataset_listener(self,val):
         self.tmp_dataset_listeners.append(val)

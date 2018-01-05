@@ -72,7 +72,7 @@ class FormDropDown(GridLayout):
         if dropdown_options != None:
             self.mk_dropdown(dropdown_options)
 
-    def try_populate_dropdown(self,quiet=False,*args):
+    def try_populate(self,quiet=False,*args):
         """
         Try and populate the dropdown with values from the specified data set.
         The specified data set will be referenced by name in the get_cols_from key
@@ -96,7 +96,7 @@ class FormDropDown(GridLayout):
                 if desc[0] in allowed_types:
                     headers.append(name)
 
-            self.main_btn.unbind(on_release=self.try_populate_dropdown)
+            self.main_btn.unbind(on_release=self.try_populate)
             logger.info("Populating dropdown with {}".format(headers))
             self.prev_dataset_name = dataset_name
             self.mk_dropdown(headers)
@@ -118,7 +118,7 @@ class FormDropDown(GridLayout):
         changes
         """
         if "get_cols_from" in self.input_dict.keys():
-            self.try_populate_dropdown()
+            self.try_populate()
         else:
             self.dropdown.open(self.main_btn)
 

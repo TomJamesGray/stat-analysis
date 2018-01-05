@@ -1,7 +1,7 @@
 import logging
 from kivy.uix.label import Label
 from kivy.app import App
-from stat_analysis.form_inputs import combo_box,check_box,numeric_bounded,numeric,file,string
+from stat_analysis.form_inputs import combo_box,check_box,numeric_bounded,numeric,file,string,action_columns
 from stat_analysis.d_types.setup import types
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.scrollview import ScrollView
@@ -17,7 +17,8 @@ form_input_maps = {
     "numeric_bounded":numeric_bounded.FormNumericBounded,
     "numeric":numeric.FormNumeric,
     "file":file.FormFile,
-    "string":string.FormString
+    "string":string.FormString,
+    "action_columns":action_columns.ActionColumns
 }
 
 column_d_type_maps = {
@@ -48,8 +49,12 @@ class BaseAction(object):
         is the label that will be shown to the user
         :return:
         """
+        try:
+            form_width = self.form_width
+        except AttributeError:
+            form_width = 220
         logger.debug("Rendering action {}".format(self.type))
-        form_layout = GridLayout(cols=1,padding=(5,5),spacing=(10,10),width=220,size_hint=(None,None))
+        form_layout = GridLayout(cols=1,padding=(5,5),spacing=(10,10),width=form_width,size_hint=(None,None))
         form_layout.bind(minimum_height=form_layout.setter("height"))
         self.form_items = []
         for group in self.form:
@@ -71,7 +76,7 @@ class BaseAction(object):
                 form_layout.add_widget(form_cls)
                 self.form_items.append(form_cls)
 
-        scroller = ScrollView(size_hint=(None,1),width=220)
+        scroller = ScrollView(size_hint=(None,1),width=form_width)
         scroller.add_widget(form_layout)
         self.output_widget.add_widget(scroller)
 
