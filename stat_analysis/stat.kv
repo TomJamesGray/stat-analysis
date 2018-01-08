@@ -116,7 +116,7 @@
     datasets_grid:datasets_grid
     actions_grid:actions_grid
     cols:1
-    minimum_height:self.height
+    height:self.minimum_height
     GridLayout:
         cols:1
         padding:15,15
@@ -133,7 +133,7 @@
             size_hint_y:None
             valign:"middle"
             text_size:self.size
-            # height:40
+            height:40
             font_size:18
 
         ActionsGrid:
@@ -145,14 +145,14 @@
             row_force_default:True
             id:datasets_grid
             on_parent:self.render(app.datasets)
-            minimum_height:self.height
+            height:self.minimum_height
         Label:
             color:0,0,0,1
             text:"Saved Actions"
             size_hint_y:None
             valign:"middle"
             text_size:self.size
-            # height:40
+            height:40
             font_size:18
 
         ActionsGrid:
