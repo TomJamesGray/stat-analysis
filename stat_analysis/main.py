@@ -111,10 +111,6 @@ class HomeView(GridLayout):
     datasets_grid = ObjectProperty(None)
     actions_grid = ObjectProperty(None)
 
-    def post_init(self,**kwargs):
-        self.datasets_grid.render(App.get_running_app().datasets)
-        self.actions_grid.render(App.get_running_app().saved_actions)
-
 
 class ActionsGrid(GridLayout):
     def __init__(self,**kwargs):
@@ -167,6 +163,7 @@ class PrimaryPane(GridLayout):
         for item in self.children:
             # Remove all widgets that aren't the title pane
             if type(item) != TitlePane:
+                # item.clear_widgets()
                 self.remove_widget(item)
         self.title = "Home"
         self.add_widget(HomeView())
