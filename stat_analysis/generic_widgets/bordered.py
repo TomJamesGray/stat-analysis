@@ -2,6 +2,7 @@ import logging
 from kivy.uix.button import Button
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.label import Label
+from kivy.uix.spinner import Spinner
 from kivy.properties import NumericProperty,ListProperty,StringProperty
 
 logger = logging.getLogger(__name__)
@@ -70,3 +71,5 @@ class BorderedTable(GridLayout):
             if len(self.headers) != len(self.data):
                 raise ValueError("Length of headers and data aren't equal")
 
+class BorderedSpinner(Spinner):
+    b_width = NumericProperty(1)

@@ -180,6 +180,19 @@
             pos:self.x,self.y
             size:self.width,self.height
 
+<BorderedSpinner>
+    canvas.before:
+        Color:
+            rgba:0,0,0,1
+        Rectangle:
+            pos:self.x-self.b_width,self.y-self.b_width
+            size:self.width+self.b_width*2,self.height+self.b_width*2
+        Color:
+            rgba:1,1,1,1
+        Rectangle:
+            pos:self.x,self.y
+            size:self.width,self.height
+
 <BorderedButton>
     canvas.before:
         Color:

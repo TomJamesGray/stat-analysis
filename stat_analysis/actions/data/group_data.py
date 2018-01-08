@@ -67,7 +67,7 @@ class GroupData(BaseAction):
                         "input_type":"action_columns",
                         "required":False,
                         "form_name":"group_on_width_action_cols",
-                        "visible_name": "Column to group on",
+                        "visible_name": "Column actions:",
                         "get_cols_from": lambda x: x.parent_action.tmp_dataset,
                         "add_dataset_listener": lambda x: x.parent_action.add_dataset_listener(x),
                         "actions":["Sum","Average"]
