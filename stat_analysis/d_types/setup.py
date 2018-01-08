@@ -15,3 +15,8 @@ types = {
         "format_required":True
     }
 }
+
+column_d_type_maps = {
+    "column_numeric":["int","float"],
+    "column":list(types.keys())
+}

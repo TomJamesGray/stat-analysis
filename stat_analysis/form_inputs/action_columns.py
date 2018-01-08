@@ -4,6 +4,7 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.uix.label import Label
 from kivy.uix.spinner import Spinner,SpinnerOption
 from stat_analysis.generic_widgets.bordered import BorderedSpinner
+from stat_analysis.d_types.setup import column_d_type_maps
 
 logger = logging.getLogger(__name__)
 
@@ -45,7 +46,27 @@ class ActionColumns(GridLayout):
             self.cols_container.add_widget(Label(text="Action", color=App.get_running_app().accent_col,font_size="14"))
 
             dataset = App.get_running_app().get_dataset_by_name(dataset_name)
-            for header in dataset.get_headers():
+
+            if "column_filters" in self.input_dict:
+                # Get the allowed headers, ie column types that are in the column_filters
+                # Header structure is (Name, (Column data type, converter function))
+
+                all_headers = dataset.get_header_structure()
+                allowed_headers = []
+                for i,header in enumerate(list(all_headers.items())):
+                    col_allowed = True
+                    # if all_headers[i][1][0] in
+                    for restraint in self.input_dict["column_filters"]:
+                        if header[1][0] not in column_d_type_maps[restraint]:
+                            col_allowed = False
+
+                    if col_allowed:
+                        allowed_headers.append(header[0])
+
+            else:
+                allowed_headers = dataset.get_headers()
+
+            for header in allowed_headers:
                 self.cols_container.add_widget(Label(text=header,color=(0,0,0,1),font_size="14"))
 
 

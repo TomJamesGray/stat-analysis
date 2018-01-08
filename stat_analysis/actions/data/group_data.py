@@ -15,7 +15,7 @@ class GroupData(BaseAction):
         self.status = "OK"
         self.form = [
             {
-                "group_name":"",
+                "group_name":"Dataset",
                 "inputs":[
                     {
                         "input_type": "combo_box",
@@ -70,7 +70,8 @@ class GroupData(BaseAction):
                         "visible_name": "Column actions:",
                         "get_cols_from": lambda x: x.parent_action.tmp_dataset,
                         "add_dataset_listener": lambda x: x.parent_action.add_dataset_listener(x),
-                        "actions":["Sum","Average"]
+                        "column_filters":["column_numeric"],
+                        "actions":["Sum","Average","Drop"]
                     }
                 ]
             }
