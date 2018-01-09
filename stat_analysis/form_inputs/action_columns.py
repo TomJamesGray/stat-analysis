@@ -5,6 +5,7 @@ from kivy.uix.label import Label
 from kivy.uix.spinner import Spinner,SpinnerOption
 from stat_analysis.generic_widgets.bordered import BorderedSpinner
 from stat_analysis.d_types.setup import column_d_type_maps
+from collections import OrderedDict
 
 logger = logging.getLogger(__name__)
 
@@ -26,7 +27,7 @@ class ActionColumns(GridLayout):
         self.cols_container.bind(minimum_height=self.cols_container.setter("height"))
         self.add_widget(self.cols_container)
         self.bind(minimum_height=self.setter("height"))
-        self.column_actions = {}
+        self.column_actions = OrderedDict()
         # self.height = 400
 
         logger.info("Adding form item to dataset listener group")
@@ -55,7 +56,6 @@ class ActionColumns(GridLayout):
                 allowed_headers = []
                 for i,header in enumerate(list(all_headers.items())):
                     col_allowed = True
-                    # if all_headers[i][1][0] in
                     for restraint in self.input_dict["column_filters"]:
                         if header[1][0] not in column_d_type_maps[restraint]:
                             col_allowed = False
@@ -69,7 +69,6 @@ class ActionColumns(GridLayout):
             for header in allowed_headers:
                 self.cols_container.add_widget(Label(text=header,color=(0,0,0,1),font_size="14"))
 
-
                 spin = BorderedSpinner(text=self.input_dict["actions"][0],values=self.input_dict["actions"],
                                        sync_height=True,option_cls=CustSpinnerOption,background_normal="",
                                        background_color=(1,1,1,1),color=(0,0,0,1))
@@ -78,6 +77,12 @@ class ActionColumns(GridLayout):
 
             self.prev_dataset_name = dataset_name
 
+    def get_val(self):
+        out = OrderedDict()
+        for key,val in self.column_actions.items():
+            out[key] = val.text
+
+        return out
 
 class CustSpinnerOption(SpinnerOption):
     def __init__(self,**kwargs):

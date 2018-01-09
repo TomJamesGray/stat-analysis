@@ -46,13 +46,13 @@ class GroupData(BaseAction):
                         "input_type":"combo_box",
                         "data_type":"column_numeric",
                         "required":False,
-                        "form_name":"width_column",
+                        "form_name":"group_width_column",
                         "visible_name":"Column to group on",
                         "get_cols_from": lambda x: x.parent_action.tmp_dataset,
                         "add_dataset_listener": lambda x: x.parent_action.add_dataset_listener(x),
                     },
                     {
-                        "input_type":"string",
+                        "input_type":"numeric",
                         "required":False,
                         "form_name":"group_width_start_value",
                         "visible_name":"Starting value for groups(leave blank for lowest value)"
@@ -60,18 +60,24 @@ class GroupData(BaseAction):
                     {
                         "input_type":"numeric",
                         "required":False,
-                        "form_name":"group_width",
+                        "form_name":"group_width_width",
                         "visible_name":"Width for the groups"
+                    },
+                    {
+                        "input_type": "check_box",
+                        "required": True,
+                        "form_name": "group_width_count_col",
+                        "visible_name": "Add a count column"
                     },
                     {
                         "input_type":"action_columns",
                         "required":False,
-                        "form_name":"group_on_width_action_cols",
+                        "form_name":"group_width_action_cols",
                         "visible_name": "Column actions:",
                         "get_cols_from": lambda x: x.parent_action.tmp_dataset,
                         "add_dataset_listener": lambda x: x.parent_action.add_dataset_listener(x),
                         "column_filters":["column_numeric"],
-                        "actions":["Sum","Average","Drop"]
+                        "actions":["Sum","Drop"]
                     }
                 ]
             }
@@ -94,3 +100,29 @@ class GroupData(BaseAction):
             logger.debug("Form validated, form outputs: {}".format(self.form_outputs))
             vals = self.form_outputs
             dataset = App.get_running_app().get_dataset_by_name(vals["dataset"])
+
+            if vals["use_group_on_width"]:
+                grouping_col_pos = list(dataset.get_header_structure().keys()).index(vals["group_width_column"])
+                raw_data = dataset.get_data()
+                if vals["group_width_start_value"] == None:
+                    #Group width start value is blank so use the minimum value for the start
+                    start_val = min(raw_data,key=lambda x:x[grouping_col_pos])[grouping_col_pos]
+                else:
+                    start_val = vals["group_width_start_value"]
+
+                max_val = max(raw_data,key=lambda x:x[grouping_col_pos])[grouping_col_pos]
+                width = vals["group_width_width"]
+                # TODO: What if columns are called start value or width?
+                column_headers = ["start_value","width"]
+                if vals["group_width_count_col"]:
+                    column_headers.append("count")
+
+                col_actions = vals["group_width_action_cols"]
+                for col,action in col_actions.items():
+                    if action != "Drop":
+                        column_headers.append(col)
+                # Generate the groups in format start value, width so data in that group, x, will be
+                # start < x <= start+width
+
+                logger.info("Start value is {}".format(start_val))
+
