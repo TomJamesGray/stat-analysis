@@ -192,17 +192,25 @@
             size:self.width,self.height
 
 <BorderedButton>
-    canvas.before:
+    canvas.after:
         Color:
             rgba:root.b_color
-        Rectangle:
-            pos:self.x-self.b_width,self.y-self.b_width
-            size:self.width+self.b_width*2,self.height+self.b_width*2
-        Color:
-            rgba:1,1,1,1
+        # Left vertical
         Rectangle:
             pos:self.x,self.y
-            size:self.width,self.height
+            size:self.b_width,self.height
+        # Right vertical
+        Rectangle:
+            pos:self.x+self.width-self.b_width,self.y
+            size:self.b_width,self.height
+        # Bottom horizontal
+        Rectangle:
+            pos:self.x,self.y
+            size:self.width,self.b_width
+        # Top horizontal
+        Rectangle:
+            pos:self.x,self.y+self.height-self.b_width
+            size:self.width,self.b_width
 
 
 <ButtonDropDown>
@@ -224,6 +232,7 @@
         Rectangle:
             pos:self.x+self.width-1,self.y-self.b_width
             size:self.b_width,self.height+self.b_width*2
+
 
 <TitlePane>:
     Label:

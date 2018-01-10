@@ -33,7 +33,7 @@ class FormDropDown(GridLayout):
 
         self.main_btn = BorderedButton(text=self.main_btn_text, size_hint=(1,None), height=30, background_normal="",
                                        color=(0,0,0,1),background_color=(1,1,1,1),halign="left",valign="middle",
-                                       padding=(5,5),b_color=(190/255,190/255,190/255,1))
+                                       padding=(5,5),b_color=(190/255,190/255,190/255,1),b_width=5)
         self.main_btn.bind(size=self.main_btn.setter("text_size"))
         self.add_widget(self.main_btn)
 

@@ -3,7 +3,7 @@ from kivy.uix.button import Button
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.label import Label
 from kivy.uix.spinner import Spinner
-from kivy.properties import NumericProperty,ListProperty,StringProperty
+from kivy.properties import NumericProperty,ListProperty,StringProperty,BooleanProperty
 
 logger = logging.getLogger(__name__)
 
@@ -11,6 +11,7 @@ logger = logging.getLogger(__name__)
 class BorderedButton(Button):
     b_width = NumericProperty(1)
     b_color = ListProperty([0, 0, 0, 1])
+    inside = BooleanProperty(False)
 
 
 class BorderedLabel(Label):
