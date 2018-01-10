@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Stat Analysis
+Comment=Statistical analysis tool
+path=/usr/local/bin/
+Exec=statanalysis
+Terminal=false
+MimeType=application/x-statanalysis-project
