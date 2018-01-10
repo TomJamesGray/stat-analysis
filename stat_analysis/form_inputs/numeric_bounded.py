@@ -2,6 +2,7 @@ from kivy.uix.label import Label
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.slider import Slider
 from kivy.uix.textinput import TextInput
+from stat_analysis.generic_widgets.form_inputs import FormInputLabel
 
 
 class FormNumericBounded(GridLayout):
@@ -10,11 +11,10 @@ class FormNumericBounded(GridLayout):
         self.cols = 1
         self.size_hint_y = None
         self.size_hint_x = None
-        self.height = 70
+        self.bind(minimum_height=self.setter("height"))
         self.width = 200
         self.input_dict = input_dict
-        input_label = Label(text=input_dict["visible_name"],halign="left",size_hint=(1,None),height=30,color=(0,0,0,1),
-                            valign="middle",font_size="14")
+        input_label = FormInputLabel(text=input_dict["visible_name"])
         input_label.bind(size=input_label.setter("text_size"))
         container = GridLayout(rows=1,height=30,width=200,size_hint=(None,None))
 
