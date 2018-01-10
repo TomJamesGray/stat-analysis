@@ -221,7 +221,7 @@ class LogView(GridLayout):
             self.scroll_view.height = self.prev_height
             self.size_hint_y = 0.2
 
-            self.close_btn.background_normal = "res/close.png"
+            self.close_btn.background_normal = "res/minimise.png"
             self.log_visible = True
 
 class LogText(TextInput):
