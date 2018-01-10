@@ -13,7 +13,7 @@ from kivy.uix.label import Label
 from kivy.uix.textinput import TextInput
 from kivy.uix.button import Button
 from kivy.core.window import Window
-from kivy.properties import StringProperty,ObjectProperty,ListProperty
+from kivy.properties import StringProperty,ObjectProperty,BooleanProperty,NumericProperty
 from kivy.modules import inspector
 from stat_analysis.actions import stats,data,graph
 from stat_analysis.generic_widgets.bordered import BorderedButton
@@ -189,6 +189,10 @@ class LogView(GridLayout):
     Widget displays the log output
     """
     output = ObjectProperty(None)
+    close_btn = ObjectProperty(None)
+    scroll_view = ObjectProperty(None)
+    log_visible = BooleanProperty(True)
+    prev_height = NumericProperty(20)
 
     def log_msg(self,msg):
         if self.output.text != "":
@@ -196,6 +200,29 @@ class LogView(GridLayout):
         else:
             self.output.text  += msg
 
+    def toggle_log_view(self):
+        if self.log_visible:
+            print("Hiding log view")
+            # Minimise the scroll view
+            self.prev_height = self.scroll_view.height
+            self.parent.size_hint_y = 0
+            self.parent.strip_size = 0
+            self.scroll_view.height = 0
+            self.height = self.close_btn.height
+            self.size_hint_y = None
+
+            self.close_btn.background_normal = "res/un_minimise.png"
+            self.log_visible = False
+        else:
+            self.scroll_view.height = self.prev_height
+            self.height = 100
+            self.parent.strip_size = "10pt"
+            self.parent.size_hint_y = 0.2
+            self.scroll_view.height = self.prev_height
+            self.size_hint_y = 0.2
+
+            self.close_btn.background_normal = "res/close.png"
+            self.log_visible = True
 
 class LogText(TextInput):
     """

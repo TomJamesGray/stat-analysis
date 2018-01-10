@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 class TransformData(BaseAction):
     type = "data.transform_data"
-    view_name  = "Transform Data"
+    view_name = "Transform Data"
 
     def __init__(self,output_widget):
         self.save_name = "XYZ"
@@ -112,6 +112,7 @@ class TransformData(BaseAction):
 
         self.save_name = None
         App.get_running_app().add_action(self)
+        return True
 
     def load(self,state):
         self.form_outputs = state["form_outputs"]

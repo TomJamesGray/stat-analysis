@@ -59,6 +59,7 @@
             padding:5,0,5,0
             spacing:5,5
             PrimaryPane:
+                size_hint_y:1
                 id:primary_pane
                 title:"Home"
                 canvas.before:
@@ -68,14 +69,17 @@
                         pos:self.pos
                         size:self.size
                 HomeView:
-                    size_hint_y:0.8
+                    size_hint_y:1
             Splitter:
                 sizable_from:"top"
-                size_hint_y:None
-                min_size:100
+                size_hint_y:0.2
+                min_size:70
                 max_size:250
+                keep_within_parent:True
+                rescale_with_parent:True
                 strip_cls:Factory.get("MainSplitterStrip")
                 LogView:
+                    size_hint_y:0.2
                     id:log_view
                     canvas.before:
                         Color:
@@ -83,7 +87,6 @@
                         Rectangle:
                             pos:self.pos
                             size:self.size
-                    size_hint_y:0.2
 
 
 
@@ -98,13 +101,37 @@
     font_name:"res/Hack-Regular.ttf"
 
 <LogView>:
-    cols:1
+    scroll_view:scroll_view
+    close_btn:close_btn
     output:output
-    TitlePane:
-        title:"Log"
+
+    cols:1
+    GridLayout:
+        rows:1
         height:30
-        size_hint_y:None
+        size_hint:1,None
+        TitlePane:
+            title:"Log"
+            size_hint_x:1
+            size_hint_y:1
+        Button:
+            id:close_btn
+            background_normal:"res/close.png"
+            on_press:root.toggle_log_view()
+            border:0,0,0,0
+            height:25
+            width:25
+            size_hint:(None,1)
+            canvas.before:
+                Color:
+                    rgba:app.title_pane_col
+                Rectangle:
+                    pos:self.pos
+                    size:self.size
+
+
     ScrollView:
+        id:scroll_view
         bar_width:5
         bar_inactive_color:190/255,190/255,190/255,1
         bar_color:190/255,190/255,190/255,1
@@ -118,6 +145,19 @@
         title:root.title
         height:30
         size_hint_y:None
+
+<TitlePane>:
+    text:root.title
+    text_size:self.size
+    valign:"middle"
+    color:(1,1,1,1)
+    padding:5,0
+    canvas.before:
+        Color:
+            rgba:app.title_pane_col
+        Rectangle:
+            pos:self.pos
+            size:self.size
 
 <HomeView>:
     datasets_grid:datasets_grid
@@ -239,22 +279,6 @@
             pos:(self.x,self.y) if self.bottom else (0,0)
             size:(self.width,self.b_width) if self.bottom else (0,0)
 
-
-<TitlePane>:
-    Label:
-        text:root.title
-        text_size:self.size
-        valign:"middle"
-        pos:root.pos
-        size:root.size
-        color:(1,1,1,1)
-        padding:5,0
-        canvas.before:
-            Color:
-                rgba:app.title_pane_col
-            Rectangle:
-                pos:self.pos
-                size:self.size
 
 <ResultOutputWidget>:
     label_header:label_header
