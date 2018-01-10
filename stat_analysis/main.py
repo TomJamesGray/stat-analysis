@@ -250,7 +250,6 @@ class StatApp(App):
                 dataset = d
                 break
         if dataset == None:
-            # This should never happen
             logger.error("Dataset name {} from get_cols_from not found".format(name))
             return False
 
@@ -287,8 +286,9 @@ class StatApp(App):
             if type_action == None:
                 logger.error("In loading save file action type {} not found, stopping load".format(item[1]["type"]))
                 continue
-            type_action.load(item[1])
-            actions_loaded += 1
+            success = type_action.load(item[1])
+            if success:
+                actions_loaded += 1
         logger.info("Loading completed, {} actions/datasets loaded".format(actions_loaded))
 
     def save_btn(self,*args):

@@ -80,7 +80,7 @@ class ImportCSV(base_action.BaseAction):
                 logger.debug("Form validated, form outputs: {}".format(self.form_outputs))
         # Get the values from the form validation
         vals = self.form_outputs
-        with open(vals["file"]) as f:
+        with open(vals["file"],"r") as f:
             reader = csv.reader(f)
             data = []
             for row in reader:
@@ -190,9 +190,15 @@ class ImportCSV(base_action.BaseAction):
 
     def load(self,state):
         self.form_outputs = state["form_outputs"]
-        self.run(validate=False,quiet=True)
-        # Add back the converter functions to header strucure
+        try:
+            self.run(validate=False,quiet=True)
+        except FileNotFoundError as e:
+            logger.error("Error in loading file {}, file not found\n{}".format(self.form_outputs["file"],e))
+            return False
+        # Add back the converter functions to header structure
         header_struct = OrderedDict()
         for key,value in state["header_structure"].items():
             header_struct[key] = (value,types[value]["convert"])
         self.set_header_structure(header_struct)
+
+        return True
