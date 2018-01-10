@@ -231,6 +231,8 @@ class StatApp(App):
                 "actions": [graph.bar_chart.BarChart]
             }
         ]
+        self.startup_messages = ""
+        self.started_up = False
         self.saved_actions = []
         self.datasets = []
 
@@ -240,6 +242,8 @@ class StatApp(App):
         Window.size = (1336,768)
         self.root_widget = StatAnalysis()
         inspector.create_inspector(Window,self.root_widget)
+        self.started_up = True
+        self.log_this(self.startup_messages)
         return self.root_widget
 
     def get_dataset_by_name(self,name):
@@ -289,6 +293,12 @@ class StatApp(App):
             success = type_action.load(item[1])
             if success:
                 actions_loaded += 1
+            elif not self.started_up:
+                # Error occured when loading the save file via a command line argument
+                # add the error to the startup messages so user will be informed in the log view
+                self.startup_messages += "Error in loading saved action of type {}. " \
+                                         "View log file for more info\n".format(item[1]["type"])
+
         logger.info("Loading completed, {} actions/datasets loaded".format(actions_loaded))
 
     def save_btn(self,*args):
