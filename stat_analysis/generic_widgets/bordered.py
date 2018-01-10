@@ -22,6 +22,7 @@ class BorderedLabel(Label):
 class BorderedTable(GridLayout):
     headers = ListProperty([])
     orientation = StringProperty("vertical")
+    markup = BooleanProperty(False)
     # Using this as an example:
     # Col1     Col2     Col3
     #   1        2        3
@@ -41,32 +42,35 @@ class BorderedTable(GridLayout):
             if self.orientation == "vertical":
                 self.cols = len(self.headers)
                 for header in self.headers:
-                    self.add_widget(BorderedLabel(text=str(header), color=(.5, 0, 0, 1), size_hint_x=None,size_hint_y=None,height=30))
+                    self.add_widget(BorderedLabel(text=str(header), color=(.5, 0, 0, 1), size_hint_x=None,
+                                                  size_hint_y=None,height=30,markup=self.markup))
 
                 for row in self.table_data:
                         for val in row:
-                            self.add_widget(BorderedLabel(text=str(val), color=(0, 0, 0, 1), size_hint_x=None,size_hint_y=None,
-                                                          height=30))
+                            self.add_widget(BorderedLabel(text=str(val), color=(0, 0, 0, 1), size_hint_x=None,
+                                                          size_hint_y=None,height=30,markup=self.markup))
         elif self.data != []:
             if self.orientation == "vertical":
                 self.cols = len(self.headers)
                 for header in self.headers:
-                    self.add_widget(BorderedLabel(text=str(header),color=(.5,0,0,1),size_hint_x=None))
+                    self.add_widget(BorderedLabel(text=str(header),color=(.5,0,0,1),size_hint_x=None,
+                                                  markup=self.markup))
 
                 for y in range(0,len(self.data[0])):
                     for x in range(0, len(self.data)):
                         self.add_widget(BorderedLabel(text=str(self.data[x][y]),color=(0,0,0,1),size_hint_x=None,
-                                                      height=30))
+                                                      height=30,markup=self.markup))
 
             elif self.orientation == "horizontal":
                 self.rows = len(self.headers)
                 for x in range(0, len(self.data)):
                     self.add_widget(
-                        BorderedLabel(text=str(self.headers[x]), color=(.5, 0, 0, 1), size_hint_x=None))
+                        BorderedLabel(text=str(self.headers[x]), color=(.5, 0, 0, 1), size_hint_x=None,
+                                      markup=self.markup))
 
                     for y in range(0, len(self.data[0])):
                         x = BorderedLabel(text=str(self.data[x][y]), color=(0, 0, 0, 1), size_hint_x=1,height=30,
-                                          halign="left",valign="middle")
+                                          halign="left",valign="middle",markup=self.markup)
                         x.bind(size=x.setter("text_size"))
                         self.add_widget(x)
 

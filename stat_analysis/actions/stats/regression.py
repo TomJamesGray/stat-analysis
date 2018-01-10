@@ -122,7 +122,7 @@ class Regression(base_action.BaseAction):
                     func += "+"
                 rnd_coeff = numpy.around(coeff,int(vals["regression_out_precision"]))
                 if deg > 1:
-                    func += "{}x^{}".format(rnd_coeff,deg)
+                    func += "{}x[sup]{}[/sup]".format(rnd_coeff,deg)
                 elif deg == 1:
                     func += "{}x".format(rnd_coeff)
                 else:
@@ -144,7 +144,7 @@ class Regression(base_action.BaseAction):
             self.result_output.clear_outputs()
             self.result_output.add_widget(BorderedTable(
                 headers=["Function"],data=[[func]],row_default_height=30,row_force_default=True,
-                orientation="horizontal",size_hint_y=None,size_hint_x=1,for_scroller=True
+                orientation="horizontal",size_hint_y=None,size_hint_x=1,for_scroller=True,markup=True
             ))
 
             self.result_output.add_widget(Image(source="tmp/plot.png",nocache=True,size_hint_x=1,size_hint_y=None,
