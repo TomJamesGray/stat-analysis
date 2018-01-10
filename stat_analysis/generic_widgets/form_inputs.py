@@ -21,7 +21,7 @@ class FormInputLabel(GridLayout):
             main_lbl = FormInputLabelText(text=text,size_hint=(1,None))
             self.add_widget(main_lbl)
 
-            tooltip = ToolTip(source="res/tooltip.png",width=15,height=15,size_hint=(None,None),tip_text=tip)
+            tooltip = ToolTip(source="res/tooltip.png",width=15,height=15,size_hint=(None,1),tip_text=tip)
             Window.bind(mouse_pos=tooltip.mouse_pos)
             self.add_widget(tooltip)
 

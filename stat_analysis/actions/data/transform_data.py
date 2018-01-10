@@ -45,13 +45,14 @@ class TransformData(BaseAction):
                         "input_type": "check_box",
                         "required":True,
                         "form_name":"overwrite_existing_set",
-                        "visible_name":"Add column to existing dataset"
+                        "visible_name":"Add column to existing dataset",
                     },
                     {
                         "input_type":"string",
                         "required":False,
                         "form_name":"new_name",
-                        "visible_name":"Save name for new dataset (required if existing dataset is not being modified)"
+                        "visible_name":"Save name for new dataset",
+                        "tip":"Required if existing dataset is not being modified"
                     }
                 ]
             },

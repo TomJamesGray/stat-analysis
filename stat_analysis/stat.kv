@@ -332,11 +332,27 @@
     height:self.texture_size[1]
     color:0,0,0,1
     font_size:"14"
-    padding:5,5
+    padding:10,10
     canvas.before:
+        # Make border first
         Color:
-            rgba: 77/255,77/255,77/255,0.4
+            rgba:190/255,190/255,190/255,1
         RoundedRectangle:
-            pos:self.x,self.y
-            size:self.width,self.height
-            radius:[1,]
+            pos:self.x+4,self.y-1
+            size:self.width-8,self.height-3
+            radius:[2,2,2,0]
+        Mesh:
+            vertices:(self.x+4,self.y-1,1,1,self.x-3,self.y-1,1,1,self.x+4,self.y+6,1,1)
+            indices:(0,1,2)
+            mode:"triangle_fan"
+
+        Color:
+            rgba: 210/255,210/255,210/255,1
+        RoundedRectangle:
+            pos:self.x+5,self.y
+            size:self.width-10,self.height-5
+            radius:[2,2,2,0]
+        Mesh:
+            vertices:(self.x+5,self.y,1,1,self.x,self.y,1,1,self.x+5,self.y+5,1,1)
+            indices:(0,1,2)
+            mode:"triangle_fan"

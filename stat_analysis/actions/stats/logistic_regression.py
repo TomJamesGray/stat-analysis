@@ -65,7 +65,8 @@ class LogisticRegression(BaseAction):
                         "required":False,
                         "allow_comma_separated":True,
                         "form_name":"predict_on",
-                        "visible_name":"Get probability for values (comma separated)"
+                        "visible_name":"Get probability for values",
+                        "tip":"For multiple values input them with commas separating them"
                     }
                 ]
             }
