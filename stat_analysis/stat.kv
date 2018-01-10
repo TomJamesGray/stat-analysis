@@ -127,13 +127,6 @@
     GridLayout:
         cols:1
         padding:15,15
-        Button:
-            text:"Import data set"
-            size_hint_y:None
-            size_hint_x:None
-            height:35
-            width:150
-            padding:5,5
         Label:
             color:0,0,0,1
             text:"Datasets"
@@ -224,6 +217,7 @@
 
 <ButtonDropDown>
     background_normal:""
+    background_down:""
     color:0,0,0,1
     background_color:1,1,1,1
     b_width:1
@@ -323,10 +317,26 @@
             text: "Load"
             on_release:root.on_load(filechooser.path,filechooser.selection)
 
-<FormInputLabel>
+<FormInputLabelText>
     size_hint_y:None
     text_size:self.width,None
     height:self.texture_size[1]
     color:0,0,0,1
     font_size:"14"
     pos_hint_y:0.5
+
+<ToolTipText>
+    size_hint_y:None
+    width:150
+    text_size:self.width,None
+    height:self.texture_size[1]
+    color:0,0,0,1
+    font_size:"14"
+    padding:5,5
+    canvas.before:
+        Color:
+            rgba: 77/255,77/255,77/255,0.4
+        RoundedRectangle:
+            pos:self.x,self.y
+            size:self.width,self.height
+            radius:[1,]

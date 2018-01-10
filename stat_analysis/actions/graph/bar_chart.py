@@ -43,7 +43,8 @@ class BarChart(BaseAction):
                         "get_cols_from": lambda x: x.parent_action.tmp_dataset,
                         "required": False,
                         "form_name": "y_var",
-                        "visible_name": "Y Variable (if left blank the count for the x variable is used)"
+                        "visible_name": "Y Variable",
+                        "tip":"If left blank the count for the x variable is used"
                     },
                     {
                         "input_type":"check_box",

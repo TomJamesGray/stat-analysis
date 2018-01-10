@@ -22,8 +22,16 @@ class FormDropDown(GridLayout):
         self.bind(minimum_height=self.setter("height"))
         self.width = 200
         self.input_dict = input_dict
-        input_label = FormInputLabel(text=input_dict["visible_name"])
-        input_label.bind(size=input_label.setter("text_size"))
+
+        # Add a tooltip if specified
+        if "tip" in input_dict.keys():
+            print("Adding tip")
+            input_label = FormInputLabel(text=input_dict["visible_name"],tip=input_dict["tip"])
+        else:
+            input_label = FormInputLabel(text=input_dict["visible_name"])
+
+
+        # input_label.bind(size=input_label.setter("text_size"))
         self.add_widget(input_label)
         self.prev_dataset_name = None
         if "default" in input_dict.keys():
