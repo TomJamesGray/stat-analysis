@@ -13,7 +13,14 @@ class FormCheckBox(GridLayout):
         self.input_dict = input_dict
         self.check = CheckBox(size_hint=(None,None),width=30,height=30,color=(0,0,0,1))
         self.add_widget(self.check)
-        input_label = FormInputLabel(text=input_dict["visible_name"],size_hint_y=1)
+
+        # Add a tooltip if specified
+        if "tip" in input_dict.keys():
+            print("Adding tip")
+            input_label = FormInputLabel(text=input_dict["visible_name"], tip=input_dict["tip"])
+        else:
+            input_label = FormInputLabel(text=input_dict["visible_name"])
+
         self.add_widget(input_label)
 
     def get_val(self):

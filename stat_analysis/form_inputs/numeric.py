@@ -17,8 +17,14 @@ class FormNumeric(GridLayout):
         self.height = 55
         self.width = 200
         self.input_dict = input_dict
-        input_label = FormInputLabel(text=input_dict["visible_name"])
-        input_label.bind(size=input_label.setter("text_size"))
+
+        # Add a tooltip if specified
+        if "tip" in input_dict.keys():
+            print("Adding tip")
+            input_label = FormInputLabel(text=input_dict["visible_name"], tip=input_dict["tip"])
+        else:
+            input_label = FormInputLabel(text=input_dict["visible_name"])
+
         self.num_input = TextInput(size_hint=(None,None),height=30,multiline=False)
         self.add_widget(input_label)
         self.add_widget(self.num_input)

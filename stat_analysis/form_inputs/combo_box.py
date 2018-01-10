@@ -31,7 +31,6 @@ class FormDropDown(GridLayout):
             input_label = FormInputLabel(text=input_dict["visible_name"])
 
 
-        # input_label.bind(size=input_label.setter("text_size"))
         self.add_widget(input_label)
         self.prev_dataset_name = None
         if "default" in input_dict.keys():
