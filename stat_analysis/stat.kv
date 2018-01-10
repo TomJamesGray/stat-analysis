@@ -21,15 +21,13 @@
                 on_press:primary_pane.go_home()
             ActionButton:
                 text:"Save"
-            ActionButton:
-                text:"Run action (TMP)"
-                on_press:primary_pane.active_action.run()
-            ActionButton:
-                text:"Save"
                 on_press:app.save_btn()
             ActionButton:
                 text:"Load"
                 on_press:app.load_btn()
+            ActionButton:
+                text:"Run action"
+                on_press:primary_pane.active_action.run()
 
 
     BoxLayout:
@@ -170,7 +168,7 @@
 #    text_size: self.size
     canvas.before:
         Color:
-            rgba:0,0,0,1
+            rgba:root.b_color
         Rectangle:
             pos:self.x-self.b_width,self.y-self.b_width
             size:self.width+self.b_width*2,self.height+self.b_width*2
@@ -196,7 +194,7 @@
 <BorderedButton>
     canvas.before:
         Color:
-            rgba:0,0,0,1
+            rgba:root.b_color
         Rectangle:
             pos:self.x-self.b_width,self.y-self.b_width
             size:self.width+self.b_width*2,self.height+self.b_width*2
@@ -209,25 +207,23 @@
 
 <ButtonDropDown>
     background_normal:""
-    background_color:.9,.9,.9,1
     color:0,0,0,1
+    background_color:1,1,1,1
     b_width:1
     size_hint:None,None
     height:25
     size_hint_x:1
     text_size:self.size
     padding:5,5
-    canvas.before:
+    canvas.after:
         Color:
-            rgba:0,0,0,1
+            rgba:self.b_color
         Rectangle:
-            pos:self.x-self.b_width,self.y-self.b_width
-            size:self.width+self.b_width*2,self.height+self.b_width*2
-        Color:
-            rgba:0,0,1,1
+            pos:self.x,self.y-self.b_width
+            size:self.b_width,self.height+self.b_width*2
         Rectangle:
-            pos:self.x,self.y
-            size:self.width,self.height
+            pos:self.x+self.width-1,self.y-self.b_width
+            size:self.b_width,self.height+self.b_width*2
 
 <TitlePane>:
     Label:

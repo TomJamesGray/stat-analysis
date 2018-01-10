@@ -1,13 +1,13 @@
 import logging
 from kivy.uix.dropdown import DropDown
 from kivy.app import App
-from kivy.uix.label import Label
 from kivy.uix.gridlayout import GridLayout
-from kivy.properties import NumericProperty
+from kivy.properties import NumericProperty,ListProperty,BooleanProperty
 from stat_analysis.generic_widgets.bordered import BorderedButton
+from kivy.uix.button import Button
+from kivy.core.window import Window
 from stat_analysis.actions import base_action
 from stat_analysis.generic_widgets.form_inputs import FormInputLabel
-from kivy.graphics import Rectangle,Color
 
 logger = logging.getLogger(__name__)
 
@@ -33,7 +33,7 @@ class FormDropDown(GridLayout):
 
         self.main_btn = BorderedButton(text=self.main_btn_text, size_hint=(1,None), height=30, background_normal="",
                                        color=(0,0,0,1),background_color=(1,1,1,1),halign="left",valign="middle",
-                                       padding=(5,5))
+                                       padding=(5,5),b_color=(190/255,190/255,190/255,1))
         self.main_btn.bind(size=self.main_btn.setter("text_size"))
         self.add_widget(self.main_btn)
 
@@ -56,8 +56,7 @@ class FormDropDown(GridLayout):
             elif isinstance(input_dict["get_cols_from"],base_action.BaseAction):
                 raise ValueError("get_cols_from {} is not an action".format(input_dict["get_cols_from"]))
 
-            # Bind the try_populate_dropdown method to the main_btn as there will currently be
-            # no possible values for the dropdown
+
             self.main_btn.bind(on_release=self.dropdown_open)
             logger.info("Not adding dropdown as first one so no data set will be selected")
             self.main_btn_text = "Select data set first"
@@ -127,7 +126,9 @@ class FormDropDown(GridLayout):
         self.dropdown = DropDown()
         for i in dropdown_options:
             btn = ButtonDropDown(text=i)
+            Window.bind(mouse_pos=btn.mouse_pos)
             btn.bind(on_release=lambda btn: self.dropdown.select(btn.text))
+
             self.dropdown.add_widget(btn)
             self.main_btn.bind(on_release=self.dropdown_open)
             # Support for on_change attribute in input_dict
@@ -144,5 +145,25 @@ class FormDropDown(GridLayout):
         return self.main_btn.text
 
 
-class ButtonDropDown(BorderedButton):
+class ButtonDropDown(Button):
     b_width = NumericProperty(1)
+    b_color = ListProperty([190/255, 190/255, 190/255, 1])
+    hovering = BooleanProperty(False)
+
+    def mouse_pos(self,*args):
+        if not self.get_root_window():
+            # Widget isn't displayed so exit
+            return
+        # Determine whether mouse is over the button
+        collision = self.collide_point(*self.to_widget(*args[1]))
+        if self.hovering and collision:
+            # Mouse moved within the button
+            return
+        elif collision and not self.hovering:
+            # Mouse enter button
+            self.background_color = (210/255,210/255,210/255,1)
+        elif self.hovering and not collision:
+            # Mouse exit button
+            self.background_color = (1,1,1,1)
+
+        self.hovering = collision
