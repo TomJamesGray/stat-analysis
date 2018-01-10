@@ -131,6 +131,7 @@ class ResultOutputWidget(GridLayout):
     label_header = ObjectProperty(None)
 
     def clear_outputs(self):
-        for item in self.children:
+        children = self.children[:]
+        for item in children:
             if item != self.label_header:
                 self.remove_widget(item)
