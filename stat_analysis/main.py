@@ -11,6 +11,7 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.uix.treeview import TreeView,TreeViewLabel
 from kivy.uix.label import Label
 from kivy.uix.textinput import TextInput
+from kivy.uix.button import Button
 from kivy.core.window import Window
 from kivy.properties import StringProperty,ObjectProperty,ListProperty
 from kivy.modules import inspector
@@ -71,6 +72,13 @@ logging_config = {
 }
 logging.config.dictConfig(logging_config)
 logger = logging.getLogger(__name__)
+
+
+class MainSplitterStrip(Button):
+    def __init__(self,**kwargs):
+        super().__init__(**kwargs)
+        self.background_normal = ""
+        self.text = "HI"
 
 
 class StatAnalysis(Widget):

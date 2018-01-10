@@ -1,3 +1,5 @@
+#:import Factory kivy.factory.Factory
+
 <StatAnalysis>:
     primary_pane:primary_pane
     log_view:log_view
@@ -42,6 +44,7 @@
             max_size:300
             min_size:180
             rescale_with_parent:True
+            strip_cls:Factory.get("MainSplitterStrip")
             ActionsScroller:
                 primary_pane_edit:primary_pane
                 canvas.before:
@@ -71,6 +74,7 @@
                 size_hint_y:None
                 min_size:100
                 max_size:250
+                strip_cls:Factory.get("MainSplitterStrip")
                 LogView:
                     id:log_view
                     canvas.before:
@@ -80,6 +84,8 @@
                             pos:self.pos
                             size:self.size
                     size_hint_y:0.2
+
+
 
 <LogText>:
     font_size:12
