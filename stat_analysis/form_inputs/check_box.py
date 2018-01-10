@@ -16,7 +16,6 @@ class FormCheckBox(GridLayout):
 
         # Add a tooltip if specified
         if "tip" in input_dict.keys():
-            print("Adding tip")
             input_label = FormInputLabel(text=input_dict["visible_name"], tip=input_dict["tip"],height=30)
         else:
             input_label = FormInputLabel(text=input_dict["visible_name"],height=30)
