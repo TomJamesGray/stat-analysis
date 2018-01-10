@@ -13,7 +13,7 @@ class FormCheckBox(GridLayout):
         self.input_dict = input_dict
         self.check = CheckBox(size_hint=(None,None),width=30,height=30,color=(0,0,0,1))
         self.add_widget(self.check)
-        input_label = FormInputLabel(text=input_dict["visible_name"])
+        input_label = FormInputLabel(text=input_dict["visible_name"],valign="middle",top=0,size_hint_y=1)
         self.add_widget(input_label)
 
     def get_val(self):

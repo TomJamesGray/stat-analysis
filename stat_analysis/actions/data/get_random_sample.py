@@ -15,7 +15,7 @@ class DataSample(BaseAction):
         self.status = "OK"
         self.form = [
             {
-                "group_name":"",
+                "group_name":"Dataset",
                 "inputs":[
                     {
                         "input_type":"combo_box",
