@@ -81,16 +81,15 @@
                             size:self.size
                     size_hint_y:0.2
 
-<ScrollableLabel>:
-    Label:
-        color:0,0,0,1
-        text:root.text
-        font_size:12
-        text_size:self.width,None
-        size_hint_y:None
-        height:self.texture_size[1]
-        # Hack Font - http://sourcefoundry.org/hack/
-        font_name:"res/Hack-Regular.ttf"
+<LogText>:
+    font_size:12
+    text_size:self.width,None
+    size_hint:1,None
+    background_normal:""
+    cursor_color:0,0,0,1
+    height: max((len(self._lines)+1) * self.line_height, self.parent.height)
+    # Hack Font - http://sourcefoundry.org/hack/
+    font_name:"res/Hack-Regular.ttf"
 
 <LogView>:
     cols:1
@@ -99,9 +98,13 @@
         title:"Log"
         height:30
         size_hint_y:None
-    ScrollableLabel:
-        id:output
-        markup:True
+    ScrollView:
+        bar_width:5
+        bar_inactive_color:190/255,190/255,190/255,1
+        bar_color:190/255,190/255,190/255,1
+        LogText:
+            id:output
+            markup:True
 
 <PrimaryPane>:
     cols:1

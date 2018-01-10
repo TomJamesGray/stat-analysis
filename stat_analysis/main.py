@@ -4,13 +4,13 @@ import os
 import logging.config
 import pickle
 import argparse
-import sys
 from kivy.uix.widget import Widget
 from kivy.uix.popup import Popup
 from kivy.uix.scrollview import ScrollView
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.treeview import TreeView,TreeViewLabel
 from kivy.uix.label import Label
+from kivy.uix.textinput import TextInput
 from kivy.core.window import Window
 from kivy.properties import StringProperty,ObjectProperty,ListProperty
 from kivy.modules import inspector
@@ -189,11 +189,15 @@ class LogView(GridLayout):
             self.output.text  += msg
 
 
-class ScrollableLabel(ScrollView):
+class LogText(TextInput):
     """
     Generic widget that displays text in a scrolling box
     """
-    text = StringProperty("")
+    def insert_text(self, substring, from_undo=False):
+        # This disables user input of text but still allows for internally adding
+        # to the text property
+        return
+
 
 
 class StatApp(App):
