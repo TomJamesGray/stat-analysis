@@ -33,7 +33,7 @@ class FormDropDown(GridLayout):
 
         self.main_btn = BorderedButton(text=self.main_btn_text, size_hint=(1,None), height=30, background_normal="",
                                        color=(0,0,0,1),background_color=(1,1,1,1),halign="left",valign="middle",
-                                       padding=(5,5),b_color=(190/255,190/255,190/255,1),b_width=5)
+                                       padding=(5,5),b_color=(190/255,190/255,190/255,1))
         self.main_btn.bind(size=self.main_btn.setter("text_size"))
         self.add_widget(self.main_btn)
 
@@ -124,8 +124,11 @@ class FormDropDown(GridLayout):
 
     def mk_dropdown(self,dropdown_options):
         self.dropdown = DropDown()
-        for i in dropdown_options:
-            btn = ButtonDropDown(text=i)
+        for i,txt in enumerate(dropdown_options):
+            if i == len(dropdown_options)-1:
+                btn = ButtonDropDown(text=txt,bottom=True)
+            else:
+                btn = ButtonDropDown(text=txt)
             Window.bind(mouse_pos=btn.mouse_pos)
             btn.bind(on_release=lambda btn: self.dropdown.select(btn.text))
 
@@ -149,6 +152,7 @@ class ButtonDropDown(Button):
     b_width = NumericProperty(1)
     b_color = ListProperty([190/255, 190/255, 190/255, 1])
     hovering = BooleanProperty(False)
+    bottom = BooleanProperty(False)
 
     def mouse_pos(self,*args):
         if not self.get_root_window():

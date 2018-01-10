@@ -232,6 +232,9 @@
         Rectangle:
             pos:self.x+self.width-1,self.y-self.b_width
             size:self.b_width,self.height+self.b_width*2
+        Rectangle:
+            pos:(self.x,self.y) if self.bottom else (0,0)
+            size:(self.width,self.b_width) if self.bottom else (0,0)
 
 
 <TitlePane>:
