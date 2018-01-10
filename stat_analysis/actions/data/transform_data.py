@@ -37,6 +37,7 @@ class TransformData(BaseAction):
                         "input_type": "combo_box",
                         "data_type": "column_numeric",
                         "get_cols_from": lambda x: x.parent_action.tmp_dataset,
+                        "add_dataset_listener": lambda x: x.parent_action.add_dataset_listener(x),
                         "required": True,
                         "form_name": "transform_col",
                         "visible_name": "Column to transform"
@@ -77,9 +78,14 @@ class TransformData(BaseAction):
         ]
         self.output_widget = output_widget
         self.tmp_dataset = None
+        self.tmp_dataset_listeners = []
 
-    def set_tmp_dataset(self,val):
+    def set_tmp_dataset(self, val):
         self.tmp_dataset = val
+        [form_item.try_populate(quiet=True) for form_item in self.tmp_dataset_listeners]
+
+    def add_dataset_listener(self, val):
+        self.tmp_dataset_listeners.append(val)
 
     def run(self,validate=True,quiet=False):
         logger.debug("Running action {}".format(self.type))

@@ -33,6 +33,7 @@ class BarChart(BaseAction):
                         "input_type": "combo_box",
                         "data_type": "column",
                         "get_cols_from": lambda x: x.parent_action.tmp_dataset,
+                        "add_dataset_listener": lambda x: x.parent_action.add_dataset_listener(x),
                         "required": True,
                         "form_name": "x_var",
                         "visible_name": "X Variable"
@@ -41,6 +42,7 @@ class BarChart(BaseAction):
                         "input_type": "combo_box",
                         "data_type": "column",
                         "get_cols_from": lambda x: x.parent_action.tmp_dataset,
+                        "add_dataset_listener": lambda x: x.parent_action.add_dataset_listener(x),
                         "required": False,
                         "form_name": "y_var",
                         "visible_name": "Y Variable",
@@ -57,9 +59,14 @@ class BarChart(BaseAction):
         ]
         self.output_widget = output_widget
         self.tmp_dataset = None
+        self.tmp_dataset_listeners = []
 
     def set_tmp_dataset(self, val):
         self.tmp_dataset = val
+        [form_item.try_populate(quiet=True) for form_item in self.tmp_dataset_listeners]
+
+    def add_dataset_listener(self, val):
+        self.tmp_dataset_listeners.append(val)
 
     def run(self):
         logger.debug("Running action {}".format(self.type))
