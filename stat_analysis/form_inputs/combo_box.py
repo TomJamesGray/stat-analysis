@@ -6,6 +6,7 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.properties import NumericProperty
 from stat_analysis.generic_widgets.bordered import BorderedButton
 from stat_analysis.actions import base_action
+from stat_analysis.generic_widgets.form_inputs import FormInputLabel
 from kivy.graphics import Rectangle,Color
 
 logger = logging.getLogger(__name__)
@@ -18,11 +19,12 @@ class FormDropDown(GridLayout):
         self.cols = 1
         self.size_hint_y = None
         self.size_hint_x = None
-        self.height = 60
+        self.bind(minimum_height=self.setter("height"))
         self.width = 200
         self.input_dict = input_dict
-        input_label = Label(text=input_dict["visible_name"],halign="left",size_hint=(1,None),height=20,color=(0,0,0,1),
-                            font_size="14")
+        # input_label = Label(text=input_dict["visible_name"],halign="left",size_hint=(1,None),height=40,color=(0,0,0,1),
+        #                     font_size="14",valign="middle")
+        input_label = FormInputLabel(text=input_dict["visible_name"])
         input_label.bind(size=input_label.setter("text_size"))
         self.add_widget(input_label)
         self.prev_dataset_name = None
