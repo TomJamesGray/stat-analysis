@@ -19,7 +19,7 @@ class FormFile(GridLayout):
         self.input_dict = input_dict
         input_label = FormInputLabel(text=input_dict["visible_name"])
 
-        self.file_chooser_btn = Button(text="Select File",height=30)
+        self.file_chooser_btn = Button(text="Select File",height=30,size_hint_y=None)
         self.file_chooser_btn.bind(on_press=self.open_f_selector)
 
         self.add_widget(input_label)
