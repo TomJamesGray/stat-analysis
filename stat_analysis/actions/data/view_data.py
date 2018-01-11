@@ -26,10 +26,11 @@ class ViewData(base_action.BaseAction):
             }
         ]
         self.output_widget = output_widget
-        self.run_after_render = True
+        self.run_after_render = False
 
         if "dataset" in kwargs:
             # Dataset has been specified as a kwarg
+            self.run_after_render = True
             self.form_outputs = {"dataset":kwargs["dataset"]}
 
     def render(self):
@@ -37,7 +38,7 @@ class ViewData(base_action.BaseAction):
         if self.run_after_render:
             self.run(validate=False)
 
-    def run(self,quiet=False,validate=False):
+    def run(self,quiet=False,validate=True):
         logger.debug("Running action {}".format(self.type))
         if validate:
             if not self.validate_form():

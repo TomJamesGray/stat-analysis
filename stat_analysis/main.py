@@ -137,19 +137,18 @@ class ActionsGrid(GridLayout):
         return x
 
     def render(self,tbl):
-        name_btns = []
         for action in tbl:
-            name_btns.append(self.add_btn(action.save_name))
-            name_btns[-1].saved_action = self.btn_fn.get(0,None)
-            if name_btns[-1].saved_action != None:
-                name_btns[-1].bind(on_press=lambda *args:name_btns[-1].saved_action(name_btns[-1]))
+            col1 = self.add_btn(action.save_name)
+            if 0 in self.btn_fn.keys():
+                col1.bind(on_press=lambda *args:self.btn_fn[0](*args))
 
-            self.add_btn(action.type)
+            col2 = self.add_btn(action.save_name)
+            if 1 in self.btn_fn.keys():
+                col1.bind(on_press=lambda *args:self.btn_fn[1](*args))
 
-    def view_dataset(self,lbl):
-        print(lbl)
-        print(lbl.text)
-        App.get_running_app().root_widget.primary_pane.refresh(data.view_data.ViewData,dataset=lbl.text)
+    def view_dataset(self,*args):
+        App.get_running_app().root_widget.primary_pane.refresh(data.view_data.ViewData,dataset=args[0].text)
+
 
 class ActionTreeViewLabel(TreeViewLabel):
     stored_action = ObjectProperty(None)
