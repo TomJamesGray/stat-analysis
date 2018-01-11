@@ -1,4 +1,5 @@
 import logging
+from kivy.app import App
 from kivy.uix.button import Button
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.label import Label
@@ -35,6 +36,7 @@ class BorderedTable(GridLayout):
 
     def __init__(self,for_scroller=False,**kwargs):
         super(BorderedTable,self).__init__(**kwargs)
+        self.header_col = App.get_running_app().accent_col
         if for_scroller:
             self.bind(minimum_height=self.setter("height"))
 
@@ -42,7 +44,7 @@ class BorderedTable(GridLayout):
             if self.orientation == "vertical":
                 self.cols = len(self.headers)
                 for header in self.headers:
-                    self.add_widget(BorderedLabel(text=str(header), color=(.5, 0, 0, 1), size_hint_x=None,
+                    self.add_widget(BorderedLabel(text=str(header), color=self.header_col, size_hint_x=None,
                                                   size_hint_y=None,height=30,markup=self.markup))
 
                 for row in self.table_data:
@@ -53,7 +55,7 @@ class BorderedTable(GridLayout):
             if self.orientation == "vertical":
                 self.cols = len(self.headers)
                 for header in self.headers:
-                    self.add_widget(BorderedLabel(text=str(header),color=(.5,0,0,1),size_hint_x=None,
+                    self.add_widget(BorderedLabel(text=str(header),color=self.header_col,size_hint_x=None,
                                                   markup=self.markup))
 
                 for y in range(0,len(self.data[0])):
@@ -65,7 +67,7 @@ class BorderedTable(GridLayout):
                 self.rows = len(self.headers)
                 for x in range(0, len(self.data)):
                     self.add_widget(
-                        BorderedLabel(text=str(self.headers[x]), color=(.5, 0, 0, 1), size_hint_x=None,
+                        BorderedLabel(text=str(self.headers[x]), color=self.header_col, size_hint_x=None,
                                       markup=self.markup))
 
                     for y in range(0, len(self.data[0])):
