@@ -31,6 +31,7 @@ class ViewData(base_action.BaseAction):
         if "dataset" in kwargs:
             # Dataset has been specified as a kwarg
             self.run_after_render = True
+            self.form[0]["inputs"][0]["default"] = kwargs["dataset"]
             self.form_outputs = {"dataset":kwargs["dataset"]}
 
     def render(self):
