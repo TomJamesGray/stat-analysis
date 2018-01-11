@@ -204,7 +204,6 @@
             row_force_default:True
             id:actions_grid
             on_parent:self.render(app.saved_actions)
-            btn_fn:{0:self.view_dataset }
 
 
 <BorderedLabel>
@@ -235,6 +234,8 @@
             size:self.width,self.height
 
 <BorderedButton>
+    background_normal:""
+    background_down:""
     canvas.after:
         Color:
             rgba:root.b_color
@@ -286,12 +287,6 @@
     size_hint_y:None
     cols:1
     padding:5,5
-    canvas.before:
-        Color:
-            rgba:.6,.6,.6,1
-        Rectangle:
-            pos:self.x,self.y+10
-            size:1,self.height-20
     Label:
         text:"Result"
         size_hint:1,None

@@ -5,7 +5,8 @@ from stat_analysis.form_inputs import combo_box,check_box,numeric_bounded,numeri
 from stat_analysis.d_types.setup import types,column_d_type_maps
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.scrollview import ScrollView
-from kivy.properties import ObjectProperty
+from kivy.properties import ObjectProperty,NumericProperty
+from kivy.graphics import Color,Rectangle
 from kivy.uix.splitter import Splitter
 from kivy.uix.button import Button
 
@@ -23,6 +24,8 @@ form_input_maps = {
 
 
 class BaseAction(object):
+    form_width = 220
+
     def render(self):
         """
         This is the basic method that renders an action by going through the form property.
@@ -44,12 +47,8 @@ class BaseAction(object):
         is the label that will be shown to the user
         :return:
         """
-        try:
-            form_width = self.form_width
-        except AttributeError:
-            form_width = 220
         logger.debug("Rendering action {}".format(self.type))
-        form_layout = GridLayout(cols=1,padding=(5,5),spacing=(10,10),width=form_width,size_hint=(None,None))
+        form_layout = GridLayout(cols=1,padding=(5,5),spacing=(10,10),width=self.form_width,size_hint=(None,None))
         form_layout.bind(minimum_height=form_layout.setter("height"))
         self.form_items = []
         for group in self.form:
@@ -71,9 +70,12 @@ class BaseAction(object):
                 form_layout.add_widget(form_cls)
                 self.form_items.append(form_cls)
 
-        scroller = ScrollView(size_hint=(None,1),width=form_width)
+        scroller = ScrollView(size_hint=(None,1),width=self.form_width)
         scroller.add_widget(form_layout)
         self.output_widget.add_widget(scroller)
+
+        # Create the border between the form area and the result area
+        self.output_widget.bind(size=self._draw_border)
 
         # Create the generic output area
         result_output_scroller = ScrollView(size_hint=(1,1))
@@ -85,6 +87,17 @@ class BaseAction(object):
         self.output_widget.add_widget(result_output_scroller)
         # Add property so that the result output can be added to when the action is run
         self.result_output = result_output
+
+    def _draw_border(self,*args):
+        try:
+            self.output_widget.canvas.before.remove(self._rect)
+        except Exception:
+            pass
+
+        with self.output_widget.canvas.before:
+            Color(.6,.6,.6,1)
+            self._rect = Rectangle(pos=(self.output_widget.x+self.form_width,self.output_widget.y+10),
+                      size=(1,self.output_widget.height-20))
 
     def validate_form(self):
         """
