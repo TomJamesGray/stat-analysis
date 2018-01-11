@@ -376,3 +376,69 @@
             vertices:(self.x+5,self.y,1,1,self.x,self.y,1,1,self.x+5,self.y+5,1,1)
             indices:(0,1,2)
             mode:"triangle_fan"
+
+<ExportableImage>
+    cols:1
+    size_hint_y:None
+    height:450
+    Image:
+        size_hint:1,None
+        id:img
+        source:root.source
+        nocache:root.nocache
+        height:400
+
+        canvas.after:
+            Color:
+                rgba:.6,.6,.6,1
+            Line:
+                points:[self.x+(root.width-self.norm_image_size[0])/2,self.y,self.x+(root.width-self.norm_image_size[0])/2,self.y+self.norm_image_size[1],self.x+(root.width-self.norm_image_size[0])/2+self.norm_image_size[0],self.y+self.norm_image_size[1],self.x+(root.width-self.norm_image_size[0])/2+self.norm_image_size[0],self.y]
+                width:1
+                joint:"miter"
+    GridLayout:
+        rows:1
+        size_hint:1,None
+        height:40
+        Widget:
+            height:20
+            width:(root.width-img.norm_image_size[0])/2
+            size_hint:None,None
+        GridLayout:
+            rows:1
+            size_hint_y:1
+            size_hint_x:None
+            width:img.norm_image_size[0]
+            canvas.after:
+                Color:
+                    rgba:.6,.6,.6,1
+                Line:
+                    points:[self.x,self.y+self.height, self.x,self.y, self.x+self.width,self.y, self.x+self.width,self.y+self.height,self.x,self.y+self.height]
+                    width:1
+                    joint:"miter"
+            ToolBoxButton:
+                text:"Export Image"
+                background_normal:""
+                background_down:""
+                color:0,0,0,1
+                size_hint:None,1
+                font_size:"14"
+                on_press:root.save_btn()
+                canvas.before:
+                    Color:
+                        rgba:.6,.6,.6,1
+                    Rectangle:
+                        pos:self.x+self.width,self.y
+                        size:1,self.height
+            ToolBoxButton:
+                text:"Graph Options"
+                background_normal:""
+                background_down:""
+                color:0,0,0,1
+                size_hint:None,1
+                font_size:"14"
+                canvas.before:
+                    Color:
+                        rgba:.6,.6,.6,1
+                    Rectangle:
+                        pos:self.x+self.width,self.y
+                        size:1,self.height

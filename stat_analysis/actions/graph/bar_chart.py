@@ -113,5 +113,4 @@ class BarChart(BaseAction):
             fig.savefig("tmp/plot.png")
 
             self.result_output.clear_outputs()
-            self.result_output.add_widget(ExportableImage(source="tmp/plot.png", nocache=True, size_hint_x=1,
-                                                          size_hint_y=None,height=500))
+            self.result_output.add_widget(ExportableImage(source="tmp/plot.png", nocache=True,size_hint_y=None))

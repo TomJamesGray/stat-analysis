@@ -1,29 +1,50 @@
-from kivy.uix.image import Image
+import shutil
+import os
 from kivy.uix.gridlayout import GridLayout
-from kivy.uix.widget import Widget
+from kivy.uix.popup import Popup
+from stat_analysis.generic_widgets.files import FileChooserSaveDialog
 from kivy.uix.button import Button
 from kivy.properties import StringProperty,BooleanProperty
+from kivy.core.window import Window
 
 
 class ExportableImage(GridLayout):
     source = StringProperty("")
     nocache = BooleanProperty(False)
 
+    def save_btn(self):
+        self.save_popup = Popup(size_hint=(None, None), size=(400, 400))
+        f_chooser = FileChooserSaveDialog(default_file_name="graph.png")
+        f_chooser.on_save = self.do_save
+        self.save_popup.content = f_chooser
+        self.save_popup.open()
+
+    def do_save(self,path,filename):
+        self.save_popup.dismiss()
+        shutil.copyfile(self.source,os.path.join(path,filename))
+
+class ToolBoxButton(Button):
+    hovering = BooleanProperty(False)
+
     def __init__(self,**kwargs):
-        self.cols = 1
         super().__init__(**kwargs)
-        self.image = Image(source=self.source,nocache=self.nocache,size_hint_y=1)
-        self.image.bind(size=self.update_toolbar)
-        self.add_widget(self.image)
+        Window.bind(mouse_pos=self.mouse_pos)
 
-        self.toolbar = GridLayout(rows=1,size_hint_x=1,size_hint=(None,None),width=self.image.texture_size[0],
-                                  height=30)
-        self.spacer = Widget(height=30,width=(self.width-self.image.texture_size[0])/2,size_hint=(None,None))
-        self.toolbar.add_widget(self.spacer)
-        self.toolbar.add_widget(Button(text="Export Image",height=30,size_hint=(None,None)))
+    def mouse_pos(self,*args):
+        if not self.get_root_window():
+            # Widget isn't displayed so exit
+            return
+        # Determine whether mouse is over the button
+        collision = self.collide_point(*self.to_widget(*args[1]))
+        if self.hovering and collision:
+            # Mouse moved within the button
+            return
+        elif collision and not self.hovering:
+            # Mouse enter button
+            # self.background_color = (210 / 255, 210 / 255, 210 / 255, 1)
+            self.background_color = (.6,.6,.6,1)
+        elif self.hovering and not collision:
+            # Mouse exit button
+            self.background_color = (1, 1, 1, 1)
 
-        self.add_widget(self.toolbar)
-
-    def update_toolbar(self,*args):
-        self.toolbar.width = self.image.texture_size[0]
-        self.spacer.width = (self.width-self.image.texture_size[0])/2
+        self.hovering = collision
