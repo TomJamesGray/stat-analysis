@@ -181,12 +181,12 @@
             size_hint_y:None
             size_hint_x:None
             width:400
-            cols:3
             row_default_height:30
             row_force_default:True
             id:datasets_grid
             on_parent:self.render(app.datasets)
             height:self.minimum_height
+            btn_fn:{0:self.view_dataset }
         Label:
             color:0,0,0,1
             text:"Saved Actions"
@@ -200,11 +200,11 @@
             size_hint_y:None
             size_hint_x:None
             width:400
-            cols:3
             row_default_height:30
             row_force_default:True
             id:actions_grid
             on_parent:self.render(app.saved_actions)
+            btn_fn:{0:self.view_dataset }
 
 
 <BorderedLabel>

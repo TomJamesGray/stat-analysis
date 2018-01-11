@@ -10,9 +10,7 @@ class ViewData(base_action.BaseAction):
     type = "data.view_data"
     view_name = "View data"
 
-    def __init__(self,output_widget):
-        self.save_name = "XYZ"
-        self.status = "OK"
+    def __init__(self,output_widget,**kwargs):
         self.form = [
             {
                 "group_name": "Data set",
@@ -21,25 +19,40 @@ class ViewData(base_action.BaseAction):
                         "input_type": "combo_box",
                         "required": True,
                         "data_type":"dataset",
-                        "form_name": "data_set",
+                        "form_name": "dataset",
                         "visible_name": "Data set"
                     }
                 ]
             }
         ]
         self.output_widget = output_widget
+        self.run_after_render = True
 
-    def run(self):
+        if "dataset" in kwargs:
+            # Dataset has been specified as a kwarg
+            self.form_outputs = {"dataset":kwargs["dataset"]}
+
+    def render(self):
+        super().render()
+        if self.run_after_render:
+            self.run(validate=False)
+
+    def run(self,quiet=False,validate=False):
         logger.debug("Running action {}".format(self.type))
-        if self.validate_form():
-            logger.debug("Form validated, form outputs: {}".format(self.form_outputs))
-            vals = self.form_outputs
-            cur_set = App.get_running_app().get_dataset_by_name(vals["data_set"])
-            if cur_set == None:
-                # This should never happen
-                logger.error("Data set selected in combo box doesn't exist in app's data_sets")
-                raise ValueError("Data set selected in combo box doesn't exist in app's data_sets")
-            logger.debug("Using {} as cur_set".format(cur_set))
+        if validate:
+            if not self.validate_form():
+                logger.warning("Form not validated, form errors: {}".format(self.form_errors))
+                return False
+            else:
+                logger.debug("Form validated, form outputs: {}".format(self.form_outputs))
+        vals = self.form_outputs
+        cur_set = App.get_running_app().get_dataset_by_name(vals["dataset"])
+        if cur_set == None:
+            # This should never happen
+            logger.error("Data set selected in combo box doesn't exist in app's data_sets")
+            raise ValueError("Data set selected in combo box doesn't exist in app's data_sets")
+        logger.debug("Using {} as cur_set".format(cur_set))
+        if not quiet:
             self.result_output.clear_outputs()
             self.result_output.add_widget(BorderedTable(headers=cur_set.get_headers(),table_data=cur_set.get_data(),
                                                         row_default_height=30,row_force_default=True,for_scroller=True,

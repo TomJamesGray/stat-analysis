@@ -20,8 +20,6 @@ class ImportCSV(base_action.BaseAction):
     view_name = "CSV Import"
 
     def __init__(self,output_widget):
-        self.save_name = "XYZ"
-        self.status = "OK"
         self.form = [
             {
                 "group_name":"File",
