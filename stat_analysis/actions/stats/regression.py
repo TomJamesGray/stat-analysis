@@ -1,11 +1,10 @@
 import logging
 import numpy
-import matplotlib
 import matplotlib.pyplot as plt
 from stat_analysis.actions import base_action
 from kivy.app import App
-from kivy.uix.image import Image
 from stat_analysis.generic_widgets.bordered import BorderedTable
+from stat_analysis.generic_widgets.form_outputs import ExportableImage
 
 logger = logging.getLogger(__name__)
 
@@ -147,5 +146,4 @@ class Regression(base_action.BaseAction):
                 orientation="horizontal",size_hint_y=None,size_hint_x=1,for_scroller=True,markup=True
             ))
 
-            self.result_output.add_widget(Image(source="tmp/plot.png",nocache=True,size_hint_x=1,size_hint_y=None,
-                                                height=500))
+            self.result_output.add_widget(ExportableImage(source="tmp/plot.png", nocache=True, size_hint_y=None))

@@ -2,11 +2,11 @@ import logging
 import numpy as np
 import matplotlib.pyplot as plt
 from kivy.app import App
-from kivy.uix.image import Image
 from sklearn.linear_model import LogisticRegression as LR
 from sklearn import metrics
 from stat_analysis.actions.base_action import BaseAction
 from stat_analysis.generic_widgets.bordered import BorderedTable
+from stat_analysis.generic_widgets.form_outputs import ExportableImage
 
 logger = logging.getLogger(__name__)
 
@@ -150,5 +150,4 @@ class LogisticRegression(BaseAction):
                 axis.legend()
                 fig.savefig("tmp/plot.png")
 
-                self.result_output.add_widget(Image(source="tmp/plot.png",nocache=True,size_hint_x=1,size_hint_y=None,
-                                                    height=500))
+                self.result_output.add_widget(ExportableImage(source="tmp/plot.png", nocache=True, size_hint_y=None))
