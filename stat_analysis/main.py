@@ -318,13 +318,13 @@ class StatApp(App):
                 logger.error("In loading save file action type {} not found, stopping load".format(item[1]["type"]))
                 continue
             success = type_action.load(item[1])
-            if success:
+            if success == True:
                 actions_loaded += 1
-            elif not self.started_up:
+            else:
                 # Error occured when loading the save file via a command line argument
                 # add the error to the startup messages so user will be informed in the log view
-                self.startup_messages += "Error in loading saved action of type {}. " \
-                                         "View log file for more info\n".format(item[1]["type"])
+                self.startup_messages += "Error in loading saved action. Error:\n{}\n" \
+                                         "View log file for more info\n\n".format(success,item[1]["type"])
 
         logger.info("Loading completed, {} actions/datasets loaded".format(actions_loaded))
 

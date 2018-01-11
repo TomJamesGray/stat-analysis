@@ -100,9 +100,12 @@ class TransformData(BaseAction):
         logger.debug("Form validated, form outputs: {}".format(self.form_outputs))
         vals = self.form_outputs
         dataset = App.get_running_app().get_dataset_by_name(vals["dataset"])
+
         if dataset == False:
             # Dataset couldn't be found, this is likely happening when loading
-            return False
+            print("dataset not found")
+            raise ValueError("Dataset {} couldn't be found".format(vals["dataset"]))
+        print(dataset)
         # Get the position in each row for the column
         col_pos = list(dataset.get_header_structure().keys()).index(vals["transform_col"])
         transform_func = self.simple_transforms[vals["transform_name"]]
@@ -116,7 +119,13 @@ class TransformData(BaseAction):
 
     def load(self,state):
         self.form_outputs = state["form_outputs"]
-        if not self.run(validate=False,quiet=True):
-            return False
+        try:
+            success = self.run(validate=False,quiet=True)
+        except ValueError as e:
+            print("Caught error")
+            err = "Error in loading transform data\n{}".format(e)
+            logger.error(err)
+            return err
 
         return True
+

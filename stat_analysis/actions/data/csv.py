@@ -193,8 +193,9 @@ class ImportCSV(base_action.BaseAction):
         try:
             self.run(validate=False,quiet=True)
         except FileNotFoundError as e:
-            logger.error("Error in loading file {}, file not found\n{}".format(self.form_outputs["file"],e))
-            return False
+            err = "Error in loading file {}, file not found\n{}".format(self.form_outputs["file"],e)
+            logger.error(err)
+            return err
         # Add back the converter functions to header structure
         header_struct = OrderedDict()
         for key,value in state["header_structure"].items():
