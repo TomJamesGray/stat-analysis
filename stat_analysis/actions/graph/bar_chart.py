@@ -3,7 +3,7 @@ import numpy as np
 from stat_analysis.actions.base_action import BaseAction
 from stat_analysis.generic_widgets.bordered import BorderedTable
 from kivy.app import App
-from stat_analysis.generic_widgets.form_outputs import ExportableImage
+from stat_analysis.generic_widgets.form_outputs import ExportableGraph
 from collections import OrderedDict
 import matplotlib.pyplot as plt
 
@@ -113,4 +113,5 @@ class BarChart(BaseAction):
             fig.savefig("tmp/plot.png")
 
             self.result_output.clear_outputs()
-            self.result_output.add_widget(ExportableImage(source="tmp/plot.png", nocache=True,size_hint_y=None))
+            self.result_output.add_widget(ExportableGraph(source="tmp/plot.png", fig=fig, axis=[axis], nocache=True,
+                                                          size_hint_y=None))

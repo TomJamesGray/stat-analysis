@@ -6,7 +6,7 @@ from sklearn.linear_model import LogisticRegression as LR
 from sklearn import metrics
 from stat_analysis.actions.base_action import BaseAction
 from stat_analysis.generic_widgets.bordered import BorderedTable
-from stat_analysis.generic_widgets.form_outputs import ExportableImage
+from stat_analysis.generic_widgets.form_outputs import ExportableGraph
 
 logger = logging.getLogger(__name__)
 
@@ -150,4 +150,5 @@ class LogisticRegression(BaseAction):
                 axis.legend()
                 fig.savefig("tmp/plot.png")
 
-                self.result_output.add_widget(ExportableImage(source="tmp/plot.png", nocache=True, size_hint_y=None))
+                self.result_output.add_widget(ExportableGraph(source="tmp/plot.png", fig=fig, axis=[axis], nocache=True,
+                                                              size_hint_y=None))

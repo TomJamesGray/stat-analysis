@@ -287,6 +287,7 @@
     size_hint_y:None
     cols:1
     padding:5,5
+    spacing:5,5
     Label:
         text:"Result"
         size_hint:1,None
@@ -377,7 +378,8 @@
             indices:(0,1,2)
             mode:"triangle_fan"
 
-<ExportableImage>
+<ExportableGraph>
+    image:img
     cols:1
     size_hint_y:None
     height:450
@@ -436,6 +438,7 @@
                 color:0,0,0,1
                 size_hint:None,1
                 font_size:"14"
+                on_press:root.graph_opts()
                 canvas.before:
                     Color:
                         rgba:.6,.6,.6,1
