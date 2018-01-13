@@ -14,6 +14,7 @@ from kivy.core.window import Window
 
 logger = logging.getLogger(__name__)
 
+
 class ExportableGraph(GridLayout):
     source = StringProperty("")
     nocache = BooleanProperty(False)

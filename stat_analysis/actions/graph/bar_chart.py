@@ -100,14 +100,16 @@ class BarChart(BaseAction):
 
             fig = plt.figure()
             axis = plt.subplot(111)
-            axis.bar(x_data,y_data.values())
-            plt.xticks(x_data,y_data.keys())
+
+            axis.bar(y_data.keys(),y_data.values())
+
             # Set axis labels
-            plt.xlabel(vals["x_var"])
+            axis.set_xlabel(vals["x_var"])
+
             if vals["y_var"] == None:
-                plt.ylabel("Count")
+                axis.set_ylabel("Count")
             else:
-                plt.ylabel(vals["y_var"])
+                axis.set_ylabel(vals["y_var"])
 
             axis.legend()
             fig.savefig("tmp/plot.png")

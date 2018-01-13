@@ -144,8 +144,8 @@ class LogisticRegression(BaseAction):
                 axis.plot(x_line,y_line)
 
                 # Set axis labels
-                plt.xlabel(vals["x_var"])
-                plt.ylabel(vals["bin_var"])
+                axis.set_xlabel(vals["x_var"])
+                axis.set_ylabel(vals["bin_var"])
 
                 axis.legend()
                 fig.savefig("tmp/plot.png")
