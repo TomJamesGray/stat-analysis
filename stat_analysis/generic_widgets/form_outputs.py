@@ -1,6 +1,7 @@
 import shutil
 import os
 import logging
+import numpy as np
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.tabbedpanel import TabbedPanel,TabbedPanelItem
 from kivy.uix.popup import Popup
@@ -93,6 +94,16 @@ class GraphOptions(TabbedPanel):
                 "prop": lambda x: x.get_ylabel(),
                 "text": "Y Label",
                 "set": lambda x, val: x.set_ylabel(val)
+            },
+            {
+                "prop": lambda x: x.get_xticks()[1] - x.get_xticks()[0],
+                "text": "X Step",
+                "set": lambda x,val: x.set_xticks(np.arange(x.get_xticks()[0],x.get_xlim()[1],float(val)))
+            },
+            {
+                "prop": lambda x: x.get_yticks()[1] - x.get_yticks()[0],
+                "text": "Y Step",
+                "set": lambda x, val: x.set_yticks(np.arange(x.get_yticks()[0], x.get_ylim()[1], float(val)))
             }
         ]
 
@@ -102,13 +113,13 @@ class GraphOptions(TabbedPanel):
         for axe in self.axis:
             self.opts_out.append(self.opts_binds)
             panel = TabbedPanelItem(text="Item")
-            cont = GridLayout(cols=1,size_hint=(1,None))
+            cont = GridLayout(cols=1,size_hint=(1,1))
 
-            grd = GridLayout(cols=2,size_hint=(1,None),row_default_height=30,row_force_default=True)
+            grd = GridLayout(cols=2,size_hint=(1,1),row_default_height=30,row_force_default=True)
 
             for opt in self.opts_out[-1]:
                 grd.add_widget(Label(text=opt["text"]))
-                opt["form"] = TextInput(text=opt["prop"](axe))
+                opt["form"] = TextInput(text=str(opt["prop"](axe)))
                 grd.add_widget(opt["form"])
 
             cont.add_widget(grd)
