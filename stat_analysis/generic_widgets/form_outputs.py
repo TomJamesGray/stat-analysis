@@ -27,6 +27,7 @@ class ExportableGraph(GridLayout):
         self.save_popup = Popup(size_hint=(None, None), size=(400, 400))
         f_chooser = FileChooserSaveDialog(default_file_name="graph.png")
         f_chooser.on_save = self.do_save
+        f_chooser.on_cancel = lambda :self.save_popup.dismiss()
         self.save_popup.content = f_chooser
         self.save_popup.open()
 
@@ -110,9 +111,14 @@ class GraphOptions(TabbedPanel):
         self.do_default_tab = False
         self.opts_out = []
 
-        for axe in self.axis:
+        for i,axe in enumerate(self.axis):
             self.opts_out.append(self.opts_binds)
-            panel = TabbedPanelItem(text="Item")
+
+            if i == 0:
+                # Set first axe as default tab
+                self.default_tab = self.opts_out[-1]
+
+            panel = TabbedPanelItem(text="Figure {}".format(i+1))
             cont = GridLayout(cols=1,size_hint=(1,1))
 
             grd = GridLayout(cols=2,size_hint=(1,1),row_default_height=30,row_force_default=True)

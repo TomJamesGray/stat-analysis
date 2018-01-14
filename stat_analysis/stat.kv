@@ -317,6 +317,7 @@
         height: 30
         Button:
             text: "Cancel"
+            on_release:root.on_cancel()
         Button:
             text: "Save"
             on_release: root.on_save(filechooser.path,text_input.text)
@@ -333,6 +334,7 @@
         height: 30
         Button:
             text: "Cancel"
+            on_release:root.on_cancel()
         Button:
             text: "Load"
             on_release:root.on_load(filechooser.path,filechooser.selection)

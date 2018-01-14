@@ -240,7 +240,6 @@ class LogText(TextInput):
         return
 
 
-
 class StatApp(App):
     accent_col = (219/255,46/255,52/255,1)
     title_pane_col = (34/255,34/255,34/255,1)
@@ -296,6 +295,7 @@ class StatApp(App):
         self.load_popup = Popup(size_hint=(None,None),size=(400,400))
         f_chooser = FileChooserLoadDialog()
         f_chooser.on_load = self.do_load
+        f_chooser.on_cancel = lambda :self.load_popup.dismiss()
         self.load_popup.content = f_chooser
         self.load_popup.open()
 
@@ -338,6 +338,7 @@ class StatApp(App):
         self.save_popup = Popup(size_hint=(None,None),size=(400,400))
         f_chooser = FileChooserSaveDialog(default_file_name="Project.stat")
         f_chooser.on_save = self.do_save
+        f_chooser.on_cancel = lambda: self.save_popup.dismiss()
         self.save_popup.content = f_chooser
         self.save_popup.open()
 
