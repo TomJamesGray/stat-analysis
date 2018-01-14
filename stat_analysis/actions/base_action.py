@@ -88,6 +88,7 @@ class BaseAction(object):
         # Add property so that the result output can be added to when the action is run
         self.result_output = result_output
 
+
     def _draw_border(self,*args):
         try:
             self.output_widget.canvas.before.remove(self._rect)

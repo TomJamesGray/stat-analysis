@@ -113,12 +113,12 @@ class GraphOptions(TabbedPanel):
 
         for i,axe in enumerate(self.axis):
             self.opts_out.append(self.opts_binds)
+            panel = TabbedPanelItem(text="Figure {}".format(i+1))
 
             if i == 0:
                 # Set first axe as default tab
-                self.default_tab = self.opts_out[-1]
+                self.default_tab = panel
 
-            panel = TabbedPanelItem(text="Figure {}".format(i+1))
             cont = GridLayout(cols=1,size_hint=(1,1))
 
             grd = GridLayout(cols=2,size_hint=(1,1),row_default_height=30,row_force_default=True)

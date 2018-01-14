@@ -97,13 +97,11 @@ class TransformData(BaseAction):
             else:
                 logger.debug("Form validated, form outputs: {}".format(self.form_outputs))
 
-        logger.debug("Form validated, form outputs: {}".format(self.form_outputs))
         vals = self.form_outputs
         dataset = App.get_running_app().get_dataset_by_name(vals["dataset"])
 
         if dataset == False:
             # Dataset couldn't be found, this is likely happening when loading
-            print("dataset not found")
             raise ValueError("Dataset {} couldn't be found".format(vals["dataset"]))
         print(dataset)
         # Get the position in each row for the column
@@ -121,9 +119,8 @@ class TransformData(BaseAction):
         self.form_outputs = state["form_outputs"]
         try:
             success = self.run(validate=False,quiet=True)
-        except ValueError as e:
-            print("Caught error")
-            err = "Error in loading transform data\n{}".format(e)
+        except Exception as e:
+            err = "Error in loading transform data\n{}".format(repr(e))
             logger.error(err)
             return err
 

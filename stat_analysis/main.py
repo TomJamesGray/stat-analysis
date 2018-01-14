@@ -142,12 +142,18 @@ class ActionsGrid(GridLayout):
             if 0 in self.btn_fn.keys():
                 col1.bind(on_press=lambda *args:self.btn_fn[0](*args))
 
-            col2 = self.add_btn(action.save_name)
+            col2 = self.add_btn(action.type)
             if 1 in self.btn_fn.keys():
                 col1.bind(on_press=lambda *args:self.btn_fn[1](*args))
 
     def view_dataset(self,*args):
         App.get_running_app().root_widget.primary_pane.refresh(data.view_data.ViewData,dataset=args[0].text)
+
+    def load_action(self,*args):
+        print(args[0].text)
+        action = App.get_running_app().get_action_by_name(args[0].text)
+        print(action)
+        App.get_running_app().root_widget.primary_pane.reload_action(action)
 
 
 class ActionTreeViewLabel(TreeViewLabel):
@@ -169,8 +175,20 @@ class PrimaryPane(GridLayout):
         self.active_action = action(output_widget,**kwargs)
         self.active_action.render()
 
-    def load_action(self,lbl):
-        logger.info("Loading action {}".format(lbl.saved_action))
+    def reload_action(self,action,**kwargs):
+        logger.info("Loading pre-loaded action")
+        for item in self.children:
+            # Remove all widgets that aren't the title pane
+            if type(item) != TitlePane:
+                self.remove_widget(item)
+        self.title = action.type
+        output_widget = GridLayout(size_hint=(1, 1), cols=2)
+        self.add_widget(output_widget)
+        self.active_action = action
+        action.output_widget = output_widget
+
+        self.active_action.render()
+        self.active_action.run(quiet=False,validate=False,preloaded=True)
 
     def go_home(self,*args):
         logger.info("Changing active pane to home screen")
@@ -290,6 +308,20 @@ class StatApp(App):
             return False
 
         return dataset
+
+    def get_action_by_name(self,name):
+        # Find the data set
+        action = None
+        for a in self.saved_actions:
+            if a.save_name == name:
+                action = a
+                break
+        if action == None:
+            logger.error("Action {} couldn't be found".format(name))
+            return False
+
+        return action
+
 
     def load_btn(self,*args):
         self.load_popup = Popup(size_hint=(None,None),size=(400,400))

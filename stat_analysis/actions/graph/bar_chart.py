@@ -55,6 +55,23 @@ class BarChart(BaseAction):
                         "visible_name":"Sort the data on the X variable"
                     }
                 ]
+            },
+            {
+                "group_name":"Save",
+                "inputs":[
+                    {
+                        "input_type":"check_box",
+                        "required":True,
+                        "form_name":"save_action",
+                        "visible_name":"Save action"
+                    },
+                    {
+                        "input_type":"string",
+                        "required":True,
+                        "visible_name":"Action save name",
+                        "form_name":"action_save_name"
+                    }
+                ]
             }
         ]
         self.output_widget = output_widget
@@ -68,52 +85,79 @@ class BarChart(BaseAction):
     def add_dataset_listener(self, val):
         self.tmp_dataset_listeners.append(val)
 
-    def run(self):
+    def run(self,validate=True,quiet=False,preloaded=False):
         logger.debug("Running action {}".format(self.type))
-        if self.validate_form():
-            logger.debug("Form validated, form outputs: {}".format(self.form_outputs))
-            vals = self.form_outputs
-            dataset = App.get_running_app().get_dataset_by_name(vals["dataset"])
-            # Get's the position in each row for the desired columns
-            x_pos = list(dataset.get_header_structure().keys()).index(vals["x_var"])
-            raw_data = OrderedDict()
 
-            if vals["y_var"] == None:
-                for row in dataset.get_data():
-                    if row[x_pos] in raw_data.keys():
-                        raw_data[row[x_pos]] += 1
-                    else:
-                        raw_data[row[x_pos]] = 1
+        if validate:
+            if not self.validate_form():
+                logger.warning("Form not validated, form errors: {}".format(self.form_errors))
+                return False
             else:
-                y_pos = list(dataset.get_header_structure().keys()).index(vals["y_var"])
-                for row in dataset.get_data():
-                    if row[x_pos] in raw_data.keys():
-                        raw_data[row[x_pos]] += row[y_pos]
-                    else:
-                        raw_data[row[x_pos]] = row[y_pos]
+                logger.debug("Form validated, form outputs: {}".format(self.form_outputs))
 
-            x_data = range(len(raw_data))
-            if vals["sort_x"]:
-                y_data = OrderedDict(sorted(raw_data.items(),key=lambda x:x[1]))
-            else:
-                y_data = raw_data
+        vals = self.form_outputs
+        dataset = App.get_running_app().get_dataset_by_name(vals["dataset"])
 
-            fig = plt.figure()
-            axis = plt.subplot(111)
+        if dataset == False:
+            # Dataset couldn't be found
+            raise ValueError("Dataset {} couldn't be found".format(vals["dataset"]))
 
-            axis.bar(y_data.keys(),y_data.values())
+        # Get's the position in each row for the desired columns
+        x_pos = list(dataset.get_header_structure().keys()).index(vals["x_var"])
+        raw_data = OrderedDict()
 
-            # Set axis labels
-            axis.set_xlabel(vals["x_var"])
+        if vals["y_var"] == None:
+            for row in dataset.get_data():
+                if row[x_pos] in raw_data.keys():
+                    raw_data[row[x_pos]] += 1
+                else:
+                    raw_data[row[x_pos]] = 1
+        else:
+            y_pos = list(dataset.get_header_structure().keys()).index(vals["y_var"])
+            for row in dataset.get_data():
+                if row[x_pos] in raw_data.keys():
+                    raw_data[row[x_pos]] += row[y_pos]
+                else:
+                    raw_data[row[x_pos]] = row[y_pos]
 
-            if vals["y_var"] == None:
-                axis.set_ylabel("Count")
-            else:
-                axis.set_ylabel(vals["y_var"])
+        if vals["sort_x"]:
+            y_data = OrderedDict(sorted(raw_data.items(),key=lambda x:x[1]))
+        else:
+            y_data = raw_data
 
-            axis.legend()
-            fig.savefig("tmp/plot.png")
+        fig = plt.figure()
+        axis = plt.subplot(111)
 
+        axis.bar(y_data.keys(),y_data.values())
+
+        # Set axis labels
+        axis.set_xlabel(vals["x_var"])
+
+        if vals["y_var"] == None:
+            axis.set_ylabel("Count")
+        else:
+            axis.set_ylabel(vals["y_var"])
+
+        axis.legend()
+        fig.savefig("tmp/plot.png")
+
+        if vals["save_action"] and not preloaded:
+            # Save the action
+            self.save_name = vals["action_save_name"]
+            App.get_running_app().add_action(self)
+
+        if not quiet:
             self.result_output.clear_outputs()
             self.result_output.add_widget(ExportableGraph(source="tmp/plot.png", fig=fig, axis=[axis], nocache=True,
                                                           size_hint_y=None))
+
+    def load(self,state):
+        self.form_outputs = state["form_outputs"]
+        try:
+            success = self.run(validate=False,quiet=True)
+        except Exception as e:
+            err = "Error in loading transform data\n{}".format(repr(e))
+            logger.error(err)
+            return err
+
+        return True
