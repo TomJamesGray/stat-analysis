@@ -85,7 +85,7 @@ class BarChart(BaseAction):
     def add_dataset_listener(self, val):
         self.tmp_dataset_listeners.append(val)
 
-    def run(self,validate=True,quiet=False,preloaded=False):
+    def run(self,validate=True,quiet=False,preloaded=False,**kwargs):
         logger.debug("Running action {}".format(self.type))
 
         if validate:

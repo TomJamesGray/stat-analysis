@@ -1,5 +1,6 @@
 import logging
 import numpy as np
+import time
 import matplotlib.pyplot as plt
 from kivy.app import App
 from sklearn.linear_model import LogisticRegression as LR
@@ -93,6 +94,7 @@ class LogisticRegression(BaseAction):
         self.output_widget = output_widget
         self.tmp_dataset = None
         self.tmp_dataset_listeners = []
+        self.stored_model = None
 
     def set_tmp_dataset(self, val):
         self.tmp_dataset = val
@@ -101,7 +103,7 @@ class LogisticRegression(BaseAction):
     def add_dataset_listener(self, val):
         self.tmp_dataset_listeners.append(val)
 
-    def run(self,validate=True,quiet=False,preloaded=False):
+    def run(self,validate=True,quiet=False,preloaded=False,use_cached=False,**kwargs):
         logger.info("Running action {}".format(self.type))
         if validate:
             if not self.validate_form():
@@ -123,8 +125,13 @@ class LogisticRegression(BaseAction):
             x.append([row[x_pos]])
             y.append(row[y_pos])
 
-        model = LR(fit_intercept=True,C=1e9)
-        model.fit(x,y)
+        if self.stored_model != None and use_cached:
+            logger.debug("Using cached model for type {} save name {}".format(self.type,self.save_name))
+            model = self.stored_model
+        else:
+            model = LR(fit_intercept=True,C=1e9)
+            model.fit(x,y)
+            self.stored_model = model
 
         x_coeff = model.coef_[0][0]
         const = model.intercept_[0]

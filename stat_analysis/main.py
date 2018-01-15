@@ -155,12 +155,10 @@ class ActionsGrid(GridLayout):
         App.get_running_app().root_widget.primary_pane.refresh(data.view_data.ViewData,dataset=args[0].text)
 
     def load_action(self,*args):
-        print(args[0].text)
         action = App.get_running_app().get_action_by_name(args[0].text)
         if action == False:
             # Action not found
             return False
-        print(action)
         App.get_running_app().root_widget.primary_pane.reload_action(action)
 
 
@@ -197,7 +195,7 @@ class PrimaryPane(GridLayout):
 
         self.active_action.set_default_form_vals()
         self.active_action.render()
-        self.active_action.run(quiet=False,validate=False,preloaded=True)
+        self.active_action.run(quiet=False,validate=False,preloaded=True,use_cached=True)
 
     def go_home(self,*args):
         logger.info("Changing active pane to home screen")
