@@ -138,6 +138,11 @@ class ActionsGrid(GridLayout):
 
     def render(self,tbl):
         for action in tbl:
+            if action.save_name == None:
+                # Don't display this action as it can't be viewed, eg
+                # transform data
+                continue
+
             col1 = self.add_btn(action.save_name)
             if 0 in self.btn_fn.keys():
                 col1.bind(on_press=lambda *args:self.btn_fn[0](*args))
