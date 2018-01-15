@@ -147,6 +147,17 @@ class BaseAction(object):
     def serialize(self):
         return {"type":self.type,"form_outputs":self.form_outputs}
 
+    def load(self,state):
+        self.form_outputs = state["form_outputs"]
+        try:
+            success = self.run(validate=False,quiet=True)
+        except Exception as e:
+            err = "Error in loading {}\n{}".format(self.type,repr(e))
+            logger.error(err)
+            return err
+
+        return True
+
 
 class ResultOutputWidget(GridLayout):
     label_header = ObjectProperty(None)

@@ -151,13 +151,4 @@ class BarChart(BaseAction):
             self.result_output.add_widget(ExportableGraph(source="tmp/plot.png", fig=fig, axis=[axis], nocache=True,
                                                           size_hint_y=None))
 
-    def load(self,state):
-        self.form_outputs = state["form_outputs"]
-        try:
-            success = self.run(validate=False,quiet=True)
-        except Exception as e:
-            err = "Error in loading transform data\n{}".format(repr(e))
-            logger.error(err)
-            return err
 
-        return True
