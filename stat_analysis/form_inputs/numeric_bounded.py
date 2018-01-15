@@ -27,8 +27,12 @@ class FormNumericBounded(GridLayout):
                                       text=str(input_dict["default"]))
         slider = Slider(min=input_dict["min"],max=input_dict["max"],value=input_dict["default"],step=input_dict["step"],
                         cursor_height=20,cursor_width=20)
-
         slider.bind(value=self.on_slider_change)
+
+        if "default" in input_dict.keys():
+            if input_dict["default"] != None:
+                slider.value = input_dict["default"]
+
         self.add_widget(input_label)
         container.add_widget(self.text_readout)
         container.add_widget(slider)

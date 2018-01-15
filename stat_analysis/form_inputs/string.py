@@ -21,7 +21,8 @@ class FormString(GridLayout):
         self.str_input = TextInput(size_hint=(1,None),height=30,multiline=False)
 
         if "default" in input_dict.keys():
-            self.str_input.text = input_dict["default"]
+            if input_dict["default"] != None:
+                self.str_input.text = input_dict["default"]
 
         self.add_widget(input_label)
         self.add_widget(self.str_input)

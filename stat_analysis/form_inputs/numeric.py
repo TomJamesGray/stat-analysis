@@ -25,6 +25,11 @@ class FormNumeric(GridLayout):
             input_label = FormInputLabel(text=input_dict["visible_name"])
 
         self.num_input = TextInput(size_hint=(None,None),height=30,multiline=False)
+
+        if "default" in input_dict.keys():
+            if input_dict["default"] != None:
+                self.num_input.text = input_dict["default"]
+
         self.add_widget(input_label)
         self.add_widget(self.num_input)
 

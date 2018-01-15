@@ -20,6 +20,10 @@ class FormCheckBox(GridLayout):
         else:
             input_label = FormInputLabel(text=input_dict["visible_name"],height=30)
 
+        if "default" in input_dict.keys():
+            if input_dict["default"] == True:
+                self.check.active = True
+
         self.add_widget(input_label)
 
     def get_val(self):

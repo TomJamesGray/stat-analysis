@@ -17,6 +17,7 @@ class FormFile(GridLayout):
         self.width = 200
         self.file_location = None
         self.input_dict = input_dict
+        self.default_path = os.path.expanduser("~")
 
         # Add a tooltip if specified
         if "tip" in input_dict.keys():
@@ -26,6 +27,11 @@ class FormFile(GridLayout):
 
         self.file_chooser_btn = Button(text="Select File",height=30,size_hint_y=None)
         self.file_chooser_btn.bind(on_press=self.open_f_selector)
+
+        if "default" in input_dict.keys():
+            if input_dict["default"] != None:
+                self.file_chooser_btn.text  = os.path.basename(input_dict["default"])
+                self.default_path = os.path.dirname(input_dict["default"])
 
         self.add_widget(input_label)
         self.add_widget(self.file_chooser_btn)
