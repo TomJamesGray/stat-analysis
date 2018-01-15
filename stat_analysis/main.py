@@ -152,6 +152,9 @@ class ActionsGrid(GridLayout):
     def load_action(self,*args):
         print(args[0].text)
         action = App.get_running_app().get_action_by_name(args[0].text)
+        if action == False:
+            # Action not found
+            return False
         print(action)
         App.get_running_app().root_widget.primary_pane.reload_action(action)
 
@@ -187,6 +190,7 @@ class PrimaryPane(GridLayout):
         self.active_action = action
         action.output_widget = output_widget
 
+        self.active_action.set_default_form_vals()
         self.active_action.render()
         self.active_action.run(quiet=False,validate=False,preloaded=True)
 

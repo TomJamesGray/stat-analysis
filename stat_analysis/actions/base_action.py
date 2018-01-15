@@ -137,6 +137,13 @@ class BaseAction(object):
             self.form_errors = errors
             return False
 
+    def set_default_form_vals(self):
+        for group in self.form:
+            for  _input in group["inputs"]:
+                if self.form_outputs[_input["form_name"]] != None:
+                    print("Setting default {} to {}".format(_input["form_name"],self.form_outputs[_input["form_name"]]))
+                    _input["default"] = self.form_outputs[_input["form_name"]]
+
     def serialize(self):
         return {"type":self.type,"form_outputs":self.form_outputs}
 

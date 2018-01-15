@@ -32,12 +32,8 @@ class FormDropDown(GridLayout):
 
         self.add_widget(input_label)
         self.prev_dataset_name = None
-        if "default" in input_dict.keys():
-            self.main_btn_text = input_dict["default"]
-        else:
-            self.main_btn_text = ""
 
-        self.main_btn = BorderedButton(text=self.main_btn_text, size_hint=(1,None), height=30, background_normal="",
+        self.main_btn = BorderedButton(size_hint=(1,None), height=30, background_normal="",
                                        color=(0,0,0,1),background_color=(1,1,1,1),halign="left",valign="middle",
                                        padding=(5,5),b_color=(190/255,190/255,190/255,1),background_down="")
         self.main_btn.bind(size=self.main_btn.setter("text_size"))
@@ -54,6 +50,11 @@ class FormDropDown(GridLayout):
             dropdown_options = input_dict["data_type"]
         elif input_dict["data_type"] == "dataset":
             dropdown_options = [x.save_name for x in App.get_running_app().datasets]
+            if "default" in input_dict.keys():
+                # A default value is set for the dataset, so do the on_change property if set
+                if "on_change" in input_dict.keys():
+                    input_dict["on_change"](self,input_dict["default"])
+
         elif input_dict["data_type"] == "column_numeric" or input_dict["data_type"] == "column":
             # Data type is numeric columns. This data_type relies on a get_cols_from key
             #  being set, so the column names for the dataset can be retrieved
@@ -69,6 +70,11 @@ class FormDropDown(GridLayout):
             dropdown_options = None
         else:
             raise ValueError("Unrecognised data type {} in form layout".format(input_dict["data_type"]))
+
+        if "default" in input_dict.keys():
+            self.main_btn_text = input_dict["default"]
+        else:
+            self.main_btn_text = ""
 
         self.main_btn.text = self.main_btn_text
 
