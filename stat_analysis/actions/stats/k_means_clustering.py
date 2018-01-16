@@ -1,11 +1,14 @@
 import logging
+import random
+import matplotlib.pyplot as plt
 from kivy.app import App
 from stat_analysis.actions.base_action import BaseAction
 from stat_analysis.generic_widgets.bordered import BorderedTable
+from stat_analysis.generic_widgets.form_outputs import ExportableGraph
 
 logger = logging.getLogger(__name__)
 
-class (BaseAction):
+class KMeansClustering(BaseAction):
     type = ""
     view_name  = ""
 
@@ -41,7 +44,25 @@ class (BaseAction):
                         "required": True,
                         "form_name": "y_var",
                         "visible_name": "Y Variable"
-                    }]
+                    }
+                ]
+            },
+            {
+                "group_name": "Save",
+                "inputs": [
+                    {
+                        "input_type": "check_box",
+                        "required": True,
+                        "form_name": "save_action",
+                        "visible_name": "Save action"
+                    },
+                    {
+                        "input_type": "string",
+                        "required": True,
+                        "visible_name": "Action save name",
+                        "form_name": "action_save_name"
+                    }
+                ]
             }
         ]
         self.output_widget = output_widget
@@ -73,4 +94,88 @@ class (BaseAction):
             return False
 
         x_pos = list(dataset.get_header_structure().keys()).index(vals["x_var"])
-        y_pos = list(dataset.get_header_structure().keys()).index(vals["y_pos"])
+        y_pos = list(dataset.get_header_structure().keys()).index(vals["y_var"])
+        x,y = [],[]
+
+        for row in dataset.get_data():
+            x.append(row[x_pos])
+            y.append(row[y_pos])
+
+        model = KMeans(k=2)
+        model.fit(x,y)
+        print("---")
+        print(model.centroids)
+        print(model.classes)
+        cols = ["r","g"]
+        if not quiet:
+            fig = plt.figure()
+            axis = plt.subplot(111)
+            for i,group in enumerate(model.classes):
+                group_x = []
+                group_y = []
+                for point in group:
+                    group_x.append(point[0])
+                    group_y.append(point[1])
+
+                plt.scatter(group_x,group_y,color=cols[i])
+
+                print("Group x:{}".format(group_x))
+                print("Group y:{}".format(group_y))
+
+            for centroid in model.centroids:
+                plt.scatter(centroid[0],centroid[1],marker="x")
+
+            axis.legend()
+            fig.savefig("tmp/plot.png")
+            self.result_output.add_widget(ExportableGraph(source="tmp/plot.png", fig=fig, axis=[axis], nocache=True,
+                                                          size_hint_y=None))
+
+
+class KMeans(object):
+    def __init__(self, k=3, tolerance=0.001, max_iterations=500):
+        self.k = k
+        self.tolerance = 0.001
+        self.max_iterations = max_iterations
+        self.centroids = []
+
+    def fit(self, x, y):
+        min_x = min(x)
+        max_x = max(x)
+        min_y = min(y)
+        max_y = max(y)
+
+        # Initialise the centeroids
+        self.centroids = [None] * self.k
+        for i in range(self.k):
+            self.centroids[i] = (random.random() * (max_x - min_x) + min_x, random.random() * (max_y - min_y) + min_y)
+
+        # Main loop for fitting centroids
+        for i in range(self.max_iterations):
+            self.classes = []
+            [self.classes.append([]) for x in range(self.k)]
+
+            for data_pos in range(len(x)):
+                distances = [self.euclidean_dist([x[data_pos], y[data_pos]], centroid) for centroid in self.centroids]
+                # Get the smallest distance to a centroid, and add that to the centroid
+                opt_centroid = distances.index(min(distances))
+                self.classes[opt_centroid].append([x[data_pos], y[data_pos]])
+
+            prev = self.centroids
+            # Average the cluster data points to get a new centroid
+
+            for j, classification in enumerate(self.classes):
+                if len(classification) != 0:
+                    ave_x = sum([_x[0] for _x in classification]) / len(classification)
+                    ave_y = sum([_y[1] for _y in classification]) / len(classification)
+                    self.centroids[j] = [ave_x, ave_y]
+
+
+    @staticmethod
+    def euclidean_dist(p1, p2):
+        squared_dist = 0
+
+        for i in range(0, len(p1)):
+            squared_dist += (p1[i] - p2[i]) ** 2
+
+        return squared_dist ** 0.5
+
