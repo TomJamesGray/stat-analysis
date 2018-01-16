@@ -159,7 +159,10 @@ class KMeansClustering(BaseAction):
         if vals["save_action"] and not preloaded:
             # Save the action
             self.save_name = vals["action_save_name"]
-            App.get_running_app().add_action(self)
+            try:
+                App.get_running_app().add_action(self)
+            except ValueError:
+                logger.error("Dataset with that name already exists")
 
 
 class KMeans(object):
