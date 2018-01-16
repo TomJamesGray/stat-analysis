@@ -1,6 +1,7 @@
 import logging
 import random
 import matplotlib.pyplot as plt
+import numpy as np
 from kivy.app import App
 from stat_analysis.actions.base_action import BaseAction
 from stat_analysis.generic_widgets.bordered import BorderedTable
@@ -9,8 +10,8 @@ from stat_analysis.generic_widgets.form_outputs import ExportableGraph
 logger = logging.getLogger(__name__)
 
 class KMeansClustering(BaseAction):
-    type = ""
-    view_name  = ""
+    type = "stats.k_means_clustering"
+    view_name  = "K Means Clustering"
 
     def __init__(self,output_widget):
         self.save_name = ""
@@ -44,13 +45,27 @@ class KMeansClustering(BaseAction):
                         "required": True,
                         "form_name": "y_var",
                         "visible_name": "Y Variable"
+                    }
+                ]
+            },
+            {
+                "group_name":"Model Options",
+                "inputs":[
+                    {
+                        "input_type": "numeric",
+                        "required": True,
+                        "form_name": "k",
+                        "visible_name": "K",
+                        "tip": "Number of clusters"
                     },
                     {
-                        "input_type":"numeric",
+                        "input_type":"check_box",
                         "required":True,
-                        "form_name":"k",
-                        "visible_name":"K",
-                        "tip":"Number of clusters"
+                        "form_name":"init_rnd_num",
+                        "visible_name":"Initialise with a random point",
+                        "tip":"The centroids will either be initialised with a random point from the dataset"
+                              " or a random point in the data's range. Initialising with a random point can"
+                              " cause centroids to not be used"
                     }
                 ]
             },
@@ -108,14 +123,14 @@ class KMeansClustering(BaseAction):
             x.append(row[x_pos])
             y.append(row[y_pos])
 
-        model = KMeans(k=int(vals["k"]))
+        model = KMeans(k=int(vals["k"]),init_rnd_point=vals["init_rnd_num"])
         model.fit(x,y)
 
-        cols = ["r","g","b","c","r"]
+        cols = ["r","g","b","c","k"]
         if not quiet:
             fig = plt.figure()
             axis = plt.subplot(111)
-            # cols = cols*len(vals["k"])
+            cols = cols*int(vals["k"])
             for i,group in enumerate(model.classes):
                 group_x = []
                 group_y = []
@@ -124,9 +139,7 @@ class KMeansClustering(BaseAction):
                     group_y.append(point[1])
 
                 plt.scatter(group_x,group_y,color=cols[i])
-
-            for centroid in model.centroids:
-                plt.scatter(centroid[0],centroid[1],marker="x")
+                plt.scatter(model.centroids[i][0],model.centroids[i][1],marker="x",color=cols[i])
 
             axis.legend()
             fig.savefig("tmp/plot.png")
@@ -136,11 +149,13 @@ class KMeansClustering(BaseAction):
 
 
 class KMeans(object):
-    def __init__(self, k=3, tolerance=0.001, max_iterations=500):
+    def __init__(self, k=3, tolerance=0.0001, max_iterations=500, init_rnd_point=False):
         self.k = k
-        self.tolerance = 0.001
+        self.tolerance = tolerance
         self.max_iterations = max_iterations
         self.centroids = []
+        self.init_rnd_point = init_rnd_point
+        self.is_optimal = False
 
     def fit(self, x, y):
         min_x = min(x)
@@ -151,7 +166,12 @@ class KMeans(object):
         # Initialise the centeroids
         self.centroids = [None] * self.k
         for i in range(self.k):
-            self.centroids[i] = (random.random() * (max_x - min_x) + min_x, random.random() * (max_y - min_y) + min_y)
+            if self.init_rnd_point:
+                self.centroids[i] = [random.random() * (max_x - min_x) + min_x,
+                                     random.random() * (max_y - min_y) + min_y]
+            else:
+                pos = random.randrange(0,len(x))
+                self.centroids[i] = [x[pos],y[pos]]
 
         # Main loop for fitting centroids
         for i in range(self.max_iterations):
@@ -164,14 +184,37 @@ class KMeans(object):
                 opt_centroid = distances.index(min(distances))
                 self.classes[opt_centroid].append([x[data_pos], y[data_pos]])
 
-            prev = self.centroids
-            # Average the cluster data points to get a new centroid
+            prev = self.centroids[:]
 
+            # Average the cluster data points to get a new centroid
             for j, classification in enumerate(self.classes):
                 if len(classification) != 0:
                     ave_x = sum([_x[0] for _x in classification]) / len(classification)
                     ave_y = sum([_y[1] for _y in classification]) / len(classification)
                     self.centroids[j] = [ave_x, ave_y]
+
+            self.is_optimal = True
+
+            # Check if all centroids have converged (within self.tolerance)
+            for centroid_pos in range(0,len(self.centroids)):
+                original = prev[centroid_pos]
+                curr = self.centroids[centroid_pos]
+
+                sum_delta = 0
+                # Sum up percentage changes for each axis
+
+                for axis in range(0,len(original)):
+                    try:
+                        sum_delta += abs((curr[axis] - original[axis])/original[axis] * 100)
+                    except ZeroDivisionError:
+                        pass
+
+                if sum_delta > self.tolerance:
+                    # Fit hasn't converged
+                    self.is_optimal = False
+
+            if self.is_optimal:
+                return True
 
 
     @staticmethod
