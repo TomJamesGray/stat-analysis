@@ -28,7 +28,7 @@ class FormNumeric(GridLayout):
 
         if "default" in input_dict.keys():
             if input_dict["default"] != None:
-                self.num_input.text = input_dict["default"]
+                self.num_input.text = str(input_dict["default"])
 
         self.add_widget(input_label)
         self.add_widget(self.num_input)

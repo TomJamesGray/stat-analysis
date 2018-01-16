@@ -131,7 +131,9 @@ class KMeansClustering(BaseAction):
             fig = plt.figure()
             axis = plt.subplot(111)
             cols = cols*int(vals["k"])
+
             for i,group in enumerate(model.classes):
+                # Create scatter plot for the data points for each centroid
                 group_x = []
                 group_y = []
                 for point in group:
@@ -144,8 +146,20 @@ class KMeansClustering(BaseAction):
             axis.legend()
             fig.savefig("tmp/plot.png")
             self.result_output.clear_outputs()
+
+            self.result_output.add_widget(
+                BorderedTable(headers=["Centroids","Iterations\nperformed"],
+                              data=[[str(model.centroids)],[str(model.iters_to_fit)]],row_default_height=60,
+                              row_force_default=True,orientation="horizontal",size_hint_y=None,size_hint_x=1,
+                              for_scroller=True))
+
             self.result_output.add_widget(ExportableGraph(source="tmp/plot.png", fig=fig, axis=[axis], nocache=True,
                                                           size_hint_y=None))
+
+        if vals["save_action"] and not preloaded:
+            # Save the action
+            self.save_name = vals["action_save_name"]
+            App.get_running_app().add_action(self)
 
 
 class KMeans(object):
@@ -156,6 +170,7 @@ class KMeans(object):
         self.centroids = []
         self.init_rnd_point = init_rnd_point
         self.is_optimal = False
+        self.iters_to_fit = None
 
     def fit(self, x, y):
         min_x = min(x)
@@ -214,8 +229,10 @@ class KMeans(object):
                     self.is_optimal = False
 
             if self.is_optimal:
+                self.iters_to_fit = i
                 return True
 
+        self.iters_to_fit = i
 
     @staticmethod
     def euclidean_dist(p1, p2):

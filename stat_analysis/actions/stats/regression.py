@@ -168,11 +168,6 @@ class Regression(base_action.BaseAction):
         axis.legend()
         fig.savefig("tmp/plot.png")
 
-        if vals["save_action"] and not preloaded:
-            # Save the action
-            self.save_name = vals["action_save_name"]
-            App.get_running_app().add_action(self)
-
         if not quiet:
             self.result_output.clear_outputs()
             self.result_output.add_widget(BorderedTable(
@@ -182,3 +177,8 @@ class Regression(base_action.BaseAction):
 
             self.result_output.add_widget(ExportableGraph(source="tmp/plot.png",fig=fig, axis=[axis], nocache=True,
                                                           size_hint_y=None))
+
+        if vals["save_action"] and not preloaded:
+            # Save the action
+            self.save_name = vals["action_save_name"]
+            App.get_running_app().add_action(self)
