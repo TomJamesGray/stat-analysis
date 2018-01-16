@@ -44,6 +44,13 @@ class KMeansClustering(BaseAction):
                         "required": True,
                         "form_name": "y_var",
                         "visible_name": "Y Variable"
+                    },
+                    {
+                        "input_type":"numeric",
+                        "required":True,
+                        "form_name":"k",
+                        "visible_name":"K",
+                        "tip":"Number of clusters"
                     }
                 ]
             },
@@ -101,15 +108,14 @@ class KMeansClustering(BaseAction):
             x.append(row[x_pos])
             y.append(row[y_pos])
 
-        model = KMeans(k=2)
+        model = KMeans(k=int(vals["k"]))
         model.fit(x,y)
-        print("---")
-        print(model.centroids)
-        print(model.classes)
-        cols = ["r","g"]
+
+        cols = ["r","g","b","c","r"]
         if not quiet:
             fig = plt.figure()
             axis = plt.subplot(111)
+            # cols = cols*len(vals["k"])
             for i,group in enumerate(model.classes):
                 group_x = []
                 group_y = []
@@ -119,14 +125,12 @@ class KMeansClustering(BaseAction):
 
                 plt.scatter(group_x,group_y,color=cols[i])
 
-                print("Group x:{}".format(group_x))
-                print("Group y:{}".format(group_y))
-
             for centroid in model.centroids:
                 plt.scatter(centroid[0],centroid[1],marker="x")
 
             axis.legend()
             fig.savefig("tmp/plot.png")
+            self.result_output.clear_outputs()
             self.result_output.add_widget(ExportableGraph(source="tmp/plot.png", fig=fig, axis=[axis], nocache=True,
                                                           size_hint_y=None))
 
