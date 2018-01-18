@@ -11,7 +11,7 @@ def guess_d_type(sample):
     probs = {
         "int":1.0,
         "float":1.0,
-        "datetime":1.0,
+        # "datetime":1.0,
         "string":1.0
     }
 
@@ -29,6 +29,11 @@ def guess_d_type(sample):
                 date_time_chars += 1
             else:
                 others += 1
+
+        if val == "":
+            probs["string"] *= 1.3
+            continue
+
         if points == 1 and numbers == len(val)-1:
             probs["float"] *= 1.5
             probs["string"] *= 0.5
@@ -46,7 +51,9 @@ def guess_d_type(sample):
             probs["string"] *= 1.3
 
         if len(val) < 20 and date_time_chars >= 1:
-            probs["datetime"] *= 1.5
+            # probs["datetime"] *= 1.5
+            # TODO implement datetime format
+            probs["string"] *= 1.5
 
         if others == len(val):
             probs["string"] *= 1.5

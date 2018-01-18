@@ -95,6 +95,7 @@ class ImportCSV(base_action.BaseAction):
         # Get rid of data before user specified start line
         data = data[int(vals["start_line"])-1:]
         smpl_data = {}
+        data_points_in_smpl = 0
         for header in self.headers:
             smpl_data[header] = []
         # Set the sample rate for the d_type sample
@@ -102,10 +103,11 @@ class ImportCSV(base_action.BaseAction):
         # Smpl_rate should be larger than 2 or 1
         if smpl_rate < 2:
             smpl_rate = 1
+        print("Sample rate: {}".format(smpl_rate))
 
-        add_to_smpl = False
         for x,item in enumerate(data):
-            if x % smpl_rate == 0 and len(smpl_data) < max_sample_length:
+            if x % smpl_rate == 0 and data_points_in_smpl < max_sample_length:
+                data_points_in_smpl += 1
                 # Add the columns to the smpl_data
                 for i in range(0,len(item)):
                     # TODO Add handling if there are more columns than expected
@@ -113,6 +115,7 @@ class ImportCSV(base_action.BaseAction):
 
         col_d_types = OrderedDict()
         for col_name,col_data in smpl_data.items():
+            print("Col: {}\nData:{}\n".format(col_name,col_data))
             col_d_types[col_name] = guess_d_type(col_data)
 
         logger.debug("Guessed d_types: {}".format(col_d_types))

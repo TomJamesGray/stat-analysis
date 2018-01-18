@@ -59,7 +59,6 @@ class FormDropDown(GridLayout):
             elif isinstance(input_dict["get_cols_from"],base_action.BaseAction):
                 raise ValueError("get_cols_from {} is not an action".format(input_dict["get_cols_from"]))
 
-
             self.main_btn.bind(on_release=self.dropdown_open)
             logger.info("Not adding dropdown as first one so no data set will be selected")
             self.main_btn_text = "Select data set first"
