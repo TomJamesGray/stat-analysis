@@ -50,10 +50,6 @@ class FormDropDown(GridLayout):
             dropdown_options = input_dict["data_type"]
         elif input_dict["data_type"] == "dataset":
             dropdown_options = [x.save_name for x in App.get_running_app().datasets]
-            if "default" in input_dict.keys():
-                # A default value is set for the dataset, so do the on_change property if set
-                if "on_change" in input_dict.keys():
-                    input_dict["on_change"](self,input_dict["default"])
 
         elif input_dict["data_type"] == "column_numeric" or input_dict["data_type"] == "column":
             # Data type is numeric columns. This data_type relies on a get_cols_from key
