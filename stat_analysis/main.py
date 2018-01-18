@@ -285,7 +285,7 @@ class StatApp(App):
             },
             {
                 "group_name": "Graph",
-                "actions": [graph.bar_chart.BarChart]
+                "actions": [graph.bar_chart.BarChart,graph.scatter.ScatterPlot]
             }
         ]
         self.startup_messages = ""
