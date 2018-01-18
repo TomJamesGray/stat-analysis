@@ -1,10 +1,7 @@
 import logging
-import numpy as np
 from stat_analysis.actions.base_action import BaseAction
-from stat_analysis.generic_widgets.bordered import BorderedTable
 from kivy.app import App
 from stat_analysis.generic_widgets.form_outputs import ExportableGraph
-from collections import OrderedDict
 import matplotlib.pyplot as plt
 
 logger = logging.getLogger(__name__)
@@ -89,32 +86,33 @@ class ScatterPlot(BaseAction):
                 logger.debug("Form validated, form outputs: {}".format(self.form_outputs))
 
         vals = self.form_outputs
-        dataset = App.get_running_app().get_dataset_by_name(vals["dataset"])
-
-        if dataset == False:
-            # Dataset couldn't be found
-            raise ValueError("Dataset {} couldn't be found".format(vals["dataset"]))
-
-        x,y = [],[]
-        # Get's the position in each row for the desired columns
-        x_pos = list(dataset.get_header_structure().keys()).index(vals["x_var"])
-        y_pos = list(dataset.get_header_structure().keys()).index(vals["y_var"])
-        for row in dataset.get_data():
-            x.append(row[x_pos])
-            y.append(row[y_pos])
-
-        fig = plt.figure()
-        axis = plt.subplot(111)
-
-        axis.scatter(x,y)
-        # Set axis labels
-        axis.set_xlabel(vals["x_var"])
-        axis.set_ylabel(vals["y_var"])
-
-        axis.legend()
-        fig.savefig("tmp/plot.png")
 
         if not quiet:
+            dataset = App.get_running_app().get_dataset_by_name(vals["dataset"])
+
+            if dataset == False:
+                # Dataset couldn't be found
+                raise ValueError("Dataset {} couldn't be found".format(vals["dataset"]))
+
+            x,y = [],[]
+            # Get's the position in each row for the desired columns
+            x_pos = list(dataset.get_header_structure().keys()).index(vals["x_var"])
+            y_pos = list(dataset.get_header_structure().keys()).index(vals["y_var"])
+            for row in dataset.get_data():
+                x.append(row[x_pos])
+                y.append(row[y_pos])
+
+            fig = plt.figure()
+            axis = plt.subplot(111)
+
+            axis.scatter(x,y)
+            # Set axis labels
+            axis.set_xlabel(vals["x_var"])
+            axis.set_ylabel(vals["y_var"])
+
+            axis.legend()
+            fig.savefig("tmp/plot.png")
+
             self.result_output.clear_outputs()
             self.result_output.add_widget(ExportableGraph(source="tmp/plot.png", fig=fig, axis=[axis], nocache=True,
                                                           size_hint_y=None))
