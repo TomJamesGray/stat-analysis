@@ -42,6 +42,12 @@ class ImportCSV(base_action.BaseAction):
                         "required":True
                     },
                     {
+                        "input_type":"check_box",
+                        "visible_name":"Drop columns with errors",
+                        "form_name":"drop_err_cols",
+                        "required":True
+                    },
+                    {
                         "input_type": "numeric",
                         "required": True,
                         "form_name": "start_line",
@@ -137,7 +143,8 @@ class ImportCSV(base_action.BaseAction):
             return False
 
         if not quiet:
-            self.output_widget.parent.refresh(ImportSetColTypes,dataset_name=vals["save_name"])
+            self.output_widget.parent.refresh(ImportSetColTypes,dataset_name=vals["save_name"],
+                                              drop_err_cols=vals["drop_err_cols"])
 
 
 
@@ -150,16 +157,24 @@ class ImportCSV(base_action.BaseAction):
     def get_header_structure(self):
         return self.cols_structure
 
-    def set_header_structure(self,struct):
+    def set_header_structure(self,struct,drop_err_cols=True):
         self.cols_structure = struct
         # Get converter functions in a list
         converters = []
         for _,x in self.cols_structure.items():
             converters.append(x[1])
 
+        tmp_data = []
         for row in range(0,len(self.stored_data)):
+            tmp_data.append([])
             for col in range(0,len(self.stored_data[0])):
-                self.stored_data[row][col] = converters[col](self.stored_data[row][col])
+                try:
+                    tmp_data[row].append(converters[col](self.stored_data[row][col]))
+                except:
+                    if drop_err_cols:
+                        tmp_data.pop(row)
+                        break
+        self.stored_data = tmp_data
 
     def add_column(self,col_data,col_type,col_name):
         if len(col_data) != self.records:

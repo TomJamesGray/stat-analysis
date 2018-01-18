@@ -12,3 +12,4 @@ class ImportSetColTypes(SetColTypes):
         self.base_form = []
         self.output_widget = output_widget
         self.form_add_cols(kwargs["dataset_name"],set_dataset_selector=False,re_render=False)
+        self.drop_err_cols = kwargs["drop_err_cols"]

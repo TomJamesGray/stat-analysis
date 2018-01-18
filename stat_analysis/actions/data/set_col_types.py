@@ -32,6 +32,7 @@ class SetColTypes(base_action.BaseAction):
         ]
         self.form = self.base_form
         self.output_widget = output_widget
+        self.drop_err_cols = True
 
     def form_add_cols(self,dataset_name,set_dataset_selector=True,re_render=True):
         self.dataset = App.get_running_app().get_dataset_by_name(dataset_name)
@@ -81,7 +82,8 @@ class SetColTypes(base_action.BaseAction):
                 header_struct[vals["{}_name".format(i)]] = (vals["{}_type".format(i)],convert)
 
             logger.info("Header structure generated: {}".format(header_struct))
-            self.dataset.set_header_structure(header_struct)
+            self.dataset.set_header_structure(header_struct,drop_err_cols=self.drop_err_cols)
+
             self.result_output.clear_outputs()
             self.result_output.add_widget(BorderedTable(
                 headers=["Records","Columns","Data types"],data=[[str(self.dataset.records)],[str(self.dataset.columns)],
