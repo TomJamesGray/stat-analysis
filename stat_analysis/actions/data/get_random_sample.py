@@ -82,6 +82,8 @@ class DataSample(BaseAction):
                 return False
         else:
             logger.info("Form not validated, form errors: {}".format(self.form_errors))
+            self.make_err_message(self.form_errors)
+            return False
 
     def get_data(self):
         return self.stored_data

@@ -85,3 +85,5 @@ class Summary(BaseAction):
                 headers=[vals["action"].replace(" ","\n")],data=[[str(round(val,5))]],row_default_height=60,
                 row_force_default=True,orientation="horizontal",size_hint_y=None,size_hint_x=1,for_scroller=True
             ))
+        else:
+            self.make_err_message(self.form_errors)

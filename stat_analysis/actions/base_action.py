@@ -165,17 +165,18 @@ class BaseAction(object):
         """
         bullet = "•"
 
-        popup = Popup(size_hint=(None,None),width=300,height=300)
+        popup = Popup(size_hint=(None,None),title="Error",width=300)
         cont = GridLayout(cols=1)
+        cont.bind(minimum_height=lambda _,height:popup.__setattr__("height",height+150))
         if isinstance(msg,str):
-            disp_msg = "{}{}".format(bullet,msg)
+            disp_msg = "{} {}".format(bullet,msg)
         else:
             disp_msg = ""
             for line in msg:
-                disp_msg += "{}{}\n".format(bullet,line)
+                disp_msg += "{} {}\n".format(bullet,line)
 
         cont.add_widget(Label(text=disp_msg))
-        dismiss_btn = Button(text="Dismiss",size_hint=(1,None))
+        dismiss_btn = Button(text="Dismiss",size_hint=(1,None),padding=(0,10))
         dismiss_btn.bind(on_press=lambda *args:popup.dismiss())
         dismiss_btn.bind(texture_size=dismiss_btn.setter("size"))
         cont.add_widget(dismiss_btn)

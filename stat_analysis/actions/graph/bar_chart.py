@@ -91,6 +91,7 @@ class BarChart(BaseAction):
         if validate:
             if not self.validate_form():
                 logger.warning("Form not validated, form errors: {}".format(self.form_errors))
+                self.make_err_message(self.form_errors)
                 return False
             else:
                 logger.debug("Form validated, form outputs: {}".format(self.form_outputs))
