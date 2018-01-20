@@ -13,7 +13,7 @@ from kivy.uix.label import Label
 from kivy.uix.textinput import TextInput
 from kivy.uix.button import Button
 from kivy.core.window import Window
-from kivy.properties import StringProperty,ObjectProperty,BooleanProperty,NumericProperty
+from kivy.properties import StringProperty,ObjectProperty,BooleanProperty,NumericProperty,Property
 from kivy.modules import inspector
 from stat_analysis.actions import stats,data,graph
 from stat_analysis.generic_widgets.bordered import BorderedButton
@@ -168,6 +168,7 @@ class ActionTreeViewLabel(TreeViewLabel):
 
 class PrimaryPane(GridLayout):
     title = StringProperty("")
+    active_action = None
 
     def refresh(self,action,**kwargs):
         logger.info("Changing the active pane to: {}".format(action.type))
@@ -205,7 +206,12 @@ class PrimaryPane(GridLayout):
                 # item.clear_widgets()
                 self.remove_widget(item)
         self.title = "Home"
+        self.active_action = None
         self.add_widget(HomeView())
+
+    def run_action(self,*args):
+        if self.active_action != None:
+            self.active_action.run()
 
 
 class TitlePane(Label):

@@ -124,7 +124,7 @@ class BaseAction(object):
                 continue
 
             if item.input_dict["required"] and val == None:
-                errors.append("Field {} is required".format(item.input_dict["form_name"]))
+                errors.append("Field '{}' is required".format(item.input_dict["visible_name"]))
                 logger.warning(errors[-1])
 
             # Add the input value to the output dictionary
@@ -175,7 +175,10 @@ class BaseAction(object):
             for line in msg:
                 disp_msg += "{} {}\n".format(bullet,line)
 
-        cont.add_widget(Label(text=disp_msg))
+        error_label = Label(text=disp_msg,halign="left",valign="middle")
+        error_label.bind(size=error_label.setter("text_size"))
+        cont.add_widget(error_label)
+
         dismiss_btn = Button(text="Dismiss",size_hint=(1,None),padding=(0,10))
         dismiss_btn.bind(on_press=lambda *args:popup.dismiss())
         dismiss_btn.bind(texture_size=dismiss_btn.setter("size"))
