@@ -7,7 +7,7 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.uix.scrollview import ScrollView
 from kivy.properties import ObjectProperty,NumericProperty
 from kivy.graphics import Color,Rectangle
-from kivy.uix.splitter import Splitter
+from kivy.uix.popup import Popup
 from kivy.uix.button import Button
 
 logger = logging.getLogger(__name__)
@@ -156,6 +156,32 @@ class BaseAction(object):
             return err
 
         return True
+
+    def make_err_message(self,msg):
+        """
+        Makes a simple error message with a popup
+        :param msg: Single string or list of strings to be displayed
+        :return:
+        """
+        bullet = "•"
+
+        popup = Popup(size_hint=(None,None),width=300,height=300)
+        cont = GridLayout(cols=1)
+        if isinstance(msg,str):
+            disp_msg = "{}{}".format(bullet,msg)
+        else:
+            disp_msg = ""
+            for line in msg:
+                disp_msg += "{}{}\n".format(bullet,line)
+
+        cont.add_widget(Label(text=disp_msg))
+        dismiss_btn = Button(text="Dismiss",size_hint=(1,None))
+        dismiss_btn.bind(on_press=lambda *args:popup.dismiss())
+        dismiss_btn.bind(texture_size=dismiss_btn.setter("size"))
+        cont.add_widget(dismiss_btn)
+
+        popup.content = cont
+        popup.open()
 
 
 class ResultOutputWidget(GridLayout):
