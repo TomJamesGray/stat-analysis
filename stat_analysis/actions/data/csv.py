@@ -109,7 +109,6 @@ class ImportCSV(base_action.BaseAction):
         # Smpl_rate should be larger than 2 or 1
         if smpl_rate < 2:
             smpl_rate = 1
-        print("Sample rate: {}".format(smpl_rate))
 
         for x,item in enumerate(data):
             if x % smpl_rate == 0 and data_points_in_smpl < max_sample_length:
@@ -121,7 +120,6 @@ class ImportCSV(base_action.BaseAction):
 
         col_d_types = OrderedDict()
         for col_name,col_data in smpl_data.items():
-            print("Col: {}\nData:{}\n".format(col_name,col_data))
             col_d_types[col_name] = guess_d_type(col_data)
 
         logger.debug("Guessed d_types: {}".format(col_d_types))

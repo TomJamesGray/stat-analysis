@@ -141,7 +141,6 @@ class BaseAction(object):
         for group in self.form:
             for  _input in group["inputs"]:
                 if self.form_outputs[_input["form_name"]] != None:
-                    print("Setting default {} to {}".format(_input["form_name"],self.form_outputs[_input["form_name"]]))
                     _input["default"] = self.form_outputs[_input["form_name"]]
 
     def serialize(self):
