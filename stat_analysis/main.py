@@ -4,6 +4,7 @@ import os
 import logging.config
 import pickle
 import argparse
+from kivy.config import Config
 from kivy.uix.widget import Widget
 from kivy.uix.popup import Popup
 from kivy.uix.scrollview import ScrollView
@@ -18,8 +19,10 @@ from kivy.modules import inspector
 from stat_analysis.actions import stats,data,graph
 from stat_analysis.generic_widgets.bordered import BorderedButton
 from stat_analysis.generic_widgets.files import FileChooserSaveDialog,FileChooserLoadDialog
+from stat_analysis.generic_widgets.right_click_menu import RightClickMenu
 from kivy.app import App
 
+Config.set('input', 'mouse', 'mouse,multitouch_on_demand')
 
 class LogViewOutputHandler(logging.StreamHandler):
     def emit(self,record):
@@ -145,21 +148,30 @@ class ActionsGrid(GridLayout):
 
             col1 = self.add_btn(action.save_name)
             if 0 in self.btn_fn.keys():
-                col1.bind(on_press=lambda *args:self.btn_fn[0](*args))
+                col1.bind(on_touch_down=self.btn_fn[0])
 
             col2 = self.add_btn(action.type)
             if 1 in self.btn_fn.keys():
-                col1.bind(on_press=lambda *args:self.btn_fn[1](*args))
+                col1.bind(on_touch_down=self.btn_fn[1])
 
-    def view_dataset(self,*args):
-        App.get_running_app().root_widget.primary_pane.refresh(data.view_data.ViewData,dataset=args[0].text)
+    def view_dataset(self,instance,touch):
+        if instance.collide_point(touch.x, touch.y):
+            App.get_running_app().root_widget.primary_pane.refresh(data.view_data.ViewData,dataset=instance.text)
 
-    def load_action(self,*args):
-        action = App.get_running_app().get_action_by_name(args[0].text)
-        if action == False:
-            # Action not found
-            return False
-        App.get_running_app().root_widget.primary_pane.reload_action(action)
+    def load_action(self,instance,touch):
+        if instance.collide_point(touch.x,touch.y):
+            if touch.button == "left":
+                action = App.get_running_app().get_action_by_name(instance.text)
+                if action == False:
+                    # Action not found
+                    return False
+                App.get_running_app().root_widget.primary_pane.reload_action(action)
+            elif touch.button == "right":
+                new_pos = self.to_window(touch.x,touch.y)
+                menu = RightClickMenu(x=new_pos[0],y=new_pos[1])
+                menu.add_opt("HI",lambda *args: print("hello world"))
+                menu.open()
+                App.get_running_app().root_widget.add_widget(menu)
 
 
 class ActionTreeViewLabel(TreeViewLabel):
