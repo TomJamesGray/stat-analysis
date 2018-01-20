@@ -70,6 +70,9 @@ class BaseAction(object):
                 form_layout.add_widget(form_cls)
                 self.form_items.append(form_cls)
 
+        # Add the run action button to end of form
+        form_layout.add_widget(Button(text="Run action",on_press=lambda *_:self.run(),size_hint=(1,None),height=30))
+
         scroller = ScrollView(size_hint=(None,1),width=self.form_width)
         scroller.add_widget(form_layout)
         self.output_widget.add_widget(scroller)

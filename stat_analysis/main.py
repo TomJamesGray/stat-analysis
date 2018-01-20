@@ -168,7 +168,6 @@ class ActionTreeViewLabel(TreeViewLabel):
 
 class PrimaryPane(GridLayout):
     title = StringProperty("")
-    active_action = None
 
     def refresh(self,action,**kwargs):
         logger.info("Changing the active pane to: {}".format(action.type))
@@ -179,8 +178,8 @@ class PrimaryPane(GridLayout):
         self.title = action.type
         output_widget = GridLayout(size_hint=(1,1),cols=2)
         self.add_widget(output_widget)
-        self.active_action = action(output_widget,**kwargs)
-        self.active_action.render()
+        active_action = action(output_widget,**kwargs)
+        active_action.render()
 
     def reload_action(self,action,**kwargs):
         logger.info("Loading pre-loaded action")
@@ -191,12 +190,12 @@ class PrimaryPane(GridLayout):
         self.title = action.type
         output_widget = GridLayout(size_hint=(1, 1), cols=2)
         self.add_widget(output_widget)
-        self.active_action = action
+        active_action = action
         action.output_widget = output_widget
 
-        self.active_action.set_default_form_vals()
-        self.active_action.render()
-        self.active_action.run(quiet=False,validate=False,preloaded=True,use_cached=True)
+        active_action.set_default_form_vals()
+        active_action.render()
+        active_action.run(quiet=False,validate=False,preloaded=True,use_cached=True)
 
     def go_home(self,*args):
         logger.info("Changing active pane to home screen")
@@ -206,12 +205,7 @@ class PrimaryPane(GridLayout):
                 # item.clear_widgets()
                 self.remove_widget(item)
         self.title = "Home"
-        self.active_action = None
         self.add_widget(HomeView())
-
-    def run_action(self,*args):
-        if self.active_action != None:
-            self.active_action.run()
 
 
 class TitlePane(Label):
