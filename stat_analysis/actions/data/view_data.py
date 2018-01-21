@@ -1,7 +1,7 @@
 import logging
 from kivy.app import App
 from stat_analysis.actions import base_action
-from stat_analysis.generic_widgets.bordered import BorderedTable
+from stat_analysis.generic_widgets.form_outputs import DataTable
 
 logger = logging.getLogger(__name__)
 
@@ -57,6 +57,5 @@ class ViewData(base_action.BaseAction):
         logger.debug("Using {} as cur_set".format(cur_set))
         if not quiet:
             self.result_output.clear_outputs()
-            self.result_output.add_widget(BorderedTable(headers=cur_set.get_headers(),table_data=cur_set.get_data(),
-                                                        row_default_height=30,row_force_default=True,for_scroller=True,
-                                                        size_hint_x=1,size_hint_y=None))
+            self.result_output.add_widget(DataTable(headers=cur_set.get_headers(),table_data=cur_set.get_data(),
+                                                    size_hint_x=1,size_hint_y=None,height=500))

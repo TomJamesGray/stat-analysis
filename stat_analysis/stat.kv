@@ -205,7 +205,7 @@
 
 
 <BorderedLabel>
-    width:100
+    width:150
     canvas.before:
         Color:
             rgba:root.b_color
@@ -462,3 +462,11 @@
         Rectangle:
             pos:self.x-self.b_width,self.y-self.b_width
             size:self.width+self.b_width*2,self.height+self.b_width*2
+
+<DataTable>:
+    RecycleGridLayout:
+        default_size: None, dp(56)
+        default_size_hint: 1, None
+        size_hint_y: None
+        height: self.minimum_height
+        cols:1

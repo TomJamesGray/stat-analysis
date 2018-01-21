@@ -2,18 +2,55 @@ import shutil
 import os
 import logging
 import numpy as np
+from stat_analysis.generic_widgets.files import FileChooserSaveDialog
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.tabbedpanel import TabbedPanel,TabbedPanelItem
 from kivy.uix.popup import Popup
 from kivy.uix.label import Label
 from kivy.uix.textinput import TextInput
-from stat_analysis.generic_widgets.files import FileChooserSaveDialog
 from kivy.uix.button import Button
+from kivy.uix.recycleview import RecycleView
+from kivy.uix.recyclegridlayout import RecycleGridLayout
+from kivy.uix.recycleview.views import RecycleDataViewBehavior
 from kivy.properties import StringProperty,BooleanProperty,Property,ListProperty,ObjectProperty
 from kivy.core.window import Window
 
 
 logger = logging.getLogger(__name__)
+
+
+class DataTable(RecycleView):
+    table_data = ListProperty()
+    headers = ListProperty()
+
+    def __init__(self,**kwargs):
+        super().__init__(**kwargs)
+        self.viewclass = DataTableRow
+        self.data = [{'data': x} for x in self.table_data]
+
+
+class DataTableRow(GridLayout,RecycleDataViewBehavior):
+    data = Property(None)
+
+    def __init__(self,**kwargs):
+        super().__init__(**kwargs)
+        self.size_hint = (1,None)
+        self.rows = 1
+
+    def refresh_view_attrs(self, rv, index, data):
+        """
+        Handle the view changes for the recycle view
+        """
+        self.data = data
+        self.clear_widgets()
+        for val in data["data"]:
+            self.add_widget(Label(text=str(val),color=(0,0,0,1)))
+        return super().refresh_view_attrs(
+            rv, index, data)
+
+# class DataTableRow(Label):
+#     pass
+
 
 
 class ExportableGraph(GridLayout):
