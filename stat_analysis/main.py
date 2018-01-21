@@ -129,6 +129,7 @@ class ActionsGrid(GridLayout):
         super().__init__(**kwargs)
         headers = ["Name","Type"]
         self.cols = len(headers)
+        self.click_menu_active = False
         for header in headers:
             self.add_btn(header)
 
@@ -160,6 +161,10 @@ class ActionsGrid(GridLayout):
 
     def load_action(self,instance,touch):
         if instance.collide_point(touch.x,touch.y):
+            if self.click_menu_active != False:
+                if self.click_menu_active.collide_point(touch.x,touch.y):
+                    return False
+
             if touch.button == "left":
                 action = App.get_running_app().get_action_by_name(instance.text)
                 if action == False:
@@ -169,8 +174,11 @@ class ActionsGrid(GridLayout):
             elif touch.button == "right":
                 new_pos = self.to_window(touch.x,touch.y)
                 menu = RightClickMenu(x=new_pos[0],y=new_pos[1])
-                menu.add_opt("HI",lambda *args: print("hello world"))
+                menu.add_opt("Delete",lambda *args: App.get_running_app().get_action_by_name(instance.text).delete())
+                menu.add_opt("Jeff", lambda *args: App.get_running_app().saved_actions.remove(
+                    App.get_running_app().get_action_by_name(instance.text)))
                 menu.open()
+                self.click_menu_active = menu
                 App.get_running_app().root_widget.add_widget(menu)
 
 

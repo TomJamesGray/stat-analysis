@@ -442,3 +442,21 @@
                     Rectangle:
                         pos:self.x+self.width,self.y
                         size:1,self.height
+
+<MenuBtn>:
+    background_normal:""
+    background_down:""
+    color:0,0,0,1
+    background_color:self.bg_color
+    b_width:1
+    size_hint:None,None
+    size_hint_x:1
+    text_size:self.size
+    valign:"middle"
+    padding:5,5
+    canvas.before:
+        Color:
+            rgba:self.b_color
+        Rectangle:
+            pos:self.x-self.b_width,self.y-self.b_width
+            size:self.width+self.b_width*2,self.height+self.b_width*2

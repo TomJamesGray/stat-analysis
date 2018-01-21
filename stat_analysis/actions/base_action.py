@@ -190,6 +190,9 @@ class BaseAction(object):
         popup.content = cont
         popup.open()
 
+    def delete(self):
+        App.get_running_app().saved_actions.remove(self)
+
 
 class ResultOutputWidget(GridLayout):
     label_header = ObjectProperty(None)

@@ -80,5 +80,33 @@ class BorderedTable(GridLayout):
             if len(self.headers) != len(self.data):
                 raise ValueError("Length of headers and data aren't equal")
 
+
 class BorderedSpinner(Spinner):
     b_width = NumericProperty(1)
+
+
+class BorderedHoverButton(Button):
+    b_width = NumericProperty(1)
+    b_color = ListProperty([150/255, 150/255, 150/255, 1])
+    bg_color = ListProperty([60 / 255, 60 / 255, 60 / 255, 1])
+    bg_color_hover = ListProperty([30/255,30/255,30/255,1])
+    hovering = BooleanProperty(False)
+    bottom = BooleanProperty(False)
+
+    def mouse_pos(self,*args):
+        if not self.get_root_window():
+            # Widget isn't displayed so exit
+            return
+        # Determine whether mouse is over the button
+        collision = self.collide_point(*self.to_widget(*args[1]))
+        if self.hovering and collision:
+            # Mouse moved within the button
+            return
+        elif collision and not self.hovering:
+            # Mouse enter button
+            self.background_color = self.bg_color_hover
+        elif self.hovering and not collision:
+            # Mouse exit button
+            self.background_color = self.bg_color
+
+        self.hovering = collision
