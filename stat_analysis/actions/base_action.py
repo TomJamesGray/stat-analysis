@@ -190,8 +190,14 @@ class BaseAction(object):
         popup.content = cont
         popup.open()
 
-    def delete(self):
+    def delete(self,callback=None):
+        """
+        Removes this action from saved_actions
+        """
         App.get_running_app().saved_actions.remove(self)
+        print("Removed: {}".format(App.get_running_app().saved_actions))
+        if callback != None:
+            callback()
 
 
 class ResultOutputWidget(GridLayout):

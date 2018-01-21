@@ -14,7 +14,7 @@ from kivy.uix.label import Label
 from kivy.uix.textinput import TextInput
 from kivy.uix.button import Button
 from kivy.core.window import Window
-from kivy.properties import StringProperty,ObjectProperty,BooleanProperty,NumericProperty,Property
+from kivy.properties import StringProperty,ObjectProperty,BooleanProperty,NumericProperty,ListProperty
 from kivy.modules import inspector
 from stat_analysis.actions import stats,data,graph
 from stat_analysis.generic_widgets.bordered import BorderedButton
@@ -124,13 +124,15 @@ class HomeView(GridLayout):
 
 
 class ActionsGrid(GridLayout):
+    data_tbl = ListProperty([])
+
     def __init__(self,btn_fn={},**kwargs):
         self.btn_fn = btn_fn
         super().__init__(**kwargs)
-        headers = ["Name","Type"]
-        self.cols = len(headers)
+        self.headers = ["Name","Type"]
+        self.cols = len(self.headers)
         self.click_menu_active = False
-        for header in headers:
+        for header in self.headers:
             self.add_btn(header)
 
     def add_btn(self,text):
@@ -140,8 +142,13 @@ class ActionsGrid(GridLayout):
         self.add_widget(x)
         return x
 
-    def render(self,tbl):
-        for action in tbl:
+    def render(self,re_render=False):
+        if re_render:
+            self.clear_widgets()
+            for header in self.headers:
+                self.add_btn(header)
+
+        for action in self.data_tbl:
             if action.save_name == None:
                 # Don't display this action as it can't be viewed, eg
                 # transform data
@@ -174,12 +181,16 @@ class ActionsGrid(GridLayout):
             elif touch.button == "right":
                 new_pos = self.to_window(touch.x,touch.y)
                 menu = RightClickMenu(x=new_pos[0],y=new_pos[1])
-                menu.add_opt("Delete",lambda *args: App.get_running_app().get_action_by_name(instance.text).delete())
-                menu.add_opt("Jeff", lambda *args: App.get_running_app().saved_actions.remove(
-                    App.get_running_app().get_action_by_name(instance.text)))
+                menu.add_opt("Delete",lambda *args: App.get_running_app().get_action_by_name(instance.text).delete(
+                    callback=self.delete_callback
+                ))
                 menu.open()
                 self.click_menu_active = menu
                 App.get_running_app().root_widget.add_widget(menu)
+
+    def delete_callback(self,*args):
+        self.data_tbl = App.get_running_app().saved_actions
+        self.render(re_render=True)
 
 
 class ActionTreeViewLabel(TreeViewLabel):

@@ -179,7 +179,8 @@
             row_default_height:30
             row_force_default:True
             id:datasets_grid
-            on_parent:self.render(app.datasets)
+            data_tbl:app.datasets
+            on_parent:self.render()
             height:self.minimum_height
             btn_fn:{0:self.view_dataset }
         Label:
@@ -198,7 +199,8 @@
             row_default_height:30
             row_force_default:True
             id:actions_grid
-            on_parent:self.render(app.saved_actions)
+            data_tbl:app.saved_actions
+            on_parent:self.render()
             btn_fn:{0:self.load_action}
 
 
