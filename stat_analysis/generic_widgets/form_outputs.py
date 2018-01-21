@@ -4,53 +4,88 @@ import logging
 import numpy as np
 from stat_analysis.generic_widgets.files import FileChooserSaveDialog
 from kivy.uix.gridlayout import GridLayout
+from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.tabbedpanel import TabbedPanel,TabbedPanelItem
 from kivy.uix.popup import Popup
 from kivy.uix.label import Label
 from kivy.uix.textinput import TextInput
 from kivy.uix.button import Button
 from kivy.uix.recycleview import RecycleView
-from kivy.uix.recyclegridlayout import RecycleGridLayout
-from kivy.uix.recycleview.views import RecycleDataViewBehavior
-from kivy.properties import StringProperty,BooleanProperty,Property,ListProperty,ObjectProperty
+from kivy.uix.splitter import Splitter
+from kivy.properties import StringProperty,BooleanProperty,Property,ListProperty,ObjectProperty,NumericProperty
 from kivy.core.window import Window
 
 
 logger = logging.getLogger(__name__)
 
 
-class DataTable(RecycleView):
+class DataTable(GridLayout):
+    headers = ListProperty(None)
+    table_data = ListProperty(None)
+
+    def __init__(self,**kwargs):
+        super().__init__(**kwargs)
+        self.cols = 1
+        self.data_cols = len(self.table_data[0])
+
+        header_cont = AdjustableGrid(rows=1,size_hint_y=None)
+        for header in self.headers:
+            header_cont.add_to_grid(Label(text=header,color=(0,0,0,1),size_hint_x=None,size_hint_y=None,height=30))
+
+        header_cont.make()
+
+        self.add_widget(header_cont)
+        self.add_widget(DataTableRV(table_data=self.table_data,cols=self.data_cols,size_hint_x=1,
+                                    size_hint_y=None,height=400))
+
+
+class AdjustableGrid(GridLayout):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.grid_items = []
+        self.grid_bars = []
+
+    def add_to_grid(self, cls):
+        self.grid_items.append(cls)
+
+    def make(self):
+        for i,item in enumerate(self.grid_items):
+            if i != len(self.grid_items)-1:
+                self.add_widget(item)
+                bar = AdjustableGridBar(width=10,size_hint_x=None)
+                self.grid_bars.append(bar)
+                bar.bind(on_press=lambda instance,*args:instance.__setattr__("pressed",True))
+                # bar.bind(on_release=lambda instance,*args:instance.__setattr__("pressed",False))
+                bar.bind(on_release=lambda *args:print(args[0].pressed))
+                self.add_widget(bar)
+            else:
+                self.add_widget(item)
+
+        Window.bind(on_touch_move=self.check_drag)
+
+        print(Window.get_property_observers("on_touch_move"))
+
+    def check_drag(self,instance,touch):
+        for i,bar in enumerate(self.grid_bars):
+            print("{} Pressed? {}".format(i,bar.pressed))
+
+    def update(self,index,change):
+        print(index)
+        self.grid_items[index].width += change
+
+
+class AdjustableGridBar(Button):
+    pressed = BooleanProperty(False)
+
+
+class DataTableRV(RecycleView):
     table_data = ListProperty()
-    headers = ListProperty()
+    cols = NumericProperty()
 
     def __init__(self,**kwargs):
         super().__init__(**kwargs)
-        self.viewclass = DataTableRow
-        self.data = [{'data': x} for x in self.table_data]
-
-
-class DataTableRow(GridLayout,RecycleDataViewBehavior):
-    data = Property(None)
-
-    def __init__(self,**kwargs):
-        super().__init__(**kwargs)
-        self.size_hint = (1,None)
-        self.rows = 1
-
-    def refresh_view_attrs(self, rv, index, data):
-        """
-        Handle the view changes for the recycle view
-        """
-        self.data = data
-        self.clear_widgets()
-        for val in data["data"]:
-            self.add_widget(Label(text=str(val),color=(0,0,0,1)))
-        return super().refresh_view_attrs(
-            rv, index, data)
-
-# class DataTableRow(Label):
-#     pass
-
+        # Flatten the table data list, so each value is {"text":value}
+        self.data = [{"text":str(val)} for row in self.table_data for val in row]
 
 
 class ExportableGraph(GridLayout):
