@@ -164,7 +164,8 @@ class ActionsGrid(GridLayout):
 
     def view_dataset(self,instance,touch):
         if instance.collide_point(touch.x, touch.y):
-            App.get_running_app().root_widget.primary_pane.refresh(data.view_data.ViewData,dataset=instance.text)
+            if touch.button == "left":
+                App.get_running_app().root_widget.primary_pane.refresh(data.view_data.ViewData,dataset=instance.text)
 
     def load_action(self,instance,touch):
         if instance.collide_point(touch.x,touch.y):
