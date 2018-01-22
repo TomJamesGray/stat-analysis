@@ -468,11 +468,13 @@
 
 <DataTableRV>:
     viewclass:"DataTableLabel"
+    grid:grid
     RecycleGridLayout:
+        id:grid
         default_size: None, dp(56)
         default_size_hint: 1, None
         size_hint_y: None
-        cols_minimum:{0:300,1:200,2:300,3:111}
+#        cols_minimum:{0:300,1:200,2:300,3:111}
         height: self.minimum_height
         cols:root.cols
 

@@ -22,6 +22,7 @@ logger = logging.getLogger(__name__)
 class DataTable(GridLayout):
     headers = ListProperty(None)
     table_data = ListProperty(None)
+    grid = ObjectProperty(None)
 
     def __init__(self,**kwargs):
         super().__init__(**kwargs)
@@ -30,13 +31,15 @@ class DataTable(GridLayout):
 
         header_cont = AdjustableGrid(rows=1,size_hint_y=None)
         for header in self.headers:
-            header_cont.add_to_grid(Label(text=header,color=(0,0,0,1),size_hint_x=None,size_hint_y=None,height=30))
+            header_cont.add_to_grid(Label(text=header,color=(0,0,0,1),size_hint_x=1,size_hint_y=None,height=30))
 
         header_cont.make()
 
         self.add_widget(header_cont)
-        self.add_widget(DataTableRV(table_data=self.table_data,cols=self.data_cols,size_hint_x=1,
-                                    size_hint_y=None,height=400))
+        rv = DataTableRV(table_data=self.table_data,cols=self.data_cols,size_hint_x=1,
+                         size_hint_y=None,height=400)
+
+        rv.bind(cols_minimum=self.grid.setter("cols_minimum"))
 
 
 class AdjustableGrid(GridLayout):
@@ -44,34 +47,62 @@ class AdjustableGrid(GridLayout):
         super().__init__(**kwargs)
         self.grid_items = []
         self.grid_bars = []
+        self.bar_width = 5
+        self.cell_min_width = 140
 
     def add_to_grid(self, cls):
         self.grid_items.append(cls)
 
+    def generate_col_mins(self,*args):
+        self.cols_minimum = {}
+        cell_width = (self.width - (len(self.grid_items)-1)*self.bar_width)/len(self.grid_items)
+        for i in range(0, len(self.grid_items) * 2 - 1):
+            if i % 2 != 0:
+                self.cols_minimum[i] = self.bar_width
+            else:
+                self.cols_minimum[i] = self.cell_min_width
+
     def make(self):
+        self.bind(width=self.generate_col_mins)
+
         for i,item in enumerate(self.grid_items):
             if i != len(self.grid_items)-1:
                 self.add_widget(item)
-                bar = AdjustableGridBar(width=10,size_hint_x=None)
+                bar = AdjustableGridBar(width=self.bar_width,size_hint_x=None)
                 self.grid_bars.append(bar)
                 bar.bind(on_press=lambda instance,*args:instance.__setattr__("pressed",True))
-                # bar.bind(on_release=lambda instance,*args:instance.__setattr__("pressed",False))
-                bar.bind(on_release=lambda *args:print(args[0].pressed))
+                # bar.bind(on_release=lambda instance,*args:print("RELEASE"))
+                # bar.bind(on_release=lambda *args:print(args[0].pressed))
                 self.add_widget(bar)
             else:
                 self.add_widget(item)
 
         Window.bind(on_touch_move=self.check_drag)
+        Window.bind(on_touch_up=lambda instance,*args:[x.__setattr__("pressed",False) for x in self.grid_bars])
 
         print(Window.get_property_observers("on_touch_move"))
 
     def check_drag(self,instance,touch):
         for i,bar in enumerate(self.grid_bars):
-            print("{} Pressed? {}".format(i,bar.pressed))
+            if bar.pressed:
+                if self.grid_items[i].width + touch.dx > self.cell_min_width and \
+                    self.grid_items[i+1].width - touch.dx > self.cell_min_width:
+
+                    print("Changing {}".format(i))
+                    self.cols_minimum[i*2] += touch.dx
+                    self.cols_minimum[i*2+2] -= touch.dx
+
+                    self.grid_items[i].width += touch.dx
+                    self.grid_items[i+1].width -= touch.dx
+
+                    print("New cols min {}".format(self.cols_minimum))
+                else:
+                    print("NO")
+                # print("{} Pressed? {}".format(i,bar.pressed))
 
     def update(self,index,change):
         print(index)
-        self.grid_items[index].width += change
+        # self.grid_items[index].width += change
 
 
 class AdjustableGridBar(Button):
