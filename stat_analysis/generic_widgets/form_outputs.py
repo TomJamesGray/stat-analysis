@@ -29,17 +29,22 @@ class DataTable(GridLayout):
         self.cols = 1
         self.data_cols = len(self.table_data[0])
 
-        header_cont = AdjustableGrid(rows=1,size_hint_y=None)
+        self.header_cont = AdjustableGrid(rows=1,size_hint_y=None)
         for header in self.headers:
-            header_cont.add_to_grid(Label(text=header,color=(0,0,0,1),size_hint_x=1,size_hint_y=None,height=30))
+            self.header_cont.add_to_grid(Label(text=header,color=(0,0,0,1),size_hint_x=1,size_hint_y=None,height=30))
 
-        header_cont.make()
+        self.header_cont.make()
 
-        self.add_widget(header_cont)
-        rv = DataTableRV(table_data=self.table_data,cols=self.data_cols,size_hint_x=1,
+        self.add_widget(self.header_cont)
+        self.rv = DataTableRV(table_data=self.table_data,cols=self.data_cols,size_hint_x=1,
                          size_hint_y=None,height=400)
 
-        rv.bind(cols_minimum=self.grid.setter("cols_minimum"))
+        self.rv.bind(on_parent=self.bind_to_adjustable_grid())
+        self.add_widget(self.rv)
+
+
+    def bind_to_adjustable_grid(self):
+        self.header_cont.bind(cols_minimum=self.grid.setter("cols_minimum"))
 
 
 class AdjustableGrid(GridLayout):
