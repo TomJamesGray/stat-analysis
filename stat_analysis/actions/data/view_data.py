@@ -58,4 +58,4 @@ class ViewData(base_action.BaseAction):
         if not quiet:
             self.result_output.clear_outputs()
             self.result_output.add_widget(DataTable(headers=cur_set.get_headers(),table_data=cur_set.get_data(),
-                                                    size_hint_x=1,size_hint_y=None,height=500))
+                                                    size_hint_x=None,width=800,size_hint_y=None,height=500))

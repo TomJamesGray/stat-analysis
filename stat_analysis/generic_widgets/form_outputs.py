@@ -22,7 +22,6 @@ logger = logging.getLogger(__name__)
 class DataTable(GridLayout):
     headers = ListProperty(None)
     table_data = ListProperty(None)
-    grid = ObjectProperty(None)
 
     def __init__(self,**kwargs):
         super().__init__(**kwargs)
@@ -39,35 +38,68 @@ class DataTable(GridLayout):
         self.rv = DataTableRV(table_data=self.table_data,cols=self.data_cols,size_hint_x=1,
                          size_hint_y=None,height=400)
 
-        self.rv.bind(on_parent=self.bind_to_adjustable_grid())
+        print(self.rv.children[0])
+        print(self.header_cont.cols_minimum)
+        # self.header_cont.bind(cols_minimum=self.rv.children[0].setter("cols_minimum"))
+        self.header_cont.bind(cols_minimum=self.bind_to_adjustable_grid)
+
         self.add_widget(self.rv)
 
 
-    def bind_to_adjustable_grid(self):
-        self.header_cont.bind(cols_minimum=self.grid.setter("cols_minimum"))
+    def bind_to_adjustable_grid(self,instance,*args):
+        grid = self.rv.children[0]
+        # Get the new cols_minimums by getting the cols_minimum from the adjustable
+        # grid while discarding the values for the AdjustableGridBars, ie the
+        # odd index
+        new_mins = {}
+        adjust_mins = instance.cols_minimum
+        print("Adjust mins {}".format(adjust_mins))
+        for i in range(0,len(adjust_mins),2):
+            new_mins[i//2] = (adjust_mins[i] + (instance.bar_width/2))
+        # print("New mins {}".format(new_mins))
+        grid.cols_minimum = new_mins
+        print("Grid children {}".format(grid.children))
+        try:
+            for i,child in enumerate(grid.children):
+                child.width = new_mins[i%len(new_mins)]
+            # print("Grid child {}".format([grid.children[0]]))
+        except Exception as e:
+            print(e)
+            return
 
+        print("Grid cols minimum {}".format(grid.cols_minimum))
 
 class AdjustableGrid(GridLayout):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.grid_items = []
         self.grid_bars = []
-        self.bar_width = 5
+        self.bar_width = 4
         self.cell_min_width = 140
 
     def add_to_grid(self, cls):
         self.grid_items.append(cls)
 
     def generate_col_mins(self,*args):
-        self.cols_minimum = {}
-        cell_width = (self.width - (len(self.grid_items)-1)*self.bar_width)/len(self.grid_items)
+        # self.cols_minimum T= {}
+        if len(args) == 0:
+            return False
+        width = args[1]
+        print(args)
+        # return True
+        tmp_cols = {}
+        cell_width = (width - (len(self.grid_items)-1)*self.bar_width)/len(self.grid_items)
+        print("Cell width{}".format(cell_width))
         for i in range(0, len(self.grid_items) * 2 - 1):
             if i % 2 != 0:
-                self.cols_minimum[i] = self.bar_width
+                tmp_cols[i] = self.bar_width
             else:
-                self.cols_minimum[i] = self.cell_min_width
+                tmp_cols[i] = cell_width
+        print("tmp_cols {}".format(tmp_cols))
+        self.cols_minimum = tmp_cols
 
     def make(self):
+        self.generate_col_mins()
         self.bind(width=self.generate_col_mins)
 
         for i,item in enumerate(self.grid_items):
@@ -93,17 +125,11 @@ class AdjustableGrid(GridLayout):
                 if self.grid_items[i].width + touch.dx > self.cell_min_width and \
                     self.grid_items[i+1].width - touch.dx > self.cell_min_width:
 
-                    print("Changing {}".format(i))
                     self.cols_minimum[i*2] += touch.dx
                     self.cols_minimum[i*2+2] -= touch.dx
 
                     self.grid_items[i].width += touch.dx
                     self.grid_items[i+1].width -= touch.dx
-
-                    print("New cols min {}".format(self.cols_minimum))
-                else:
-                    print("NO")
-                # print("{} Pressed? {}".format(i,bar.pressed))
 
     def update(self,index,change):
         print(index)

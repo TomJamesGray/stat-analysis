@@ -465,17 +465,16 @@
 
 <DataTableLabel@Label>:
     color:0,0,0,1
+    size_hint_x:1
 
 <DataTableRV>:
     viewclass:"DataTableLabel"
-    grid:grid
     RecycleGridLayout:
-        id:grid
         default_size: None, dp(56)
         default_size_hint: 1, None
         size_hint_y: None
 #        cols_minimum:root.rv.cols_minimum
-#        on_parent:root.parent.bind_to_adjustable_grid()
+#         on_parent:root.parent.bind_to_adjustable_grid()
         height: self.minimum_height
         cols:root.cols
 
