@@ -41,11 +41,11 @@ class DataSpreadsheet(ScrollView):
 
         self.spreadsheet_headers = GridLayout(rows=1,size_hint=(None,None),
                                               width=self.col_default_width*self.data_cols+(self.data_cols-1)*
-                                              self.adjuster_width)
+                                                                                          self.adjuster_width)
 
         self.rv_container = GridLayout(rows=1,size_hint=(None,None),height=500,
                                        width=self.col_default_width*self.data_cols+(self.data_cols-1)*
-                                       self.adjuster_width)
+                                                                                   self.adjuster_width)
 
         # Transform data so each column is in seperate list
         self.columns = [[] for _ in range(self.data_cols)]
@@ -53,21 +53,24 @@ class DataSpreadsheet(ScrollView):
             for x in range(self.data_cols):
                 self.columns[x].append(self.table_data[y][x])
 
-        print("Transformed data {}".format(self.columns))
 
         for i,header in enumerate(self.headers):
             lbl = Label(text=str(header),color=(0,0,0,1),size_hint=(None,None),
-                                                      width=self.col_default_width)
+                        width=self.col_default_width)
 
             data_column = ColumnRV(raw_data=self.columns[i],size_hint=(None,None),width=self.col_default_width,
                                    height=300)
+            if i == self.data_cols -1:
+                data_column.bar_color = (.7,.7,.7,.9)
+                data_column.bar_inactive_color = (.7,.7,.7,.2)
+
             split = WidthAdjust(size_hint_x=None,width=self.adjuster_width,adjust=[lbl,data_column])
 
+            self.rv_container.add_widget(data_column)
             self.width_adjusters.append(split)
             self.data_columns.append(data_column)
             self.spreadsheet_headers.add_widget(lbl)
             self.spreadsheet_headers.add_widget(split)
-            self.rv_container.add_widget(data_column)
 
         # Since all the Column RVs are separate, all the RVs need to be aware of each other
         # So the scrolls can be mirrored
@@ -77,6 +80,7 @@ class DataSpreadsheet(ScrollView):
 
         Window.bind(on_touch_up=self.mouse_release)
         Window.bind(on_touch_move=self.mouse_move)
+        Window.bind(on_touch_down=self.check_width_adjusters)
         self.root_container.add_widget(self.spreadsheet_headers)
         self.root_container.add_widget(self.rv_container)
         self.add_widget(self.root_container)
@@ -84,6 +88,13 @@ class DataSpreadsheet(ScrollView):
     def mouse_release(self,*args):
         for split in self.width_adjusters:
             split.pressed = False
+
+    def check_width_adjusters(self,instance,touch,*args):
+        # Since the Buttons don't work when near(??) a scrollview this is a custom
+        # handler to handle button presses
+        for a in self.width_adjusters:
+            if a.collide_point(*a.to_widget(*touch.pos)):
+                a.pressed = True
 
     def mouse_move(self,instance,touch,*args):
         for split_no,split in enumerate(self.width_adjusters):
@@ -101,6 +112,7 @@ class ColumnRV(RecycleView):
     def __init__(self,**kwargs):
         super().__init__(**kwargs)
         self.data = [{"text":str(x)} for x in self.raw_data]
+        self.scroll_type = ["bars"]
 
     def on_scroll_start(self, touch, check_children=True, root=True):
         if root:
@@ -109,8 +121,8 @@ class ColumnRV(RecycleView):
                     touch.x = sibling.center_x
                     touch.y = sibling.center_y
                     touch.pos = (touch.x,touch.y)
-                    print("x {} y {} pos {}".format(touch.x,touch.y,touch.pos))
-                    print("Touch collide with sibling {}".format(sibling.collide_point(*touch.pos)))
+                    # print("x {} y {} pos {}".format(touch.x,touch.y,touch.pos))
+                    # print("Touch collide with sibling {}".format(sibling.collide_point(*touch.pos)))
                     sibling.on_scroll_start(touch,check_children=check_children,root=False)
 
             super().on_scroll_start(touch, check_children=check_children)
@@ -152,6 +164,7 @@ class WidthAdjust(Button):
 
     def on_press(self,**kwargs):
         self.pressed = True
+        print("PRESSED")
         super().on_press(**kwargs)
 
 
