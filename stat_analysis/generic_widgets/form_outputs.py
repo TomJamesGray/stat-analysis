@@ -11,7 +11,9 @@ from kivy.uix.label import Label
 from kivy.uix.textinput import TextInput
 from kivy.uix.button import Button
 from kivy.uix.recycleview import RecycleView
+from kivy.uix.recyclelayout import RecycleLayout
 from kivy.uix.splitter import Splitter
+from kivy.uix.scrollview import ScrollView
 from kivy.properties import StringProperty,BooleanProperty,Property,ListProperty,ObjectProperty,NumericProperty
 from kivy.core.window import Window
 
@@ -19,7 +21,7 @@ from kivy.core.window import Window
 logger = logging.getLogger(__name__)
 
 
-class DataTable(GridLayout):
+class DataSpreadsheet(ScrollView):
     headers = ListProperty(None)
     table_data = ListProperty(None)
 
@@ -27,127 +29,58 @@ class DataTable(GridLayout):
         super().__init__(**kwargs)
         self.cols = 1
         self.data_cols = len(self.table_data[0])
+        self.col_default_width = 150
+        self.adjuster_width = 4
+        self.width_adjusters = []
+        # self.headers = []
+        self.root_container = GridLayout(cols=1,col_default_width=self.col_default_width,
+                                         size_hint=(None,None),width=self.col_default_width*self.data_cols)
 
-        self.header_cont = AdjustableGrid(rows=1,size_hint_y=None)
-        for header in self.headers:
-            self.header_cont.add_to_grid(Label(text=header,color=(0,0,0,1),size_hint_x=1,size_hint_y=None,height=30))
+        self.root_container.bind(minimum_width=self.root_container.setter("width"))
 
-        self.header_cont.make()
+        self.spreadsheet_headers = GridLayout(rows=1,size_hint=(None,None),
+                                              width=self.col_default_width*self.data_cols+(self.data_cols-1)*
+                                              self.adjuster_width)
 
-        self.add_widget(self.header_cont)
-        self.rv = DataTableRV(table_data=self.table_data,cols=self.data_cols,size_hint_x=1,
-                         size_hint_y=None,height=400)
+        for i,header in enumerate(self.headers):
+            lbl = Label(text=str(header),color=(0,0,0,1),size_hint=(None,None),
+                                                      width=self.col_default_width)
+            split = WidthAdjust(size_hint_x=None,width=self.adjuster_width,adjust=[lbl])
+            self.width_adjusters.append(split)
 
-        print(self.rv.children[0])
-        print(self.header_cont.cols_minimum)
-        # self.header_cont.bind(cols_minimum=self.rv.children[0].setter("cols_minimum"))
-        self.header_cont.bind(cols_minimum=self.bind_to_adjustable_grid)
-
-        self.add_widget(self.rv)
-
-
-    def bind_to_adjustable_grid(self,instance,*args):
-        grid = self.rv.children[0]
-        # Get the new cols_minimums by getting the cols_minimum from the adjustable
-        # grid while discarding the values for the AdjustableGridBars, ie the
-        # odd index
-        new_mins = {}
-        adjust_mins = instance.cols_minimum
-        print("Adjust mins {}".format(adjust_mins))
-        for i in range(0,len(adjust_mins),2):
-            new_mins[i//2] = (adjust_mins[i] + (instance.bar_width/2))
-        # print("New mins {}".format(new_mins))
-        grid.cols_minimum = new_mins
-        print("Grid children {}".format(grid.children))
-        try:
-            for i,child in enumerate(grid.children):
-                child.width = new_mins[i%len(new_mins)]
-            # print("Grid child {}".format([grid.children[0]]))
-        except Exception as e:
-            print(e)
-            return
-
-        print("Grid cols minimum {}".format(grid.cols_minimum))
-
-class AdjustableGrid(GridLayout):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.grid_items = []
-        self.grid_bars = []
-        self.bar_width = 4
-        self.cell_min_width = 140
-
-    def add_to_grid(self, cls):
-        self.grid_items.append(cls)
-
-    def generate_col_mins(self,*args):
-        # self.cols_minimum T= {}
-        if len(args) == 0:
-            return False
-        width = args[1]
-        print(args)
-        # return True
-        tmp_cols = {}
-        cell_width = (width - (len(self.grid_items)-1)*self.bar_width)/len(self.grid_items)
-        print("Cell width{}".format(cell_width))
-        for i in range(0, len(self.grid_items) * 2 - 1):
-            if i % 2 != 0:
-                tmp_cols[i] = self.bar_width
-            else:
-                tmp_cols[i] = cell_width
-        print("tmp_cols {}".format(tmp_cols))
-        self.cols_minimum = tmp_cols
-
-    def make(self):
-        self.generate_col_mins()
-        self.bind(width=self.generate_col_mins)
-
-        for i,item in enumerate(self.grid_items):
-            if i != len(self.grid_items)-1:
-                self.add_widget(item)
-                bar = AdjustableGridBar(width=self.bar_width,size_hint_x=None)
-                self.grid_bars.append(bar)
-                bar.bind(on_press=lambda instance,*args:instance.__setattr__("pressed",True))
-                # bar.bind(on_release=lambda instance,*args:print("RELEASE"))
-                # bar.bind(on_release=lambda *args:print(args[0].pressed))
-                self.add_widget(bar)
-            else:
-                self.add_widget(item)
-
-        Window.bind(on_touch_move=self.check_drag)
-        Window.bind(on_touch_up=lambda instance,*args:[x.__setattr__("pressed",False) for x in self.grid_bars])
-
-        print(Window.get_property_observers("on_touch_move"))
-
-    def check_drag(self,instance,touch):
-        for i,bar in enumerate(self.grid_bars):
-            if bar.pressed:
-                if self.grid_items[i].width + touch.dx > self.cell_min_width and \
-                    self.grid_items[i+1].width - touch.dx > self.cell_min_width:
-
-                    self.cols_minimum[i*2] += touch.dx
-                    self.cols_minimum[i*2+2] -= touch.dx
-
-                    self.grid_items[i].width += touch.dx
-                    self.grid_items[i+1].width -= touch.dx
-
-    def update(self,index,change):
-        print(index)
-        # self.grid_items[index].width += change
+            self.spreadsheet_headers.add_widget(lbl)
+            self.spreadsheet_headers.add_widget(split)
 
 
-class AdjustableGridBar(Button):
+
+        Window.bind(on_touch_up=self.mouse_release)
+        Window.bind(on_touch_move=self.mouse_move)
+        self.root_container.add_widget(self.spreadsheet_headers)
+        self.add_widget(self.root_container)
+
+    def mouse_release(self,*args):
+        for split in self.width_adjusters:
+            split.pressed = False
+
+    def mouse_move(self,instance,touch,*args):
+        for split_no,split in enumerate(self.width_adjusters):
+            if split.pressed:
+                for item in split.adjust:
+                    item.width += touch.dx
+                # self.spreadsheet_headers.children[split_no].width += touch.dx
+                logger.info("WidthAdjust index {} drag".format(split_no))
+
+
+class WidthAdjust(Button):
     pressed = BooleanProperty(False)
-
-
-class DataTableRV(RecycleView):
-    table_data = ListProperty()
-    cols = NumericProperty()
+    adjust = ListProperty()
 
     def __init__(self,**kwargs):
         super().__init__(**kwargs)
-        # Flatten the table data list, so each value is {"text":value}
-        self.data = [{"text":str(val)} for row in self.table_data for val in row]
+
+    def on_press(self,**kwargs):
+        self.pressed = True
+        super().on_press(**kwargs)
 
 
 class ExportableGraph(GridLayout):
