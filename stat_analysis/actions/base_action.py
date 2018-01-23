@@ -203,8 +203,11 @@ class BaseAction(object):
 class ResultOutputWidget(GridLayout):
     label_header = ObjectProperty(None)
 
-    def clear_outputs(self):
-        children = self.children[:]
-        for item in children:
-            if item != self.label_header:
-                self.remove_widget(item)
+    def clear_outputs(self,all=False):
+        if not all:
+            children = self.children[:]
+            for item in children:
+                if item != self.label_header:
+                    self.remove_widget(item)
+        else:
+            self.clear_widgets()

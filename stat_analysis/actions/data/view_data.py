@@ -56,6 +56,9 @@ class ViewData(base_action.BaseAction):
             raise ValueError("Data set selected in combo box doesn't exist in app's data_sets")
         logger.debug("Using {} as cur_set".format(cur_set))
         if not quiet:
-            self.result_output.clear_outputs()
-            self.result_output.add_widget(DataSpreadsheet(headers=cur_set.get_headers(),table_data=cur_set.get_data(),
-                                                          size_hint_x=None,width=800,size_hint_y=None,height=500))
+            self.result_output.clear_outputs(all=True)
+            self.result_output.size_hint_y=1
+            sheet = DataSpreadsheet(headers=cur_set.get_headers(),table_data=cur_set.get_data(),
+                                    size_hint_x=1,size_hint_y=1)
+            self.result_output.bind(height=sheet.setter("height"))
+            self.result_output.add_widget(sheet)

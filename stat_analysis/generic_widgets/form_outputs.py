@@ -32,8 +32,9 @@ class DataSpreadsheet(ScrollView):
         self.col_default_width = 150
         self.adjuster_width = 4
         self.width_adjusters = []
+        self.data_columns = []
         # self.headers = []
-        self.root_container = GridLayout(cols=1,col_default_width=self.col_default_width,
+        self.root_container = GridLayout(cols=1,col_default_width=self.col_default_width,height=550,
                                          size_hint=(None,None),width=self.col_default_width*self.data_cols)
 
         self.root_container.bind(minimum_width=self.root_container.setter("width"))
@@ -42,20 +43,42 @@ class DataSpreadsheet(ScrollView):
                                               width=self.col_default_width*self.data_cols+(self.data_cols-1)*
                                               self.adjuster_width)
 
+        self.rv_container = GridLayout(rows=1,size_hint=(None,None),height=500,
+                                       width=self.col_default_width*self.data_cols+(self.data_cols-1)*
+                                       self.adjuster_width)
+
+        # Transform data so each column is in seperate list
+        self.columns = [[] for _ in range(self.data_cols)]
+        for y in range(len(self.table_data)):
+            for x in range(self.data_cols):
+                self.columns[x].append(self.table_data[y][x])
+
+        print("Transformed data {}".format(self.columns))
+
         for i,header in enumerate(self.headers):
             lbl = Label(text=str(header),color=(0,0,0,1),size_hint=(None,None),
                                                       width=self.col_default_width)
-            split = WidthAdjust(size_hint_x=None,width=self.adjuster_width,adjust=[lbl])
-            self.width_adjusters.append(split)
 
+            data_column = ColumnRV(raw_data=self.columns[i],size_hint=(None,None),width=self.col_default_width,
+                                   height=300)
+            split = WidthAdjust(size_hint_x=None,width=self.adjuster_width,adjust=[lbl,data_column])
+
+            self.width_adjusters.append(split)
+            self.data_columns.append(data_column)
             self.spreadsheet_headers.add_widget(lbl)
             self.spreadsheet_headers.add_widget(split)
+            self.rv_container.add_widget(data_column)
 
-
+        # Since all the Column RVs are separate, all the RVs need to be aware of each other
+        # So the scrolls can be mirrored
+        print(self.data_columns)
+        for col in self.data_columns:
+            col.siblings = self.data_columns
 
         Window.bind(on_touch_up=self.mouse_release)
         Window.bind(on_touch_move=self.mouse_move)
         self.root_container.add_widget(self.spreadsheet_headers)
+        self.root_container.add_widget(self.rv_container)
         self.add_widget(self.root_container)
 
     def mouse_release(self,*args):
@@ -70,6 +93,55 @@ class DataSpreadsheet(ScrollView):
                 # self.spreadsheet_headers.children[split_no].width += touch.dx
                 logger.info("WidthAdjust index {} drag".format(split_no))
 
+
+class ColumnRV(RecycleView):
+    raw_data = ListProperty()
+    siblings = ListProperty()
+
+    def __init__(self,**kwargs):
+        super().__init__(**kwargs)
+        self.data = [{"text":str(x)} for x in self.raw_data]
+
+    def on_scroll_start(self, touch, check_children=True, root=True):
+        if root:
+            for sibling in self.siblings:
+                if sibling is not self:
+                    touch.x = sibling.center_x
+                    touch.y = sibling.center_y
+                    touch.pos = (touch.x,touch.y)
+                    print("x {} y {} pos {}".format(touch.x,touch.y,touch.pos))
+                    print("Touch collide with sibling {}".format(sibling.collide_point(*touch.pos)))
+                    sibling.on_scroll_start(touch,check_children=check_children,root=False)
+
+            super().on_scroll_start(touch, check_children=check_children)
+        else:
+            super().on_scroll_start(touch,check_children=check_children)
+
+    def on_scroll_move(self, touch, root=True):
+        if root:
+            for sibling in self.siblings:
+                if sibling is not self:
+                    touch.x = sibling.center_x
+                    touch.y = sibling.center_y
+                    touch.pos = (touch.x, touch.y)
+                    sibling.on_scroll_start(touch,root=False)
+
+            super().on_scroll_start(touch)
+        else:
+            super().on_scroll_start(touch)
+
+    def on_scroll_stop(self, touch, check_children=True, root=True):
+        if root:
+            for sibling in self.siblings:
+                if sibling is not self:
+                    touch.x = sibling.center_x
+                    touch.y = sibling.center_y
+                    touch.pos = (touch.x, touch.y)
+                    sibling.on_scroll_stop(touch,check_children=check_children,root=False)
+
+            super().on_scroll_start(touch, check_children=check_children)
+        else:
+            super().on_scroll_start(touch, check_children=check_children)
 
 class WidthAdjust(Button):
     pressed = BooleanProperty(False)

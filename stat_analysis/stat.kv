@@ -463,20 +463,16 @@
             pos:self.x-self.b_width,self.y-self.b_width
             size:self.width+self.b_width*2,self.height+self.b_width*2
 
-<DataTableLabel@Label>:
+<DataTableLabel@BorderedLabel>:
     color:0,0,0,1
     size_hint_x:1
 
-<DataTableRV>:
+<ColumnRV>:
     viewclass:"DataTableLabel"
-#     RecycleGridLayout:
-#         default_size: None, dp(56)
-#         default_size_hint: 1, None
-#         size_hint_y: None
-# #        cols_minimum:root.rv.cols_minimum
-# #         on_parent:root.parent.bind_to_adjustable_grid()
-#         height: self.minimum_height
-#         cols:root.cols
-
-
-
+#    bar_color:0,0,0,0
+    RecycleBoxLayout:
+        default_size: None, dp(56)
+        default_size_hint: 1, None
+        size_hint_y: None
+        height: self.minimum_height
+        orientation: 'vertical'
