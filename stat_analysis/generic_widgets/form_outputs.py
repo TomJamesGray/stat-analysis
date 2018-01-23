@@ -121,13 +121,13 @@ class ColumnRV(RecycleView):
                     touch.x = sibling.center_x
                     touch.y = sibling.center_y
                     touch.pos = (touch.x,touch.y)
-                    # print("x {} y {} pos {}".format(touch.x,touch.y,touch.pos))
-                    # print("Touch collide with sibling {}".format(sibling.collide_point(*touch.pos)))
                     sibling.on_scroll_start(touch,check_children=check_children,root=False)
 
             super().on_scroll_start(touch, check_children=check_children)
         else:
             super().on_scroll_start(touch,check_children=check_children)
+
+        self.refresh_from_layout()
 
     def on_scroll_move(self, touch, root=True):
         if root:
@@ -142,6 +142,8 @@ class ColumnRV(RecycleView):
         else:
             super().on_scroll_start(touch)
 
+        self.refresh_from_layout()
+
     def on_scroll_stop(self, touch, check_children=True, root=True):
         if root:
             for sibling in self.siblings:
@@ -154,6 +156,8 @@ class ColumnRV(RecycleView):
             super().on_scroll_start(touch, check_children=check_children)
         else:
             super().on_scroll_start(touch, check_children=check_children)
+
+        self.refresh_from_layout()
 
 class WidthAdjust(Button):
     pressed = BooleanProperty(False)
