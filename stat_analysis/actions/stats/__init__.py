@@ -3,3 +3,4 @@ import stat_analysis.actions.stats.summary
 import stat_analysis.actions.stats.logistic_regression
 import stat_analysis.actions.stats.k_means_clustering
 import stat_analysis.actions.stats.normal_distribution
+import stat_analysis.actions.stats.poisson_distribution

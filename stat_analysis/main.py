@@ -309,7 +309,7 @@ class StatApp(App):
                 "group_name": "Stats",
                 "actions": [stats.regression.Regression, stats.summary.Summary,
                             stats.logistic_regression.LogisticRegression,stats.k_means_clustering.KMeansClustering,
-                            stats.normal_distribution.NormalDistribution]
+                            stats.normal_distribution.NormalDistribution,stats.poisson_distribution.PoissonDistribution]
             },
             {
                 "group_name": "Data",
