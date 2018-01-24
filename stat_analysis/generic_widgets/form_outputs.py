@@ -108,6 +108,9 @@ class DataSpreadsheet(GridLayout):
                         # This adjustment would make the column too narrow
                         return
                     item.width += touch.dx
+                    self.spreadsheet_headers.width += touch.dx
+                    self.rv_container.width += touch.dx
+                    self.width += touch.dx
                 return
 
     def set_cursor_hover_adjuster(self,instance,pos,*args):
