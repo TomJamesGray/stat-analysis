@@ -5,6 +5,7 @@ import numpy as np
 import pygame.cursors
 import pygame.mouse
 from stat_analysis.generic_widgets.files import FileChooserSaveDialog
+from stat_analysis.generic_widgets.bordered import BorderedLabel
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.tabbedpanel import TabbedPanel,TabbedPanelItem
 from kivy.uix.popup import Popup
@@ -20,13 +21,14 @@ from kivy.core.window import Window
 logger = logging.getLogger(__name__)
 
 
-class DataSpreadsheet(ScrollView):
+class DataSpreadsheet(GridLayout):
     headers = ListProperty(None)
     table_data = ListProperty(None)
 
     def __init__(self,**kwargs):
         super().__init__(**kwargs)
         self.cols = 1
+        self.size_hint=(1,1)
         self.data_cols = len(self.table_data[0])
         self.col_default_width = 150
         self.adjuster_show_width = 2
@@ -34,17 +36,12 @@ class DataSpreadsheet(ScrollView):
         self.width_adjusters = []
         self.data_columns = []
         self.resize_cursor_active = False
-        # self.headers = []
-        self.root_container = GridLayout(cols=1,col_default_width=self.col_default_width,height=550,
-                                         size_hint=(None,None),width=self.col_default_width*self.data_cols)
 
-        self.root_container.bind(minimum_width=self.root_container.setter("width"))
-
-        self.spreadsheet_headers = GridLayout(rows=1,size_hint=(None,None),
+        self.spreadsheet_headers = GridLayout(rows=1,size_hint=(None,None),height=30,
                                               width=self.col_default_width*self.data_cols+(self.data_cols-1)*
                                                                                           self.adjuster_show_width)
 
-        self.rv_container = GridLayout(rows=1,size_hint=(None,None),height=500,
+        self.rv_container = GridLayout(rows=1,size_hint=(None,1),
                                        width=self.col_default_width*self.data_cols+(self.data_cols-1)*
                                                                                    self.adjuster_show_width)
 
@@ -54,13 +51,13 @@ class DataSpreadsheet(ScrollView):
             for x in range(self.data_cols):
                 self.columns[x].append(self.table_data[y][x])
 
-
         for i,header in enumerate(self.headers):
-            lbl = Label(text=str(header),color=(0,0,0,1),size_hint=(None,None),
-                        width=self.col_default_width)
+            lbl = GridAdjustHeader(text=str(header),width=self.col_default_width)
 
-            data_column = ColumnRV(raw_data=self.columns[i],size_hint=(None,None),width=self.col_default_width,
-                                   height=300)
+            data_column = ColumnRV(raw_data=self.columns[i],size_hint=(None,1),
+                                   width=self.col_default_width+self.adjuster_show_width)
+
+            self.spreadsheet_headers.bind(height=data_column.setter("height"))
             if i == self.data_cols -1:
                 data_column.bar_color = (.7,.7,.7,.9)
                 data_column.bar_inactive_color = (.7,.7,.7,.2)
@@ -83,9 +80,8 @@ class DataSpreadsheet(ScrollView):
         Window.bind(on_touch_move=self.mouse_move)
         Window.bind(on_touch_down=self.check_width_adjusters)
         Window.bind(mouse_pos=self.set_cursor_hover_adjuster)
-        self.root_container.add_widget(self.spreadsheet_headers)
-        self.root_container.add_widget(self.rv_container)
-        self.add_widget(self.root_container)
+        self.add_widget(self.spreadsheet_headers)
+        self.add_widget(self.rv_container)
 
     def mouse_release(self,*args):
         for split in self.width_adjusters:
@@ -176,6 +172,9 @@ class ColumnRV(RecycleView):
 
         self.refresh_from_layout()
 
+
+class GridAdjustHeader(Label):
+    pass
 
 class WidthAdjust(Button):
     pressed = BooleanProperty(False)

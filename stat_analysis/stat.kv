@@ -463,16 +463,33 @@
             pos:self.x-self.b_width,self.y-self.b_width
             size:self.width+self.b_width*2,self.height+self.b_width*2
 
-<DataTableLabel@BorderedLabel>:
+<DataTableLabel@Label>:
     color:0,0,0,1
     size_hint_x:1
+    background_color:0,0,0,0
+    canvas.before:
+        Color:
+            rgba:.5,.5,.5,1
+        Rectangle:
+            pos:self.pos
+            size:self.size
+        Color:
+            rgba:1,1,1,1
+        Rectangle:
+            pos:self.x-1,self.y-1
+            size:self.width-1,self.height-1
+
+<GridAdjustHeader>:
+    color:app.accent_col
+    height:30
+    size_hint:None,None
 
 <ColumnRV>:
     viewclass:"DataTableLabel"
     bar_color:0,0,0,0
     bar_inactive_color:0,0,0,0
     RecycleBoxLayout:
-        default_size: None, dp(56)
+        default_size: None, 30
         default_size_hint: 1, None
         size_hint_y: None
         height: self.minimum_height
