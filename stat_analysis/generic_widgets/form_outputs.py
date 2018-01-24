@@ -28,7 +28,7 @@ class DataSpreadsheet(GridLayout):
     def __init__(self,**kwargs):
         super().__init__(**kwargs)
         self.cols = 1
-        self.size_hint=(1,1)
+        self.size_hint=(None,None)
         self.data_cols = len(self.table_data[0])
         self.col_default_width = 150
         self.col_min_width = 75

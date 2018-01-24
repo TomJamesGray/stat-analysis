@@ -57,8 +57,14 @@ class ViewData(base_action.BaseAction):
         logger.debug("Using {} as cur_set".format(cur_set))
         if not quiet:
             self.result_output.clear_outputs(all=True)
-            self.result_output.size_hint_y=1
-            sheet = DataSpreadsheet(headers=cur_set.get_headers(),table_data=cur_set.get_data(),
-                                    size_hint_x=1,size_hint_y=1)
+            self.result_output.size_hint_y = 1
+            self.result_output.size_hint_x = None
+
+            sheet = DataSpreadsheet(headers=cur_set.get_headers(),table_data=cur_set.get_data())
+
             self.result_output.bind(height=sheet.setter("height"))
+            # self.result_output.bind(width=sheet.setter("width"))
+            sheet.bind(minimum_width=sheet.setter("width"))
+            sheet.bind(minimum_width=self.result_output.setter("width"))
+
             self.result_output.add_widget(sheet)
