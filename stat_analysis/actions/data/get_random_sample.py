@@ -48,42 +48,46 @@ class DataSample(BaseAction):
         self.output_widget = output_widget
         self.base_dataset,self.cols_structure = None,None
 
-    def run(self):
+    def run(self, validate=True, quiet=False, preloaded=False, use_cached=False, **kwargs):
         logger.info("Running action {}".format(self.type))
-        if self.validate_form():
-            logger.info("Form validated, form outputs: {}".format(self.form_outputs))
-            vals = self.form_outputs
-            self.base_dataset = App.get_running_app().get_dataset_by_name(vals["dataset"])
-            # Store a copy of the cols_structure of the base dataset, so modifications to the
-            # base dataset don't change this dataset since it should be independent
-            self.cols_structure = copy.copy(self.base_dataset.get_header_structure())
-
-            if vals["n_records"] > self.base_dataset.records:
-                logger.error("Number of records desired is greater than number of records in dataset")
+        logger.info("Running action {}".format(self.type))
+        if validate:
+            if not self.validate_form():
+                logger.warning("Form not validated, form errors: {}".format(self.form_errors))
+                self.make_err_message(self.form_errors)
                 return False
-
-            self.stored_data = []
-            dataset_data = self.base_dataset.get_data()
-
-            if vals["random_sample"]:
-                self.stored_data = random.sample(dataset_data,int(vals["n_records"]))
             else:
-                smpl_rate = int(self.base_dataset.records/vals["n_records"])
-                for i in range(0,self.base_dataset.records):
-                    if i % smpl_rate == 0 and len(self.stored_data) < vals["n_records"]:
-                        self.stored_data.append(dataset_data[i])
+                logger.debug("Form validated, form outputs: {}".format(self.form_outputs))
 
-            self.save_name = vals["save_name"]
-            try:
-                # Add action to data sets
-                App.get_running_app().add_dataset(self)
-            except ValueError:
-                logger.error("Dataset with name '{}' already exists, please choose a different name".format(self.save_name))
-                return False
-        else:
-            logger.info("Form not validated, form errors: {}".format(self.form_errors))
-            self.make_err_message(self.form_errors)
+        vals = self.form_outputs
+        self.base_dataset = App.get_running_app().get_dataset_by_name(vals["dataset"])
+        # Store a copy of the cols_structure of the base dataset, so modifications to the
+        # base dataset don't change this dataset since it should be independent
+        self.cols_structure = copy.copy(self.base_dataset.get_header_structure())
+
+        if vals["n_records"] > self.base_dataset.records:
+            logger.error("Number of records desired is greater than number of records in dataset")
             return False
+
+        self.stored_data = []
+        dataset_data = self.base_dataset.get_data()
+
+        if vals["random_sample"]:
+            self.stored_data = random.sample(dataset_data,int(vals["n_records"]))
+        else:
+            smpl_rate = int(self.base_dataset.records/vals["n_records"])
+            for i in range(0,self.base_dataset.records):
+                if i % smpl_rate == 0 and len(self.stored_data) < vals["n_records"]:
+                    self.stored_data.append(dataset_data[i])
+
+        self.save_name = vals["save_name"]
+        try:
+            # Add action to data sets
+            App.get_running_app().add_dataset(self)
+        except ValueError:
+            logger.error("Dataset with name '{}' already exists, please choose a different name".format(self.save_name))
+            return False
+
 
     def get_data(self):
         return self.stored_data
