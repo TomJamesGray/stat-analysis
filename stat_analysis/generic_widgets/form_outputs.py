@@ -2,19 +2,18 @@ import shutil
 import os
 import logging
 import numpy as np
+import pygame.cursors
+import pygame.mouse
 from stat_analysis.generic_widgets.files import FileChooserSaveDialog
 from kivy.uix.gridlayout import GridLayout
-from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.tabbedpanel import TabbedPanel,TabbedPanelItem
 from kivy.uix.popup import Popup
 from kivy.uix.label import Label
 from kivy.uix.textinput import TextInput
 from kivy.uix.button import Button
 from kivy.uix.recycleview import RecycleView
-from kivy.uix.recyclelayout import RecycleLayout
-from kivy.uix.splitter import Splitter
 from kivy.uix.scrollview import ScrollView
-from kivy.properties import StringProperty,BooleanProperty,Property,ListProperty,ObjectProperty,NumericProperty
+from kivy.properties import StringProperty,BooleanProperty,Property,ListProperty,ObjectProperty
 from kivy.core.window import Window
 
 
@@ -30,9 +29,11 @@ class DataSpreadsheet(ScrollView):
         self.cols = 1
         self.data_cols = len(self.table_data[0])
         self.col_default_width = 150
-        self.adjuster_width = 4
+        self.adjuster_show_width = 2
+        self.adjuster_click_width = 10
         self.width_adjusters = []
         self.data_columns = []
+        self.resize_cursor_active = False
         # self.headers = []
         self.root_container = GridLayout(cols=1,col_default_width=self.col_default_width,height=550,
                                          size_hint=(None,None),width=self.col_default_width*self.data_cols)
@@ -41,11 +42,11 @@ class DataSpreadsheet(ScrollView):
 
         self.spreadsheet_headers = GridLayout(rows=1,size_hint=(None,None),
                                               width=self.col_default_width*self.data_cols+(self.data_cols-1)*
-                                                                                          self.adjuster_width)
+                                                                                          self.adjuster_show_width)
 
         self.rv_container = GridLayout(rows=1,size_hint=(None,None),height=500,
                                        width=self.col_default_width*self.data_cols+(self.data_cols-1)*
-                                                                                   self.adjuster_width)
+                                                                                   self.adjuster_show_width)
 
         # Transform data so each column is in seperate list
         self.columns = [[] for _ in range(self.data_cols)]
@@ -64,7 +65,7 @@ class DataSpreadsheet(ScrollView):
                 data_column.bar_color = (.7,.7,.7,.9)
                 data_column.bar_inactive_color = (.7,.7,.7,.2)
 
-            split = WidthAdjust(size_hint_x=None,width=self.adjuster_width,adjust=[lbl,data_column])
+            split = WidthAdjust(size_hint_x=None,width=self.adjuster_show_width,adjust=[lbl,data_column])
 
             self.rv_container.add_widget(data_column)
             self.width_adjusters.append(split)
@@ -81,6 +82,7 @@ class DataSpreadsheet(ScrollView):
         Window.bind(on_touch_up=self.mouse_release)
         Window.bind(on_touch_move=self.mouse_move)
         Window.bind(on_touch_down=self.check_width_adjusters)
+        Window.bind(mouse_pos=self.set_cursor_hover_adjuster)
         self.root_container.add_widget(self.spreadsheet_headers)
         self.root_container.add_widget(self.rv_container)
         self.add_widget(self.root_container)
@@ -89,20 +91,35 @@ class DataSpreadsheet(ScrollView):
         for split in self.width_adjusters:
             split.pressed = False
 
+        self.resize_cursor_active = False
+
     def check_width_adjusters(self,instance,touch,*args):
         # Since the Buttons don't work when near(??) a scrollview this is a custom
         # handler to handle button presses
         for a in self.width_adjusters:
             if a.collide_point(*a.to_widget(*touch.pos)):
                 a.pressed = True
+                return
 
     def mouse_move(self,instance,touch,*args):
         for split_no,split in enumerate(self.width_adjusters):
             if split.pressed:
+                self.resize_cursor_active = True
                 for item in split.adjust:
                     item.width += touch.dx
-                # self.spreadsheet_headers.children[split_no].width += touch.dx
-                logger.info("WidthAdjust index {} drag".format(split_no))
+                return
+
+    def set_cursor_hover_adjuster(self,instance,pos,*args):
+        for split in self.width_adjusters:
+            if split.collide_point(*split.to_widget(*pos)) and not self.resize_cursor_active:
+                # Set cursor to the column reisizer one, ie "<->"
+                cursor,mask = pygame.cursors.compile(pygame.cursors.sizer_x_strings,"X",".")
+                cursor_data = ((24,16),(7,11),cursor,mask)
+                pygame.mouse.set_cursor(*cursor_data)
+                return
+
+        if not self.resize_cursor_active:
+            pygame.mouse.set_cursor(*pygame.cursors.arrow)
 
 
 class ColumnRV(RecycleView):
@@ -159,17 +176,10 @@ class ColumnRV(RecycleView):
 
         self.refresh_from_layout()
 
+
 class WidthAdjust(Button):
     pressed = BooleanProperty(False)
     adjust = ListProperty()
-
-    def __init__(self,**kwargs):
-        super().__init__(**kwargs)
-
-    def on_press(self,**kwargs):
-        self.pressed = True
-        print("PRESSED")
-        super().on_press(**kwargs)
 
 
 class ExportableGraph(GridLayout):

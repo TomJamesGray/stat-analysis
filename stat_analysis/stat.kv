@@ -477,3 +477,17 @@
         size_hint_y: None
         height: self.minimum_height
         orientation: 'vertical'
+
+<WidthAdjust>:
+    background_down:""
+    background_normal:""
+    background_color:0,0,0,0
+    font_size:"1px"
+    # Since Buttons like to draw more than their size if width is small
+    # draw it manually
+    canvas.after:
+        Color:
+            rgba:0,0,0,1
+        Rectangle:
+            size:self.size
+            pos:self.pos
