@@ -115,7 +115,7 @@ class ActionsScroller(ScrollView):
         self.add_widget(tv)
 
 
-class HomeView(GridLayout):
+class HomeView(ScrollView):
     """
     Widget for the main home screen
     """

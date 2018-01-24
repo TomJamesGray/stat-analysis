@@ -63,8 +63,8 @@
                     Rectangle:
                         pos:self.pos
                         size:self.size
-                HomeView:
-                    size_hint_y:1
+                HomeView
+#                    size_hint_y:1
             Splitter:
                 sizable_from:"top"
                 size_hint_y:0.2
@@ -158,11 +158,11 @@
 <HomeView>:
     datasets_grid:datasets_grid
     actions_grid:actions_grid
-    cols:1
-    height:self.minimum_height
     GridLayout:
+        height:self.minimum_height
         cols:1
         padding:15,15
+        size_hint_y:None
         Label:
             color:0,0,0,1
             text:"Datasets"
@@ -199,6 +199,7 @@
             row_default_height:30
             row_force_default:True
             id:actions_grid
+            height:self.minimum_height
             data_tbl:app.saved_actions
             on_parent:self.render()
             btn_fn:{0:self.load_action}
