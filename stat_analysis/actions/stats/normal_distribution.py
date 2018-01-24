@@ -1,5 +1,4 @@
 import logging
-import statistics
 import numpy as np
 import matplotlib.pyplot as plt
 from collections import OrderedDict
@@ -49,6 +48,14 @@ class NormalDistribution(BaseAction):
                         "form_name":"show_bars",
                         "visible_name":"Show data bars",
                         "required":True
+                    },
+                    {
+                        "input_type":"numeric",
+                        "required":False,
+                        "allow_comma_separated":True,
+                        "form_name":"predict_on",
+                        "visible_name":"Get probability for values",
+                        "tip":"For multiple values input them with commas separating them"
                     }
                 ]
             }
@@ -83,13 +90,25 @@ class NormalDistribution(BaseAction):
         for row in dataset.get_data():
             col_data.append(row[col_pos])
 
-        variance = statistics.variance(col_data)
-        mean = statistics.mean(col_data)
+        variance = np.var(col_data)
+        mean = np.mean(col_data)
         print("Var {} mean {}".format(variance,mean))
         if not quiet:
+            self.result_output.clear_outputs()
+            # This is the normal distribution function
+            y_func = lambda x:(1/(2*np.pi*variance)**0.5) * np.e ** (-(x-mean)**2/(2*variance))
+
             # Get x values for the line
             x_line = np.arange(min(col_data),max(col_data),(max(col_data)-min(col_data))/100)
-            y_line = [(1/(2*np.pi*variance)**0.5) * np.e ** (-(x-mean)**2/(2*variance)) for x in x_line]
+            y_line = [y_func(x) for x in x_line]
+
+            if vals["predict_on"] != None:
+                predicted_vals = [str("{:.3g}".format(y_func(value))) for value in vals["predict_on"]]
+                self.result_output.add_widget(BorderedTable(
+                    headers=[vals["col"], "Probability"], data=[[str(x) for x in vals["predict_on"]], predicted_vals],
+                    row_default_height=40, row_force_default=True, orientation="vertical", size_hint_y=None,
+                    for_scroller=True
+                ))
 
             fig = plt.figure()
             axis = plt.subplot(111)
@@ -107,15 +126,13 @@ class NormalDistribution(BaseAction):
 
                 x_counts = OrderedDict(sorted(x_counts.items(),key=lambda x:x[0]))
 
-                print(list(x_counts.values()))
                 x_relative_freq = [x/len(col_data) for x in x_counts.values()]
                 axis.bar(list(x_vals),x_relative_freq,color="red")
-                print(x_relative_freq)
 
+            axis.set_xlabel(vals["col"])
+            axis.set_ylabel("Probability Density")
 
             axis.legend()
             fig.savefig("tmp/plot.png")
-
-            self.result_output.clear_outputs()
             self.result_output.add_widget(ExportableGraph(source="tmp/plot.png", fig=fig, axis=[axis], nocache=True,
                                                           size_hint_y=None))
