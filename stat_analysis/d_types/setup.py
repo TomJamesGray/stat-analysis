@@ -2,7 +2,8 @@
 # TODO implement format attributes for types like datetime
 types = {
     "int":{
-        "convert":lambda x:int(x)
+        # Convert to float first otherwise error is raised for values with decimals
+        "convert":lambda x:int(float(x))
     },
     "float":{
         "convert":lambda x:float(x)

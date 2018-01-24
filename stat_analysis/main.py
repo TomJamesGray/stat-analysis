@@ -308,7 +308,8 @@ class StatApp(App):
             {
                 "group_name": "Stats",
                 "actions": [stats.regression.Regression, stats.summary.Summary,
-                            stats.logistic_regression.LogisticRegression,stats.k_means_clustering.KMeansClustering]
+                            stats.logistic_regression.LogisticRegression,stats.k_means_clustering.KMeansClustering,
+                            stats.normal_distribution.NormalDistribution]
             },
             {
                 "group_name": "Data",

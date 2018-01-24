@@ -31,7 +31,7 @@ class DataSpreadsheet(GridLayout):
         self.size_hint=(1,1)
         self.data_cols = len(self.table_data[0])
         self.col_default_width = 150
-        self.col_min_width = 100
+        self.col_min_width = 75
         self.adjuster_show_width = 2
         self.adjuster_click_width = 10
         self.width_adjusters = []
@@ -48,9 +48,11 @@ class DataSpreadsheet(GridLayout):
 
         # Transform data so each column is in seperate list
         self.columns = [[] for _ in range(self.data_cols)]
+        print(self.table_data)
         for y in range(len(self.table_data)):
             for x in range(self.data_cols):
-                self.columns[x].append(self.table_data[y][x])
+                self.columns[x].append(
+                    self.table_data[y][x])
 
         for i,header in enumerate(self.headers):
             lbl = GridAdjustHeader(text=str(header),width=self.col_default_width)
@@ -73,7 +75,6 @@ class DataSpreadsheet(GridLayout):
 
         # Since all the Column RVs are separate, all the RVs need to be aware of each other
         # So the scrolls can be mirrored
-        print(self.data_columns)
         for col in self.data_columns:
             col.siblings = self.data_columns
 
