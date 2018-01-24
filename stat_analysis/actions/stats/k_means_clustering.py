@@ -124,8 +124,15 @@ class KMeansClustering(BaseAction):
             x.append(row[x_pos])
             y.append(row[y_pos])
 
-        model = KMeans(k=int(vals["k"]),init_rnd_point=vals["init_rnd_num"])
-        model.fit(x,y)
+        if self.stored_model != None and use_cached:
+            # Use the cached model
+            logger.debug("Using cached model for type {} save name {}".format(self.type,self.save_name))
+            model = self.stored_model
+        else:
+            # Make the KMeans model and fit it
+            model = KMeans(k=int(vals["k"]),init_rnd_point=vals["init_rnd_num"])
+            model.fit(x,y)
+            self.stored_model = model
 
         cols = ["r","g","b","c","k"]
         if not quiet:
