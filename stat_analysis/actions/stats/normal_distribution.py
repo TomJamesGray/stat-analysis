@@ -2,6 +2,7 @@ import logging
 import statistics
 import numpy as np
 import matplotlib.pyplot as plt
+from collections import OrderedDict
 from kivy.app import App
 from stat_analysis.actions.base_action import BaseAction
 from stat_analysis.generic_widgets.bordered import BorderedTable
@@ -84,18 +85,37 @@ class NormalDistribution(BaseAction):
 
         variance = statistics.variance(col_data)
         mean = statistics.mean(col_data)
-
+        print("Var {} mean {}".format(variance,mean))
         if not quiet:
             # Get x values for the line
             x_line = np.arange(min(col_data),max(col_data),(max(col_data)-min(col_data))/100)
-            y_line = [(1/(2*np.pi*variance)) * np.e ** -((x-mean)**2/2*variance) for x in col_data]
+            y_line = [(1/(2*np.pi*variance)**0.5) * np.e ** (-(x-mean)**2/(2*variance)) for x in x_line]
 
             fig = plt.figure()
             axis = plt.subplot(111)
             axis.plot(x_line,y_line)
 
+            if vals["show_bars"]:
+                # Get the x values
+                x_vals = set(col_data)
+                x_counts = {}
+                for val in col_data:
+                    if val in x_counts.keys():
+                        x_counts[val] += 1
+                    else:
+                        x_counts[val] = 1
+
+                x_counts = OrderedDict(sorted(x_counts.items(),key=lambda x:x[0]))
+
+                print(list(x_counts.values()))
+                x_relative_freq = [x/len(col_data) for x in x_counts.values()]
+                axis.bar(list(x_vals),x_relative_freq,color="red")
+                print(x_relative_freq)
+
+
             axis.legend()
             fig.savefig("tmp/plot.png")
 
+            self.result_output.clear_outputs()
             self.result_output.add_widget(ExportableGraph(source="tmp/plot.png", fig=fig, axis=[axis], nocache=True,
                                                           size_hint_y=None))
