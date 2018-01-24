@@ -50,7 +50,6 @@ class DataSample(BaseAction):
 
     def run(self, validate=True, quiet=False, preloaded=False, use_cached=False, **kwargs):
         logger.info("Running action {}".format(self.type))
-        logger.info("Running action {}".format(self.type))
         if validate:
             if not self.validate_form():
                 logger.warning("Form not validated, form errors: {}".format(self.form_errors))
