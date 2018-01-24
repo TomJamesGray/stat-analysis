@@ -145,14 +145,6 @@ class LogisticRegression(BaseAction):
             logger.info("Logistic regression done, x coeff {}, constant term {}, % accuracy {}".format(
                 x_coeff,const,percentage_accuracy))
 
-            if vals["save_action"] and not preloaded:
-                # Save the action
-                self.save_name = vals["action_save_name"]
-                try:
-                    App.get_running_app().add_action(self)
-                except ValueError:
-                    logger.error("Dataset with that name already exists")
-
             self.result_output.clear_outputs()
             self.result_output.spacing = (0,5)
             self.result_output.add_widget(BorderedTable(
@@ -191,3 +183,10 @@ class LogisticRegression(BaseAction):
 
                 self.result_output.add_widget(ExportableGraph(source="tmp/plot.png", fig=fig, axis=[axis], nocache=True,
                                                           size_hint_y=None))
+        if vals["save_action"] and not preloaded:
+            # Save the action
+            self.save_name = vals["action_save_name"]
+            try:
+                App.get_running_app().add_action(self)
+            except ValueError:
+                logger.error("Dataset with that name already exists")
