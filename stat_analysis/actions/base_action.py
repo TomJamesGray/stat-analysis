@@ -1,4 +1,5 @@
 import logging
+import time
 from kivy.uix.label import Label
 from kivy.app import App
 from stat_analysis.form_inputs import combo_box,check_box,numeric_bounded,numeric,file,string,action_columns
@@ -71,7 +72,8 @@ class BaseAction(object):
                 self.form_items.append(form_cls)
 
         # Add the run action button to end of form
-        form_layout.add_widget(Button(text="Run action",on_press=lambda *_:self.run(),size_hint=(1,None),height=30))
+        form_layout.add_widget(Button(text="Run action",on_press=lambda *_:self.timed_run(),size_hint=(1,None),
+                                      height=30))
 
         scroller = ScrollView(size_hint=(None,1),width=self.form_width)
         scroller.add_widget(form_layout)
@@ -91,6 +93,10 @@ class BaseAction(object):
         # Add property so that the result output can be added to when the action is run
         self.result_output = result_output
 
+    def timed_run(self):
+        start_time = time.time()
+        self.run()
+        logger.info("Action {} finished in {} seconds".format(self.type,time.time()-start_time))
 
     def _draw_border(self,*args):
         try:
