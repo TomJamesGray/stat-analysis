@@ -93,9 +93,9 @@ class BaseAction(object):
         # Add property so that the result output can be added to when the action is run
         self.result_output = result_output
 
-    def timed_run(self):
+    def timed_run(self,**kwargs):
         start_time = time.time()
-        self.run()
+        self.run(**kwargs)
         logger.info("Action {} finished in {} seconds".format(self.type,time.time()-start_time))
 
     def _draw_border(self,*args):
