@@ -467,29 +467,39 @@
     color:0,0,0,1
     size_hint_x:1
     background_color:0,0,0,0
+    font_size:"12px"
+    font_name:"res/Hack-Regular.ttf"
+    text_size:self.size
+    valign:"middle"
     canvas.before:
         Color:
-            rgba:.5,.5,.5,1
+            rgba:.4,.4,.4,1
+        # Right vertical border
         Rectangle:
-            pos:self.pos
-            size:self.size
-        Color:
-            rgba:1,1,1,1
+            pos:self.x+self.width-1,self.y
+            size:1,self.height
+        # Bottom horizontal border
         Rectangle:
-            pos:self.x-1,self.y-1
-            size:self.width-1,self.height-1
+            pos:self.x,self.y
+            size:self.width,1
 
 <GridAdjustHeader>:
     color:app.accent_col
     height:30
     size_hint:None,None
+    canvas.before:
+        Color:
+            rgba:0,0,0,1
+        Rectangle:
+            pos:self.x,self.y
+            size:self.width,2
 
 <ColumnRV>:
     viewclass:"DataTableLabel"
     bar_color:0,0,0,0
     bar_inactive_color:0,0,0,0
     RecycleBoxLayout:
-        default_size: None, 30
+        default_size: None, 25
         default_size_hint: 1, None
         size_hint_y: None
         height: self.minimum_height

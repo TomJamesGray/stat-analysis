@@ -31,6 +31,7 @@ class DataSpreadsheet(GridLayout):
         self.size_hint=(1,1)
         self.data_cols = len(self.table_data[0])
         self.col_default_width = 150
+        self.col_min_width = 100
         self.adjuster_show_width = 2
         self.adjuster_click_width = 10
         self.width_adjusters = []
@@ -102,6 +103,9 @@ class DataSpreadsheet(GridLayout):
             if split.pressed:
                 self.resize_cursor_active = True
                 for item in split.adjust:
+                    if item.width + touch.dx < self.col_min_width:
+                        # This adjustment would make the column too narrow
+                        return
                     item.width += touch.dx
                 return
 
