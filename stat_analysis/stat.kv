@@ -50,7 +50,6 @@
                     text:"Load"
                     valign:"middle"
                     font_size:"14px"
-                    width:'75dp'
                     text_size:self.size
                     padding:3,3
                     on_press:app.load_btn()
@@ -65,7 +64,7 @@
                 # If you need to change the heights of the custom action buttons then you need to change
                 # the value in generic_widgets/action_bar since the height is changed because of the dropdown
                 CustomActionBtn:
-                    # The default font (Roboto) doesnt't support the check mark so use DejavSans
+                    # The default font (Roboto) doesnt't support the check mark so use Dejavu Sans
                     text:"[font=res/DejaVuSans.ttf]✓[/font]" +" Log View" if log_view.log_visible else "× Log View"
                     markup:True
                     valign:"middle"
@@ -73,13 +72,7 @@
                     text_size:self.size
                     padding:3,3
                     on_press:log_view.toggle_log_view()
-#                CustomActionBtn:
-#                    text:"Toggle Fullscreen"
-#                    valign:"middle"
-#                    font_size:"14px"
-#                    text_size:self.size
-#                    padding:3,3
-#                    on_press:Window.fullscreen = "fake"
+
 
     BoxLayout:
         orientation:"horizontal"
@@ -118,7 +111,6 @@
                         pos:self.pos
                         size:self.size
                 HomeView
-#                    size_hint_y:1
             Splitter:
                 sizable_from:"top"
                 size_hint_y:0.2

@@ -5,6 +5,7 @@ from stat_analysis.actions import base_action
 from stat_analysis.generic_widgets.bordered import BorderedTable
 from stat_analysis.d_types.get_d_type import guess_d_type
 from stat_analysis.d_types.setup import types
+from stat_analysis.generic_widgets.form_outputs import DataSpreadsheet
 from collections import OrderedDict
 from stat_analysis.actions.data.import_set_col_types import ImportSetColTypes
 from kivy.uix.boxlayout import BoxLayout
@@ -71,10 +72,6 @@ class ImportCSV(base_action.BaseAction):
         self.stored_data = None
 
     def run(self,validate=True,quiet=False):
-        # Set the maximum sample length for the guess_d_type function.
-        # Bigger samples will increase accuracy, but slow the program down
-        max_sample_length = 50
-
         logger.info("Running action {}".format(self.type))
         if validate:
             if not self.validate_form():
@@ -101,29 +98,21 @@ class ImportCSV(base_action.BaseAction):
 
         # Get rid of data before user specified start line
         data = data[int(vals["start_line"])-1:]
-        smpl_data = {}
-        data_points_in_smpl = 0
-        for header in self.headers:
-            smpl_data[header] = []
-        # Set the sample rate for the d_type sample
-        smpl_rate = int(len(data)/max_sample_length)
-        # Smpl_rate should be larger than 2 or 1
-        if smpl_rate < 2:
-            smpl_rate = 1
 
-        for x,item in enumerate(data):
-            if x % smpl_rate == 0 and data_points_in_smpl < max_sample_length:
-                data_points_in_smpl += 1
-                # Add the columns to the smpl_data
-                for i in range(0,len(item)):
-                    # TODO Add handling if there are more columns than expected
-                    smpl_data[self.headers[i]].append(item[i])
-
+        # Arrange the data into columns and run the guess_d_type function
+        # This returns: ((data_type_name, converter function),[Possible errors caused by this choice])
         col_d_types = OrderedDict()
-        for col_name,col_data in smpl_data.items():
-            col_d_types[col_name] = guess_d_type(col_data)
+        possible_col_errors = OrderedDict()
+        for x in range(len(data[0])):
+            tmp_col_data = []
+            for y in range(len(data)):
+                tmp_col_data.append(data[y][x])
+
+            col_d_types[self.headers[x]],possible_col_errors[self.headers[x]] = guess_d_type(tmp_col_data)
+
 
         logger.debug("Guessed d_types: {}".format(col_d_types))
+        logger.debug("Possible errors: {}".format(possible_col_errors))
 
         # Set stored data property to be used in get_data method
         self.stored_data = data
@@ -142,8 +131,12 @@ class ImportCSV(base_action.BaseAction):
             return False
 
         if not quiet:
+            tbl = DataSpreadsheet(table_data=self.stored_data[:5],headers=self.headers)
+            tbl.bind(minimum_width=tbl.setter("width"))
+
             self.output_widget.parent.refresh(ImportSetColTypes,dataset_name=vals["save_name"],
-                                              drop_err_cols=vals["drop_err_cols"])
+                                              drop_err_cols=vals["drop_err_cols"],spreadsheet=tbl,
+                                              possible_errors=possible_col_errors)
 
 
 
