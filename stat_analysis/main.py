@@ -17,12 +17,16 @@ from kivy.core.window import Window
 from kivy.properties import StringProperty,ObjectProperty,BooleanProperty,NumericProperty,ListProperty
 from kivy.modules import inspector
 from stat_analysis.actions import stats,data,graph
+# Import CustomActionBtn so kivy is made aware of it for the kv file
+from stat_analysis.generic_widgets.action_bar import CustomActionBtn
 from stat_analysis.generic_widgets.bordered import BorderedButton
 from stat_analysis.generic_widgets.files import FileChooserSaveDialog,FileChooserLoadDialog
 from stat_analysis.generic_widgets.right_click_menu import RightClickMenu
 from kivy.app import App
 
 Config.set('input', 'mouse', 'mouse,multitouch_on_demand')
+
+# GenericActionBtn
 
 class LogViewOutputHandler(logging.StreamHandler):
     def emit(self,record):
@@ -427,7 +431,10 @@ class StatApp(App):
             pickle.dump(to_save,f)
 
     def log_this(self,msg):
-        self.root_widget.log_view.log_msg(msg)
+        try:
+            self.root_widget.log_view.log_msg(msg)
+        except:
+            pass
 
     def add_dataset(self,dataset):
         for set in self.datasets:

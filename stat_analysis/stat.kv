@@ -1,4 +1,22 @@
 #:import Factory kivy.factory.Factory
+#<FileActionDropdown@CustomActionDropDown>:
+#    id:dropdown
+#    on_parent:self.dismiss()
+#    background_normal:""
+#    background_down:""
+#    CustomActionBtn:
+#        background_normal:""
+#        background_down:""
+#        text:"Save"
+#        font_size:"12px"
+#        color:1,0,0,1
+#        on_press:app.save_btn()
+#    CustomActionBtn:
+#        background_normal:""
+#        background_down:""
+#        text:"Load"
+#        font_size:"12px"
+#        on_press:app.load_btn()
 
 <StatAnalysis>:
     primary_pane:primary_pane
@@ -7,31 +25,52 @@
     height:root.height
     ActionBar:
         width:root.width
-        height:40
-        size_hint_x:1
+        height:30
+        size_hint:1,None
         pos:0,root.height-self.height
         ActionView:
+            size_hint:1,None
+            height:30
             use_seperator:True
             ActionPrevious:
+                # Hide the default kivy icon in the action bar
                 with_previous:False
                 size_hint_x:None
                 width:0
                 app_icon_width:1
                 app_icon_height:0
-            ActionButton:
+            CustomActionBtn:
+                background_normal:""
+                background_down:""
                 text:"Home"
+                font_size:"12px"
                 on_press:primary_pane.go_home()
-            ActionButton:
-                text:"Save"
-                on_press:app.save_btn()
-            ActionButton:
-                text:"Load"
-                on_press:app.load_btn()
+
+            CustomActionGroup:
+                background_normal:""
+                background_down:""
+                mode:"spinner"
+                text:"File"
+                font_size:"12px"
+                CustomActionBtn:
+                    background_normal:""
+                    background_down:""
+                    text:"Save"
+                    font_size:"12px"
+                    on_press:app.save_btn()
+                CustomActionBtn:
+                    background_normal:""
+                    background_down:""
+                    text:"Load"
+                    font_size:"12px"
+                    on_press:app.load_btn()
+
+
     BoxLayout:
         orientation:"horizontal"
         spacing:5,5
         width:root.width
-        height:root.height-40
+        height:root.height-30
         padding:5,5,0,5
         Splitter:
             size_hint_x:None
@@ -82,6 +121,7 @@
                         Rectangle:
                             pos:self.pos
                             size:self.size
+
 
 
 
