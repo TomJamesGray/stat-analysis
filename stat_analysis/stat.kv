@@ -1,22 +1,4 @@
 #:import Factory kivy.factory.Factory
-#<FileActionDropdown@CustomActionDropDown>:
-#    id:dropdown
-#    on_parent:self.dismiss()
-#    background_normal:""
-#    background_down:""
-#    CustomActionBtn:
-#        background_normal:""
-#        background_down:""
-#        text:"Save"
-#        font_size:"12px"
-#        color:1,0,0,1
-#        on_press:app.save_btn()
-#    CustomActionBtn:
-#        background_normal:""
-#        background_down:""
-#        text:"Load"
-#        font_size:"12px"
-#        on_press:app.load_btn()
 
 <StatAnalysis>:
     primary_pane:primary_pane
@@ -43,7 +25,7 @@
                 background_normal:""
                 background_down:""
                 text:"Home"
-                font_size:"12px"
+                font_size:"14px"
                 on_press:primary_pane.go_home()
 
             CustomActionGroup:
@@ -51,18 +33,24 @@
                 background_down:""
                 mode:"spinner"
                 text:"File"
-                font_size:"12px"
+                font_size:"14px"
+                # If you need to change the heights of the custom action buttons then you need to change
+                # the value in generic_widgets/action_bar since the height is changed because of the dropdown
                 CustomActionBtn:
-                    background_normal:""
-                    background_down:""
                     text:"Save"
-                    font_size:"12px"
+                    valign:"middle"
+                    font_size:"14px"
+                    size_hint_x:None
+                    text_size:self.size
+                    padding:3,3
                     on_press:app.save_btn()
                 CustomActionBtn:
-                    background_normal:""
-                    background_down:""
                     text:"Load"
-                    font_size:"12px"
+                    valign:"middle"
+                    font_size:"14px"
+                    width:'75dp'
+                    text_size:self.size
+                    padding:3,3
                     on_press:app.load_btn()
 
 

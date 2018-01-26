@@ -1,4 +1,4 @@
-from kivy.uix.actionbar import ActionItem,ActionButton,ActionGroup,ActionDropDown
+from kivy.uix.actionbar import ActionItem,ActionButton,ActionGroup
 from kivy.properties import BooleanProperty,ListProperty
 from kivy.core.window import Window
 
@@ -31,7 +31,33 @@ class GenericActionBtn(ActionItem):
         self.hovering = collision
 
 class CustomActionBtn(GenericActionBtn,ActionButton):
-    pass
+    def __init__(self,**kwargs):
+        self.background_normal = ""
+        self.background_down = ""
+        super().__init__(**kwargs)
+        self.height = 30
+        self.size_hint_y = None
+
+    def mouse_pos(self,*args):
+        super().mouse_pos(*args)
+        # self.height = 30
+        # self.background_normal = ""
+
 
 class CustomActionGroup(GenericActionBtn,ActionGroup):
-    pass
+    def _toggle_dropdown(self, *largs):
+        super()._toggle_dropdown(*largs)
+
+        for child in self._dropdown.container.children:
+            child.height = 28
+            child.background_normal = ""
+
+    def on_is_open(self, instance, value):
+        super().on_is_open(instance,value)
+
+        if value:
+            self.background_color = self.background_hover_color
+            Window.unbind(mouse_pos=self.mouse_pos)
+        elif not value:
+            self.background_color = self.background_normal_color
+            Window.bind(mouse_pos=self.mouse_pos)
