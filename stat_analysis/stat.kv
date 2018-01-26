@@ -1,4 +1,5 @@
 #:import Factory kivy.factory.Factory
+#:import Window kivy.core.window.Window
 
 <StatAnalysis>:
     primary_pane:primary_pane
@@ -34,6 +35,7 @@
                 mode:"spinner"
                 text:"File"
                 font_size:"14px"
+                dropdown_width:150
                 # If you need to change the heights of the custom action buttons then you need to change
                 # the value in generic_widgets/action_bar since the height is changed because of the dropdown
                 CustomActionBtn:
@@ -53,6 +55,31 @@
                     padding:3,3
                     on_press:app.load_btn()
 
+            CustomActionGroup:
+                background_normal:""
+                background_down:""
+                mode:"spinner"
+                text:"View"
+                font_size:"14px"
+                dropdown_width:150
+                # If you need to change the heights of the custom action buttons then you need to change
+                # the value in generic_widgets/action_bar since the height is changed because of the dropdown
+                CustomActionBtn:
+                    # The default font (Roboto) doesnt't support the check mark so use DejavSans
+                    text:"[font=res/DejaVuSans.ttf]✓[/font]" +" Log View" if log_view.log_visible else "× Log View"
+                    markup:True
+                    valign:"middle"
+                    font_size:"14px"
+                    text_size:self.size
+                    padding:3,3
+                    on_press:log_view.toggle_log_view()
+#                CustomActionBtn:
+#                    text:"Toggle Fullscreen"
+#                    valign:"middle"
+#                    font_size:"14px"
+#                    text_size:self.size
+#                    padding:3,3
+#                    on_press:Window.fullscreen = "fake"
 
     BoxLayout:
         orientation:"horizontal"
