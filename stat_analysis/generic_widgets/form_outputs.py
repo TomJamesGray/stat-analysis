@@ -2,8 +2,14 @@ import shutil
 import os
 import logging
 import numpy as np
-import pygame.cursors
-import pygame.mouse
+
+try:
+    # Try and import pygame to allow cursor to be set, currently not implemnted
+    import pygame.cursors
+    import pygame.mouse
+except:
+    pass
+
 from stat_analysis.generic_widgets.files import FileChooserSaveDialog
 from stat_analysis.generic_widgets.bordered import BorderedLabel
 from kivy.uix.gridlayout import GridLayout
@@ -77,7 +83,6 @@ class DataSpreadsheet(GridLayout):
         # So the scrolls can be mirrored
         for col in self.data_columns:
             col.siblings = self.data_columns
-
         Window.bind(on_touch_up=self.mouse_release)
         Window.bind(on_touch_move=self.mouse_move)
         Window.bind(on_touch_down=self.check_width_adjusters)
@@ -117,13 +122,19 @@ class DataSpreadsheet(GridLayout):
         for split in self.width_adjusters:
             if split.collide_point(*split.to_widget(*pos)) and not self.resize_cursor_active:
                 # Set cursor to the column reisizer one, ie "<->"
-                cursor,mask = pygame.cursors.compile(pygame.cursors.sizer_x_strings,"X",".")
-                cursor_data = ((24,16),(7,11),cursor,mask)
-                pygame.mouse.set_cursor(*cursor_data)
+                try:
+                    cursor,mask = pygame.cursors.compile(pygame.cursors.sizer_x_strings,"X",".")
+                    cursor_data = ((24,16),(7,11),cursor,mask)
+                    pygame.mouse.set_cursor(*cursor_data)
+                except:
+                    pass
                 return
 
         if not self.resize_cursor_active:
-            pygame.mouse.set_cursor(*pygame.cursors.arrow)
+            try:
+                pygame.mouse.set_cursor(*pygame.cursors.arrow)
+            except:
+                pass
 
 
 class ColumnRV(RecycleView):
