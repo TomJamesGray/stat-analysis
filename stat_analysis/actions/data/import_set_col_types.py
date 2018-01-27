@@ -1,13 +1,8 @@
 from stat_analysis.generic_widgets.bordered import BorderedTable
 from stat_analysis.actions.data.set_col_types import SetColTypes
 from kivy.uix.label import Label
+from kivy.app import App
 from collections import OrderedDict
-
-
-def make_err_lbl(msg):
-    lbl = Label(text="• {}".format(msg), color=(0, 0, 0, 1), size_hint=(None, None))
-    lbl.bind(texture_size=lbl.setter("size"))
-    return lbl
 
 
 class ImportSetColTypes(SetColTypes):
@@ -19,6 +14,7 @@ class ImportSetColTypes(SetColTypes):
         self.status = "OK"
         self.base_form = []
         self.output_widget = output_widget
+        self.passed_dataset_name = kwargs["dataset_name"]
         self.form_add_cols(kwargs["dataset_name"],set_dataset_selector=False,re_render=False)
         self.drop_err_cols = kwargs["drop_err_cols"]
         self.data_spreadsheet = kwargs["spreadsheet"]
@@ -38,22 +34,36 @@ class ImportSetColTypes(SetColTypes):
         self.data_spreadsheet.bind(minimum_width=self.result_output.setter("width"))
 
         total_errors = 0
-        errors_ouptputs = OrderedDict()
+        errors_ouptputs = Label(color=(0,0,0,1),size_hint=(None,None),markup=True,font_size="12")
+        errors_ouptputs.bind(texture_size=errors_ouptputs.setter("size"))
 
-        # make_err_message = lambda txt: self.result_output.add_widget(
-        #     Label(text="• {}".format(txt),color=(0,0,0,1),size_hint=(None,None)))
+        columns = App.get_running_app().get_dataset_by_name(self.passed_dataset_name).get_header_structure()
 
         for col_name,error_vals in self.possible_errors.items():
             if len(error_vals) == 0:
                 continue
+
+            guessed_type = columns[col_name][0]
             blanks = 0
             total_errors += len(error_vals)
             outputs = []
             for val in error_vals:
                 if val == "":
                     blanks += 1
+                    total_errors += 1
                 else:
-                    outputs.append(make_err_lbl(val))
+                    outputs.append("• Recommended type {} conflicts with '{}'\n".format(guessed_type,val))
+                    total_errors += 1
+
+            errors_ouptputs.text += "\n[size=14]Column '{}' errors:[/size]\n".format(col_name)
 
             if blanks != 0:
-                self.result_output.add_widget(make_err_lbl("{} {} Blanks".format(blanks)))
+                errors_ouptputs.text += "• {} blank records conflicts with recommended type {}\n".format(
+                    blanks,guessed_type)
+
+            for out in outputs:
+                errors_ouptputs.text += out
+
+        errors_ouptputs.text = "[size=18]Total potential errors {}[/size]\n".format(total_errors) + \
+                               errors_ouptputs.text
+        self.result_output.add_widget(errors_ouptputs)

@@ -327,6 +327,14 @@
             pos:(self.x,self.y) if self.bottom else (0,0)
             size:(self.width,self.b_width) if self.bottom else (0,0)
 
+<ResultOutputWidgetLabelHeader@Label>
+    text:"Result"
+    size_hint:1,None
+    text_size:self.size
+    color:app.accent_col
+    height:30
+    font_size:"22"
+    halign:"left"
 
 <ResultOutputWidget>:
     label_header:label_header
@@ -334,15 +342,9 @@
     cols:1
     padding:5,5
     spacing:5,5
-    Label:
-        text:"Result"
-        size_hint:1,None
-        text_size:self.size
-        color:app.accent_col
-        height:30
-        font_size:"22"
-        halign:"left"
+    ResultOutputWidgetLabelHeader:
         id:label_header
+
 
 <FileChooserSaveDialog>
     text_input:text_input

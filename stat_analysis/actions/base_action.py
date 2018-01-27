@@ -6,7 +6,7 @@ from stat_analysis.form_inputs import combo_box,check_box,numeric_bounded,numeri
 from stat_analysis.d_types.setup import types,column_d_type_maps
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.scrollview import ScrollView
-from kivy.properties import ObjectProperty,NumericProperty
+from kivy.properties import ObjectProperty,BooleanProperty
 from kivy.graphics import Color,Rectangle
 from kivy.uix.popup import Popup
 from kivy.uix.button import Button
@@ -206,10 +206,25 @@ class BaseAction(object):
             callback()
 
 
+class ResultOutputWidgetLabelHeader(Label):
+    pass
+
+
 class ResultOutputWidget(GridLayout):
     label_header = ObjectProperty(None)
+    # This property is needed to prevent kivy from throwing errors about label header not
+    # existing if it's been removed, even if you're only testing whether it exists
+    label_header_removed = BooleanProperty(False)
 
     def clear_outputs(self,all=False):
+        if self.label_header_removed:
+            # Label header has been removed so clear all outputs and add the result label back
+            self.clear_widgets()
+            self.label_header = ResultOutputWidgetLabelHeader()
+            self.add_widget(self.label_header)
+            self.label_header_removed = False
+            return
+
         if not all:
             children = self.children[:]
             for item in children:
@@ -217,3 +232,4 @@ class ResultOutputWidget(GridLayout):
                     self.remove_widget(item)
         else:
             self.clear_widgets()
+            self.label_header_removed = True

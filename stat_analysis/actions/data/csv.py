@@ -131,7 +131,8 @@ class ImportCSV(base_action.BaseAction):
             return False
 
         if not quiet:
-            tbl = DataSpreadsheet(table_data=self.stored_data[:5],headers=self.headers)
+            # TODO: better way of setting height rather than just manually working it out?
+            tbl = DataSpreadsheet(table_data=self.stored_data[:5],headers=self.headers,height=155)
             tbl.bind(minimum_width=tbl.setter("width"))
 
             self.output_widget.parent.refresh(ImportSetColTypes,dataset_name=vals["save_name"],
