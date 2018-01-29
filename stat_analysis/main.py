@@ -169,8 +169,23 @@ class ActionsGrid(GridLayout):
 
     def view_dataset(self,instance,touch):
         if instance.collide_point(touch.x, touch.y):
+            if self.click_menu_active != False:
+                if self.click_menu_active.collide_point(touch.x,touch.y):
+                    return False
+
             if touch.button == "left":
                 App.get_running_app().root_widget.primary_pane.refresh(data.view_data.ViewData,dataset=instance.text)
+
+            elif touch.button == "right":
+                new_pos = self.to_window(touch.x,touch.y)
+                menu = RightClickMenu(x=new_pos[0],y=new_pos[1])
+                menu.add_opt("Delete",lambda *args: App.get_running_app().get_dataset_by_name(instance.text).delete_dataset(
+                    callback=self.delete_dataset_callback
+                ))
+                menu.open()
+                self.click_menu_active = menu
+                App.get_running_app().root_widget.add_widget(menu)
+
 
     def load_action(self,instance,touch):
         if instance.collide_point(touch.x,touch.y):
@@ -187,17 +202,20 @@ class ActionsGrid(GridLayout):
             elif touch.button == "right":
                 new_pos = self.to_window(touch.x,touch.y)
                 menu = RightClickMenu(x=new_pos[0],y=new_pos[1])
-                menu.add_opt("Delete",lambda *args: App.get_running_app().get_action_by_name(instance.text).delete(
-                    callback=self.delete_callback
+                menu.add_opt("Delete",lambda *args: App.get_running_app().get_action_by_name(instance.text).delete_action(
+                    callback=self.delete_action_callback
                 ))
                 menu.open()
                 self.click_menu_active = menu
                 App.get_running_app().root_widget.add_widget(menu)
 
-    def delete_callback(self,*args):
+    def delete_action_callback(self,*args):
         self.data_tbl = App.get_running_app().saved_actions
         self.render(re_render=True)
 
+    def delete_dataset_callback(self,*args):
+        self.data_tbl = App.get_running_app().datasets
+        self.render(re_render=True)
 
 class ActionTreeViewLabel(TreeViewLabel):
     stored_action = ObjectProperty(None)

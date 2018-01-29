@@ -196,7 +196,7 @@ class BaseAction(object):
         popup.content = cont
         popup.open()
 
-    def delete(self,callback=None):
+    def delete_action(self,callback=None):
         """
         Removes this action from saved_actions
         """
@@ -205,6 +205,14 @@ class BaseAction(object):
         if callback != None:
             callback()
 
+    def delete_dataset(self,callback=None):
+        """
+        Removes this action from saved_actions
+        """
+        App.get_running_app().datasets.remove(self)
+        print("Removed: {}".format(App.get_running_app().datasets))
+        if callback != None:
+            callback()
 
 class ResultOutputWidgetLabelHeader(Label):
     pass
