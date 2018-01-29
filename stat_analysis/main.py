@@ -23,6 +23,7 @@ from stat_analysis.generic_widgets.action_bar import CustomActionBtn
 from stat_analysis.generic_widgets.bordered import BorderedButton
 from stat_analysis.generic_widgets.files import FileChooserSaveDialog,FileChooserLoadDialog
 from stat_analysis.generic_widgets.right_click_menu import RightClickMenu
+from stat_analysis.generic_widgets.popup_inputs import PopupStringInput
 from kivy.app import App
 
 Config.set('input', 'mouse', 'mouse,multitouch_on_demand')
@@ -402,9 +403,17 @@ class StatApp(App):
 
     def load_example_dataset(self,name):
         datasets = {
-            "heights":"res/example_datasets/heights/heights_example_dataset.stat"
+            "heights":("heights","res/example_datasets/heights/new_heights.stat")
         }
-        self.load_file(resource_find(datasets[name]))
+        str_input = PopupStringInput(label="Dataset name")
+        str_input.submit_btn.bind(on_press=lambda *args:self.load_file(datasets[name][1],
+                                                                       override_dataset_name=str_input.text_input.text))
+        str_input.text_input.text = datasets[name][0]
+        popup = Popup(size_hint=(None,None),size=(400,150))
+        str_input.submit_btn.bind(on_press=popup.dismiss)
+        popup.content = str_input
+        popup.open()
+
         self.root_widget.primary_pane.try_refresh_home_view()
 
     def load_btn(self,*args):
@@ -418,7 +427,12 @@ class StatApp(App):
     def do_load(self,path,filename):
         self.load_file(os.path.join(path,filename[0]))
 
-    def load_file(self,fpath):
+    def load_file(self,fpath,**kwargs):
+        """
+        Loads all the saved actions from a given file
+        :param fpath: The absolute path of the file to load from
+        :return: The amount of actions successful loaded
+        """
         if self.load_popup != None:
             self.load_popup.dismiss()
         actions = []
@@ -439,7 +453,7 @@ class StatApp(App):
             if type_action == None:
                 logger.error("In loading save file action type {} not found, stopping load".format(item[1]["type"]))
                 continue
-            success = type_action.load(item[1])
+            success = type_action.load(item[1],**kwargs)
             if success == True:
                 actions_loaded += 1
             else:
@@ -449,6 +463,7 @@ class StatApp(App):
                                          "View log file for more info\n\n".format(success,item[1]["type"])
 
         logger.info("Loading completed, {} actions/datasets loaded".format(actions_loaded))
+        return actions_loaded
 
     def save_btn(self,*args):
         self.save_popup = Popup(size_hint=(None,None),size=(400,400))

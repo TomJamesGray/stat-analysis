@@ -1,17 +1,13 @@
 import logging
 from kivy.app import App
 import csv
+from kivy.resources import resource_find
 from stat_analysis.actions import base_action
-from stat_analysis.generic_widgets.bordered import BorderedTable
 from stat_analysis.d_types.get_d_type import guess_d_type
 from stat_analysis.d_types.setup import types
 from stat_analysis.generic_widgets.form_outputs import DataSpreadsheet
 from collections import OrderedDict
 from stat_analysis.actions.data.import_set_col_types import ImportSetColTypes
-from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.gridlayout import GridLayout
-from kivy.uix.label import Label
-from kivy.uix.widget import Widget
 
 logger = logging.getLogger(__name__)
 
@@ -197,8 +193,17 @@ class ImportCSV(base_action.BaseAction):
             "type":self.type
         }
 
-    def load(self,state):
+    def load(self,state,**kwargs):
         self.form_outputs = state["form_outputs"]
+        if "override_dataset_name" in kwargs:
+            self.form_outputs["save_name"] = kwargs["override_dataset_name"]
+        # Using resource find means that relative paths to datasets like res/example_datasets/...
+        # can be loaded easily while still maintaining absolute paths like "/home/tom/..."
+        # Resource find also returns None if the file doesn't exist
+        file_location = resource_find(self.form_outputs["file"])
+        if file_location == None:
+            return "Error in loading file {} after `resource_find`, file not found".format(file_location)
+        self.form_outputs["file"] = file_location
         try:
             self.run(validate=False,quiet=True)
         except FileNotFoundError as e:

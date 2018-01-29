@@ -594,3 +594,26 @@
         Rectangle:
             size:self.size
             pos:self.pos
+
+<PopupStringInput>:
+    cols:1
+    spacing:10,10
+    text_input:text_input
+    submit_btn:submit_btn
+    GridLayout:
+        cols:2
+        height:30
+        width:300
+        Label:
+            height:30
+            text:root.label
+            size_hint_y:None
+        TextInput:
+            height:30
+            size_hint_y:None
+            id:text_input
+    Button:
+        id:submit_btn
+        text:"Submit"
+        height:40
+        size_hint_y:None
