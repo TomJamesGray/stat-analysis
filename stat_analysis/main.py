@@ -5,6 +5,7 @@ import logging.config
 import pickle
 import argparse
 from kivy.config import Config
+from kivy.resources import resource_find
 from kivy.uix.widget import Widget
 from kivy.uix.popup import Popup
 from kivy.uix.scrollview import ScrollView
@@ -204,6 +205,8 @@ class ActionTreeViewLabel(TreeViewLabel):
 
 class PrimaryPane(GridLayout):
     title = StringProperty("")
+    home_view_active = BooleanProperty(True)
+    home_view = ObjectProperty(None)
 
     def refresh(self,action,**kwargs):
         logger.info("Changing the active pane to: {}".format(action.type))
@@ -216,6 +219,7 @@ class PrimaryPane(GridLayout):
         self.add_widget(output_widget)
         active_action = action(output_widget,**kwargs)
         active_action.render()
+        self.home_view_active = False
 
     def reload_action(self,action,**kwargs):
         logger.info("Loading pre-loaded action")
@@ -232,6 +236,7 @@ class PrimaryPane(GridLayout):
         active_action.set_default_form_vals()
         active_action.render()
         active_action.run(quiet=False,validate=False,preloaded=True,use_cached=True)
+        self.home_view_active = False
 
     def go_home(self,*args):
         logger.info("Changing active pane to home screen")
@@ -241,7 +246,18 @@ class PrimaryPane(GridLayout):
                 # item.clear_widgets()
                 self.remove_widget(item)
         self.title = "Home"
-        self.add_widget(HomeView())
+        self.home_view_active = True
+        self.home_view = HomeView()
+        print(self.home_view)
+        self.add_widget(self.home_view)
+
+    def try_refresh_home_view(self):
+        if self.home_view_active:
+            print("Refreshing grids")
+            self.home_view.datasets_grid.data_tbl = App.get_running_app().datasets
+            self.home_view.datasets_grid.render(re_render=True)
+            self.home_view.actions_grid.data_tbl = App.get_running_app().saved_actions
+            self.home_view.actions_grid.render(re_render=True)
 
 
 class TitlePane(Label):
@@ -366,6 +382,12 @@ class StatApp(App):
 
         return action
 
+    def load_example_dataset(self,name):
+        datasets = {
+            "heights":"res/example_datasets/heights/heights_example_dataset.stat"
+        }
+        self.load_file(resource_find(datasets[name]))
+        self.root_widget.primary_pane.try_refresh_home_view()
 
     def load_btn(self,*args):
         self.load_popup = Popup(size_hint=(None,None),size=(400,400))

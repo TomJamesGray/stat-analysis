@@ -73,6 +73,31 @@
                     padding:3,3
                     on_press:log_view.toggle_log_view()
 
+            CustomActionGroup:
+                background_normal:""
+                background_down:""
+                mode:"spinner"
+                text:"Example Datasets"
+                font_size:"14px"
+                dropdown_width:150
+                # If you need to change the heights of the custom action buttons then you need to change
+                # the value in generic_widgets/action_bar since the height is changed because of the dropdown
+                CustomActionBtn:
+                    text:"Heights"
+                    valign:"middle"
+                    font_size:"14px"
+                    size_hint_x:None
+                    text_size:self.size
+                    padding:3,3
+                    on_press:app.load_example_dataset("heights")
+                CustomActionBtn:
+                    text:"Exam passes"
+                    valign:"middle"
+                    font_size:"14px"
+                    size_hint_x:None
+                    text_size:self.size
+                    padding:3,3
+
 
     BoxLayout:
         orientation:"horizontal"
@@ -103,6 +128,7 @@
             PrimaryPane:
                 size_hint_y:1
                 id:primary_pane
+                home_view:_home_view
                 title:"Home"
                 canvas.before:
                     Color:
@@ -110,7 +136,8 @@
                     Rectangle:
                         pos:self.pos
                         size:self.size
-                HomeView
+                HomeView:
+                    id:_home_view
             Splitter:
                 sizable_from:"top"
                 size_hint_y:0.2
