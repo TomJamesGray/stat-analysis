@@ -1,14 +1,24 @@
-
 import argparse
 from kivy.app import App
+from kivy.lang.builder import Builder
+from kivy.modules import inspector
+from kivy.core.window import Window
+from kivy.uix.widget import Widget
 from kivy.uix.label import Label
 from kivy.properties import StringProperty
+
+class HelpView(Widget):
+    help_text = StringProperty("")
 
 class HelpViewApp(App):
     help_text = StringProperty("")
 
     def build(self):
-        return Label(text=self.help_text,markup=True)
+        Window.clearcolor = (.9,.9,.9,1)
+        Window.size = (400,500)
+        x = HelpView(help_text=self.help_text,size_hint=(1,1))
+        inspector.create_inspector(Window,x)
+        return x
 
 
 if __name__ == "__main__":
