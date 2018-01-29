@@ -4,4 +4,5 @@ from kivy.properties import StringProperty,ObjectProperty
 class PopupStringInput(GridLayout):
     text_input = ObjectProperty(None)
     submit_btn = ObjectProperty(None)
+    dismiss_btn = ObjectProperty(None)
     label = StringProperty("")

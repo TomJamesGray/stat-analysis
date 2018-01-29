@@ -1,15 +1,18 @@
 import logging
+import subprocess
 import time
-from kivy.uix.label import Label
+
 from kivy.app import App
-from stat_analysis.form_inputs import combo_box,check_box,numeric_bounded,numeric,file,string,action_columns
-from stat_analysis.d_types.setup import types,column_d_type_maps
-from kivy.uix.gridlayout import GridLayout
-from kivy.uix.scrollview import ScrollView
-from kivy.properties import ObjectProperty,BooleanProperty
 from kivy.graphics import Color,Rectangle
-from kivy.uix.popup import Popup
+from kivy.properties import ObjectProperty,BooleanProperty
+from kivy.resources import resource_find
 from kivy.uix.button import Button
+from kivy.uix.gridlayout import GridLayout
+from kivy.uix.label import Label
+from kivy.uix.popup import Popup
+from kivy.uix.scrollview import ScrollView
+
+from stat_analysis.form_inputs import combo_box,check_box,numeric_bounded,numeric,file,string,action_columns
 
 logger = logging.getLogger(__name__)
 
@@ -26,6 +29,9 @@ form_input_maps = {
 
 class BaseAction(object):
     form_width = 220
+    help_text = """
+    No help is available for this action
+    """
 
     def render(self):
         """
@@ -213,6 +219,11 @@ class BaseAction(object):
         print("Removed: {}".format(App.get_running_app().datasets))
         if callback != None:
             callback()
+
+    def display_help(self):
+        subprocess.Popen(["python",resource_find("help_view.py"),self.help_text])
+
+
 
 class ResultOutputWidgetLabelHeader(Label):
     pass

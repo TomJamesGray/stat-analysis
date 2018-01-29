@@ -139,11 +139,13 @@ class ActionsGrid(GridLayout):
         self.cols = len(self.headers)
         self.click_menu_active = False
         for header in self.headers:
-            self.add_btn(header)
+            self.add_btn(header,header=True)
 
-    def add_btn(self,text):
+    def add_btn(self,text,header=False):
         x = BorderedButton(b_width=1, padding=(2, 2), size_hint_x=0.4, color=(0, 0, 0, 1), text=str(text),
                           valign="middle", halign="left",background_color=(1,1,1,1),background_normal="")
+        if header:
+            x.color = App.get_running_app().accent_col
         x.bind(size=x.setter("text_size"))
         self.add_widget(x)
         return x
@@ -152,7 +154,7 @@ class ActionsGrid(GridLayout):
         if re_render:
             self.clear_widgets()
             for header in self.headers:
-                self.add_btn(header)
+                self.add_btn(header,header=True)
 
         for action in self.data_tbl:
             if action.save_name == None:
@@ -236,8 +238,8 @@ class PrimaryPane(GridLayout):
         self.title = action.type
         output_widget = GridLayout(size_hint=(1,1),cols=2)
         self.add_widget(output_widget)
-        active_action = action(output_widget,**kwargs)
-        active_action.render()
+        self.active_action = action(output_widget,**kwargs)
+        self.active_action.render()
         self.home_view_active = False
 
     def reload_action(self,action,**kwargs):
@@ -249,12 +251,12 @@ class PrimaryPane(GridLayout):
         self.title = action.type
         output_widget = GridLayout(size_hint=(1, 1), cols=2)
         self.add_widget(output_widget)
-        active_action = action
-        action.output_widget = output_widget
+        self.active_action = action
+        self.active_action.output_widget = output_widget
 
-        active_action.set_default_form_vals()
-        active_action.render()
-        active_action.run(quiet=False,validate=False,preloaded=True,use_cached=True)
+        self.active_action.set_default_form_vals()
+        self.active_action.render()
+        self.active_action.run(quiet=False,validate=False,preloaded=True,use_cached=True)
         self.home_view_active = False
 
     def go_home(self,*args):
@@ -267,12 +269,10 @@ class PrimaryPane(GridLayout):
         self.title = "Home"
         self.home_view_active = True
         self.home_view = HomeView()
-        print(self.home_view)
         self.add_widget(self.home_view)
 
     def try_refresh_home_view(self):
         if self.home_view_active:
-            print("Refreshing grids")
             self.home_view.datasets_grid.data_tbl = App.get_running_app().datasets
             self.home_view.datasets_grid.render(re_render=True)
             self.home_view.actions_grid.data_tbl = App.get_running_app().saved_actions
@@ -304,7 +304,6 @@ class LogView(GridLayout):
 
     def toggle_log_view(self):
         if self.log_visible:
-            print("Hiding log view")
             # Minimise the scroll view
             self.prev_height = self.scroll_view.height
             self.parent.size_hint_y = 0
@@ -406,17 +405,30 @@ class StatApp(App):
             "heights":("heights","res/example_datasets/heights/new_heights.stat")
         }
         str_input = PopupStringInput(label="Dataset name")
-        str_input.submit_btn.bind(on_press=lambda *args:self.load_file(datasets[name][1],
-                                                                       override_dataset_name=str_input.text_input.text))
         str_input.text_input.text = datasets[name][0]
         popup = Popup(size_hint=(None,None),size=(400,150))
-        str_input.submit_btn.bind(on_press=popup.dismiss)
+
+        str_input.submit_btn.bind(on_press=lambda *args:self.submit_load_example(
+            str_input,popup,datasets[name][1]))
+
         popup.content = str_input
         popup.open()
 
+    def submit_load_example(self,str_input,popup,dataset_location):
+        """
+        Handles the submit button for the "PopupStringInput" displayed when a example dataset is loaded.
+        It loads the save file for the dataset, dismisses the popup and refreshes the home view, so the
+        Actions grid show the new datasets
+        :param str_input: Instance of the PopupStringInput
+        :param popup: The Popup widget that the str_input is within
+        :param dataset_location: The location of the save file for the example dataset
+        :return:
+        """
+        self.load_file(dataset_location,override_dataset_name=str_input.text_input.text)
+        popup.dismiss()
         self.root_widget.primary_pane.try_refresh_home_view()
 
-    def load_btn(self,*args):
+    def load_btn(self):
         self.load_popup = Popup(size_hint=(None,None),size=(400,400))
         f_chooser = FileChooserLoadDialog()
         f_chooser.on_load = self.do_load

@@ -61,8 +61,6 @@
                 text:"View"
                 font_size:"14px"
                 dropdown_width:150
-                # If you need to change the heights of the custom action buttons then you need to change
-                # the value in generic_widgets/action_bar since the height is changed because of the dropdown
                 CustomActionBtn:
                     # The default font (Roboto) doesnt't support the check mark so use Dejavu Sans
                     text:"[font=res/DejaVuSans.ttf]✓[/font]" +" Log View" if log_view.log_visible else "× Log View"
@@ -80,8 +78,6 @@
                 text:"Example Datasets"
                 font_size:"14px"
                 dropdown_width:150
-                # If you need to change the heights of the custom action buttons then you need to change
-                # the value in generic_widgets/action_bar since the height is changed because of the dropdown
                 CustomActionBtn:
                     text:"Heights"
                     valign:"middle"
@@ -92,6 +88,36 @@
                     on_press:app.load_example_dataset("heights")
                 CustomActionBtn:
                     text:"Exam passes"
+                    valign:"middle"
+                    font_size:"14px"
+                    size_hint_x:None
+                    text_size:self.size
+                    padding:3,3
+
+            CustomActionGroup:
+                background_normal:""
+                background_down:""
+                mode:"spinner"
+                text:"Help"
+                font_size:"14px"
+                dropdown_width:150
+                CustomActionBtn:
+                    text:"Stat Analysis Help"
+                    valign:"middle"
+                    font_size:"14px"
+                    size_hint_x:None
+                    text_size:self.size
+                    padding:3,3
+                CustomActionBtn:
+                    text:"Help for this action"
+                    valign:"middle"
+                    font_size:"14px"
+                    size_hint_x:None
+                    text_size:self.size
+                    padding:3,3
+                    on_press:primary_pane.active_action.display_help()
+                CustomActionBtn:
+                    text:"About"
                     valign:"middle"
                     font_size:"14px"
                     size_hint_x:None
@@ -596,24 +622,26 @@
             pos:self.pos
 
 <PopupStringInput>:
-    cols:1
-    spacing:10,10
+    cols:2
+    spacing:3,3
     text_input:text_input
     submit_btn:submit_btn
-    GridLayout:
-        cols:2
-        height:30
-        width:300
-        Label:
-            height:30
-            text:root.label
-            size_hint_y:None
-        TextInput:
-            height:30
-            size_hint_y:None
-            id:text_input
+    dismiss_btn:dismiss_btn
+    Label:
+        height:40
+        text:root.label
+        size_hint_y:None
+    TextInput:
+        height:40
+        size_hint_y:None
+        id:text_input
+    Button:
+        id:dismiss_btn
+        text:"Cancel"
+        height:45
+        size_hint_y:None
     Button:
         id:submit_btn
         text:"Submit"
-        height:40
+        height:45
         size_hint_y:None
