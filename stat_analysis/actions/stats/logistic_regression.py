@@ -16,9 +16,11 @@ class LogisticRegression(BaseAction):
     type = "stats.logistic_regression"
     view_name = "Logistic Regression"
     help_text = """
-    [b]Logistic Regression[/b]
-    This action performs a logistic regression, this means it predicts the probability
-    of a binary variable being true, given another parameter.
+[b]Logistic Regression[/b]
+This action performs a logistic regression, this means it predicts the probability of a binary variable
+being true, given another parameter.
+
+Hello
     """
 
     def __init__(self,output_widget):
