@@ -12,7 +12,14 @@ logger = logging.getLogger(__name__)
 class KMeansClustering(BaseAction):
     type = "stats.k_means_clustering"
     view_name  = "K Means Clustering"
+    help_text=\
+"""[size=16][b]K Means Clustering[/b][/size]
+This takes an input data set, comprised of an x and y variable and tries to estimate appropriate centers for clusters.
 
+[b]Inputs[\/b]
+K is the amount of clusters that the algorithm will try and split the dataset into. The value for K is highly dependent on the dataset and inappropriate values of K could mean clusters being very different across runs
+
+"""
     def __init__(self,output_widget):
         self.save_name = ""
         self.status = "OK"

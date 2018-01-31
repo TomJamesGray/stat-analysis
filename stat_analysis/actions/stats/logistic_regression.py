@@ -18,7 +18,7 @@ class LogisticRegression(BaseAction):
     help_text =\
     """[size=16][b]Logistic Regression[/b][/size]
 This action performs a logistic regression, this means it predicts the probability of a binary variable being true, given another parameter.
-**HI**
+
 [b]Outputs[/b]
 The formula for the output line, ie the probability density function is:
 
