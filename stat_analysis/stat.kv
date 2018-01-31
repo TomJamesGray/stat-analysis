@@ -115,7 +115,8 @@
                     size_hint_x:None
                     text_size:self.size
                     padding:3,3
-                    on_press:primary_pane.active_action.display_help()
+                    # Only execute if primary pane is showing an action
+                    on_press:primary_pane.active_action.display_help() if primary_pane.active_action != None else ""
                 CustomActionBtn:
                     text:"About"
                     valign:"middle"

@@ -15,10 +15,10 @@ from kivy.uix.label import Label
 from kivy.uix.textinput import TextInput
 from kivy.uix.button import Button
 from kivy.core.window import Window
-from kivy.properties import StringProperty,ObjectProperty,BooleanProperty,NumericProperty,ListProperty
+from kivy.properties import StringProperty,ObjectProperty,BooleanProperty,NumericProperty,ListProperty,Property
 from kivy.modules import inspector
 from stat_analysis.actions import stats,data,graph
-# Import CustomActionBtn so kivy is made aware of it for the kv file
+# # Import CustomActionBtn so kivy is made aware of it for the kv file
 from stat_analysis.generic_widgets.action_bar import CustomActionBtn
 from stat_analysis.generic_widgets.bordered import BorderedButton
 from stat_analysis.generic_widgets.files import FileChooserSaveDialog,FileChooserLoadDialog
@@ -27,8 +27,6 @@ from stat_analysis.generic_widgets.popup_inputs import PopupStringInput
 from kivy.app import App
 
 Config.set('input', 'mouse', 'mouse,multitouch_on_demand')
-
-# GenericActionBtn
 
 class LogViewOutputHandler(logging.StreamHandler):
     def emit(self,record):
@@ -228,6 +226,7 @@ class PrimaryPane(GridLayout):
     title = StringProperty("")
     home_view_active = BooleanProperty(True)
     home_view = ObjectProperty(None)
+    active_action = None
 
     def refresh(self,action,**kwargs):
         logger.info("Changing the active pane to: {}".format(action.type))
@@ -270,6 +269,7 @@ class PrimaryPane(GridLayout):
         self.home_view_active = True
         self.home_view = HomeView()
         self.add_widget(self.home_view)
+        self.active_action = None
 
     def try_refresh_home_view(self):
         if self.home_view_active:
@@ -277,6 +277,8 @@ class PrimaryPane(GridLayout):
             self.home_view.datasets_grid.render(re_render=True)
             self.home_view.actions_grid.data_tbl = App.get_running_app().saved_actions
             self.home_view.actions_grid.render(re_render=True)
+
+    # def show_help(self):
 
 
 class TitlePane(Label):
@@ -402,7 +404,7 @@ class StatApp(App):
 
     def load_example_dataset(self,name):
         datasets = {
-            "heights":("heights","res/example_datasets/heights/new_heights.stat")
+            "heights":("heights","res/example_datasets/heights/heights_example_dataset.stat")
         }
         str_input = PopupStringInput(label="Dataset name")
         str_input.text_input.text = datasets[name][0]
