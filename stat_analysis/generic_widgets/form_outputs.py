@@ -55,7 +55,6 @@ class DataSpreadsheet(GridLayout):
 
         # Transform data so each column is in seperate list
         self.columns = [[] for _ in range(self.data_cols)]
-        print(self.table_data)
         for y in range(len(self.table_data)):
             for x in range(self.data_cols):
                 self.columns[x].append(

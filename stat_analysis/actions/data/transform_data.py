@@ -91,7 +91,6 @@ class TransformData(BaseAction):
         if dataset == False:
             # Dataset couldn't be found, this is likely happening when loading
             raise ValueError("Dataset {} couldn't be found".format(vals["dataset"]))
-        print(dataset)
         # Get the position in each row for the column
         col_pos = list(dataset.get_header_structure().keys()).index(vals["transform_col"])
         transform_func = self.simple_transforms[vals["transform_name"]]

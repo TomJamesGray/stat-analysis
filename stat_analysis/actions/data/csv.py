@@ -166,7 +166,6 @@ class ImportCSV(base_action.BaseAction):
 
         if to_drop != []:
             # Remove rows that have been flagged to be dropped
-            print("Pre drop: {}, to drop {}".format(tmp_data,to_drop))
             dropped_cols = 0
             for row_no in to_drop:
                 # Must subtract dropped cols from the row number since columns that have already been

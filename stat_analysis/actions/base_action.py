@@ -207,7 +207,7 @@ class BaseAction(object):
         Removes this action from saved_actions
         """
         App.get_running_app().saved_actions.remove(self)
-        print("Removed: {}".format(App.get_running_app().saved_actions))
+        logger.info("Removed action: {}".format(App.get_running_app().saved_actions))
         if callback != None:
             callback()
 
@@ -216,7 +216,7 @@ class BaseAction(object):
         Removes this action from saved_actions
         """
         App.get_running_app().datasets.remove(self)
-        print("Removed: {}".format(App.get_running_app().datasets))
+        logger.info("Removed dataset: {}".format(App.get_running_app().datasets))
         if callback != None:
             callback()
 

@@ -110,7 +110,6 @@ class NormalDistribution(BaseAction):
 
         variance = np.var(col_data)
         mean = np.mean(col_data)
-        print("Var {} mean {}".format(variance,mean))
         if not quiet:
             self.result_output.clear_outputs()
             # This is the normal distribution function
