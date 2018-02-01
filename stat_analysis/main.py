@@ -18,6 +18,7 @@ from kivy.uix.button import Button
 from kivy.core.window import Window
 from kivy.properties import StringProperty,ObjectProperty,BooleanProperty,NumericProperty,ListProperty,Property
 from kivy.modules import inspector
+from kivy.resources import resource_find
 from stat_analysis.actions import stats,data,graph
 # # Import CustomActionBtn so kivy is made aware of it for the kv file
 from stat_analysis.generic_widgets.action_bar import CustomActionBtn
@@ -418,8 +419,9 @@ Some actions also have additional help available via Help > 'Help for this actio
 
     def load_example_dataset(self,name):
         datasets = {
-            "heights":("heights","res/example_datasets/heights/heights_example_dataset.stat"),
-            "exam_scores": ("exam_scores", "res/example_datasets/exam_results/exam_results_example_dataset.stat")
+            "heights":("heights",resource_find("res/example_datasets/heights/heights_example_dataset.stat")),
+            "exam_scores": ("exam_scores",
+                            resource_find("res/example_datasets/exam_results/exam_results_example_dataset.stat"))
         }
         str_input = PopupStringInput(label="Dataset name")
         str_input.text_input.text = datasets[name][0]
