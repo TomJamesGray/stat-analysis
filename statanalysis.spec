@@ -1,4 +1,5 @@
 # -*- mode: python -*-
+import os
 from kivy.tools.packaging.pyinstaller_hooks import get_deps_all
 
 block_cipher = None
@@ -128,7 +129,7 @@ exe = EXE(pyz,
 coll = COLLECT(exe,
                a.binaries,
                a.zipfiles,
-               a.datas + [("stat_analysis/stat.kv","/tmp/cw_test/comp_coursework/stat_analysis/stat.kv","DATA")],
+               a.datas + [("stat_analysis/stat.kv",os.path.join(os.getcwd(),"stat_analysis","stat.kv"),"DATA")],
                Tree('res',prefix='res'),
                strip=False,
                upx=True,
