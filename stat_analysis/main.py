@@ -362,6 +362,8 @@ class StatApp(App):
                 "actions": [graph.bar_chart.BarChart,graph.scatter.ScatterPlot]
             }
         ]
+        # Get the absolute path of the "temporary" file directory
+        self.tmp_folder = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),"tmp")
         self.help_text =\
         """[size=16][b]Stat Analysis Help[/b][/size]
 

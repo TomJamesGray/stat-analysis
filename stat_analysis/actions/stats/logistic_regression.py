@@ -1,4 +1,5 @@
 import logging
+import os.path
 import numpy as np
 import time
 import matplotlib.pyplot as plt
@@ -209,9 +210,10 @@ An example of a logistic regression can be found in the "exam passes" dataset. I
                 axis.set_ylabel(vals["bin_var"])
 
                 axis.legend()
-                fig.savefig("tmp/plot.png")
+                path = os.path.join(App.get_running_app().tmp_folder, "plot.png")
+                fig.savefig(path)
 
-                self.result_output.add_widget(ExportableGraph(source="tmp/plot.png", fig=fig, axis=[axis], nocache=True,
+                self.result_output.add_widget(ExportableGraph(source=path, fig=fig, axis=[axis], nocache=True,
                                                           size_hint_y=None))
         if vals["save_action"] and not preloaded:
             # Save the action

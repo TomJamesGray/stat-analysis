@@ -1,4 +1,5 @@
 import logging
+import os
 import numpy
 import matplotlib.pyplot as plt
 from stat_analysis.actions import base_action
@@ -169,7 +170,8 @@ class Regression(base_action.BaseAction):
             axis.set_ylabel(vals["y_var"])
 
             axis.legend()
-            fig.savefig("tmp/plot.png")
+            path = os.path.join(App.get_running_app().tmp_folder, "plot.png")
+            fig.savefig(path)
 
             self.result_output.clear_outputs()
             self.result_output.add_widget(BorderedTable(
@@ -177,7 +179,7 @@ class Regression(base_action.BaseAction):
                 orientation="horizontal",size_hint_y=None,size_hint_x=1,for_scroller=True,markup=True
             ))
 
-            self.result_output.add_widget(ExportableGraph(source="tmp/plot.png",fig=fig, axis=[axis], nocache=True,
+            self.result_output.add_widget(ExportableGraph(source=path, fig=fig, axis=[axis], nocache=True,
                                                           size_hint_y=None))
         if vals["save_action"] and not preloaded:
             # Save the action

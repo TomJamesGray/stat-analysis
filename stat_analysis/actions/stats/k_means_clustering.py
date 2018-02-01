@@ -1,6 +1,7 @@
 import logging
 import random
 import matplotlib.pyplot as plt
+import os.path
 import numpy as np
 from kivy.app import App
 from stat_analysis.actions.base_action import BaseAction
@@ -161,7 +162,8 @@ K is the amount of clusters that the algorithm will try and split the dataset in
                 plt.scatter(model.centroids[i][0],model.centroids[i][1],marker="x",color=cols[i])
 
             axis.legend()
-            fig.savefig("tmp/plot.png")
+            path = os.path.join(App.get_running_app().tmp_folder, "plot.png")
+            fig.savefig(path)
             self.result_output.clear_outputs()
 
             self.result_output.add_widget(
@@ -170,7 +172,7 @@ K is the amount of clusters that the algorithm will try and split the dataset in
                               row_force_default=True,orientation="horizontal",size_hint_y=None,size_hint_x=1,
                               for_scroller=True))
 
-            self.result_output.add_widget(ExportableGraph(source="tmp/plot.png", fig=fig, axis=[axis], nocache=True,
+            self.result_output.add_widget(ExportableGraph(source=path, fig=fig, axis=[axis], nocache=True,
                                                           size_hint_y=None))
 
         if vals["save_action"] and not preloaded:

@@ -1,4 +1,5 @@
 import logging
+import os.path
 import numpy as np
 import math
 import matplotlib.pyplot as plt
@@ -150,8 +151,10 @@ class PoissonDistribution(BaseAction):
             axis.set_ylabel("Probability Density")
 
             axis.legend()
-            fig.savefig("tmp/plot.png")
-            self.result_output.add_widget(ExportableGraph(source="tmp/plot.png", fig=fig, axis=[axis], nocache=True,
+            path = os.path.join(App.get_running_app().tmp_folder, "plot.png")
+            fig.savefig(path)
+
+            self.result_output.add_widget(ExportableGraph(source=path, fig=fig, axis=[axis], nocache=True,
                                                           size_hint_y=None))
 
         if vals["save_action"] and not preloaded:
