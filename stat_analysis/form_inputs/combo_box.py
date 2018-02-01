@@ -8,6 +8,7 @@ from kivy.uix.button import Button
 from kivy.core.window import Window
 from stat_analysis.actions import base_action
 from stat_analysis.generic_widgets.form_inputs import FormInputLabel
+from stat_analysis.d_types.setup import column_d_type_maps
 
 logger = logging.getLogger(__name__)
 
@@ -96,7 +97,7 @@ class FormDropDown(GridLayout):
 
             # Only get columns for the specified data type
             headers = []
-            allowed_types = base_action.column_d_type_maps[self.input_dict["data_type"]]
+            allowed_types = column_d_type_maps[self.input_dict["data_type"]]
 
             for name,desc in dataset.get_header_structure().items():
                 if desc[0] in allowed_types:

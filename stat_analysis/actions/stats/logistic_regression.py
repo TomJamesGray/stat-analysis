@@ -17,9 +17,11 @@ class LogisticRegression(BaseAction):
     view_name = "Logistic Regression"
     help_text =\
     """[size=16][b]Logistic Regression[/b][/size]
+
 This action performs a logistic regression, this means it predicts the probability of a binary variable being true, given another parameter.
 
 [b]Outputs[/b]
+
 The formula for the output line, ie the probability density function is:
 
 [font=res/equation.otf][size=20](1+e[sup][size=14]-(a+bx)[/size][/sup])[sup][size=14]-1[/size][/sup][/size][/font]
@@ -29,6 +31,7 @@ where a is the constant term and and b is the x coefficient
 The percentage accuracy value is a measure of how well the dataset fits the model, so higher percentage values means the dataset fits the model better which means the model is more accurate
 
 [b]Example[/b]
+
 An example of a logistic regression can be found in the "exam passes" dataset. If you do a linear regression with the binary variable being "pass" and the x variable being the hours of revision done, you can predict the probability that a student will pass the exam given the amount of revision they do.
     """
 
