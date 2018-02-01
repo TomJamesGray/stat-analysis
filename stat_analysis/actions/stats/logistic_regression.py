@@ -145,6 +145,17 @@ An example of a logistic regression can be found in the "exam passes" dataset. I
             x.append([row[x_pos]])
             y.append(row[y_pos])
 
+        # Make sure the y column is binary, ie only 2 options
+        y_options = []
+        for val in y:
+            if val not in y_options and len(y_options) == 2:
+                # This value would be the third in the found options, therefore this column isn't binary :(
+                if not quiet:
+                    self.make_err_message("Chosen y column is not binary".format(y_options))
+                return False
+            elif val not in y_options:
+                y_options.append(val)
+
         if self.stored_model != None and use_cached:
             logger.debug("Using cached model for type {} save name {}".format(self.type,self.save_name))
             model = self.stored_model

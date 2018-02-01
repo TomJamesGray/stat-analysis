@@ -19,6 +19,7 @@ from kivy.uix.label import Label
 from kivy.uix.textinput import TextInput
 from kivy.uix.button import Button
 from kivy.uix.recycleview import RecycleView
+from kivy.graphics import Rectangle,Color
 from kivy.uix.scrollview import ScrollView
 from kivy.properties import StringProperty,BooleanProperty,Property,ListProperty,ObjectProperty
 from kivy.core.window import Window
@@ -127,14 +128,16 @@ class DataSpreadsheet(GridLayout):
                     cursor_data = ((24,16),(7,11),cursor,mask)
                     pygame.mouse.set_cursor(*cursor_data)
                 except:
-                    pass
+                    # Cursor can't be changed so change the color of the adjuster
+                    split.actual_bg_color = (1, 0, 0, 1)
                 return
 
         if not self.resize_cursor_active:
             try:
                 pygame.mouse.set_cursor(*pygame.cursors.arrow)
             except:
-                pass
+                for split in self.width_adjusters:
+                    split.actual_bg_color = (0, 0, 0, 1)
 
 
 class ColumnRV(RecycleView):
@@ -145,6 +148,7 @@ class ColumnRV(RecycleView):
         super().__init__(**kwargs)
         self.data = [{"text":str(x)} for x in self.raw_data]
         self.scroll_type = ["bars"]
+        self.actual_bg_color = (0,0,0,1)
 
     def on_scroll_start(self, touch, check_children=True, root=True):
         if root:
@@ -191,6 +195,13 @@ class ColumnRV(RecycleView):
 
         self.refresh_from_layout()
 
+    # def draw_bg(self,*args):
+    #     """
+    #     Manually colour the background, this is only really used as an alternative to setting the cursor
+    #     to the resize cursor (ie "<->") for window providers other than PyGame
+    #     """
+    #     self.actual_bg_color = (1,0,0,1)
+
 
 class GridAdjustHeader(Label):
     pass
@@ -198,6 +209,7 @@ class GridAdjustHeader(Label):
 class WidthAdjust(Button):
     pressed = BooleanProperty(False)
     adjust = ListProperty()
+    actual_bg_color = Property((0,0,0,1))
 
 
 class ExportableGraph(GridLayout):

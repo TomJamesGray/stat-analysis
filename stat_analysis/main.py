@@ -1,5 +1,6 @@
 import logging
 import logging.handlers
+import subprocess
 import os
 import logging.config
 import pickle
@@ -361,6 +362,17 @@ class StatApp(App):
                 "actions": [graph.bar_chart.BarChart,graph.scatter.ScatterPlot]
             }
         ]
+        self.help_text =\
+        """[size=16][b]Stat Analysis Help[/b][/size]
+
+Stat Analysis is a statistical analysis program that implements features such as K Means clustering, logisitc regression and more as well as more traditional features such as mean and standard deviation.
+
+[b]Get started[/b]
+
+If you don't have any datasets of your own to use, you can use some of the pre-loaded datasets, such as heights and exam passes. If you already have a CSV dataset to use then you can go to Data > CSV Import and follow the instructions from there.
+
+Some actions also have additional help available via Help > 'Help for this action'.
+        """
         self.startup_messages = ""
         self.started_up = False
         self.saved_actions = []
@@ -518,6 +530,12 @@ class StatApp(App):
                 raise ValueError("A dataset with that name already exists")
 
         self.saved_actions.append(action)
+
+    def show_app_help(self):
+        """
+        Shows the help window for the app
+        """
+        subprocess.Popen(["python", resource_find("help_view.py"), self.help_text])
 
 def main():
     parser = argparse.ArgumentParser(description="Stat Analysis")

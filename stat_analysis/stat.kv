@@ -108,6 +108,7 @@
                     size_hint_x:None
                     text_size:self.size
                     padding:3,3
+                    on_press:app.show_app_help()
                 CustomActionBtn:
                     text:"Help for this action"
                     valign:"middle"
@@ -617,7 +618,7 @@
     # draw it manually
     canvas.after:
         Color:
-            rgba:0,0,0,1
+            rgba:root.actual_bg_color
         Rectangle:
             size:self.size
             pos:self.pos

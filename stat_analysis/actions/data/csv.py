@@ -154,6 +154,7 @@ class ImportCSV(base_action.BaseAction):
             converters.append(x[1])
 
         tmp_data = []
+        to_drop = []
         for row in range(0,len(self.stored_data)):
             tmp_data.append([])
             for col in range(0,len(self.stored_data[0])):
@@ -161,8 +162,18 @@ class ImportCSV(base_action.BaseAction):
                     tmp_data[row].append(converters[col](self.stored_data[row][col]))
                 except:
                     if drop_err_cols:
-                        tmp_data.pop(row)
-                        break
+                        to_drop.append(row)
+
+        if to_drop != []:
+            # Remove rows that have been flagged to be dropped
+            print("Pre drop: {}, to drop {}".format(tmp_data,to_drop))
+            dropped_cols = 0
+            for row_no in to_drop:
+                # Must subtract dropped cols from the row number since columns that have already been
+                # dropped will affect the index of the initially desired row
+                del tmp_data[row_no-dropped_cols]
+                dropped_cols += 1
+
         self.stored_data = tmp_data
 
     def add_column(self,col_data,col_type,col_name):
