@@ -1,7 +1,7 @@
 import logging
 import subprocess
 import time
-
+from kivy.effects.scroll import ScrollEffect
 from kivy.app import App
 from kivy.graphics import Color,Rectangle
 from kivy.properties import ObjectProperty,BooleanProperty
@@ -81,7 +81,7 @@ class BaseAction(object):
         form_layout.add_widget(Button(text="Run action",on_press=lambda *_:self.timed_run(),size_hint=(1,None),
                                       height=30))
 
-        scroller = ScrollView(size_hint=(None,1),width=self.form_width)
+        scroller = ScrollView(size_hint=(None,1),width=self.form_width,effect_cls=ScrollEffect)
         scroller.add_widget(form_layout)
         self.output_widget.add_widget(scroller)
 
@@ -89,7 +89,7 @@ class BaseAction(object):
         self.output_widget.bind(size=self._draw_border)
 
         # Create the generic output area
-        result_output_scroller = ScrollView(size_hint=(1,1))
+        result_output_scroller = ScrollView(size_hint=(1,1),effect_cls=ScrollEffect)
 
         result_output = ResultOutputWidget(cols=1,size_hint=(1,None))
         result_output.bind(minimum_height=result_output.setter('height'))
