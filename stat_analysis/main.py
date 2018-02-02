@@ -101,7 +101,6 @@ class ActionsScroller(ScrollView):
 
     def __init__(self,**kwargs):
         super().__init__(**kwargs)
-        self.size_hint = (1,None)
         self.bar_width = 5
         tv = TreeView(size_hint=(1,None),hide_root=True)
         tv.bind(minimum_height=tv.setter("height"))
@@ -119,21 +118,16 @@ class ActionsScroller(ScrollView):
         if self.scroller_visible:
             # Minimise the actions scroller
             self.prev_width = self.width
-            self.parent.size_hint_x = None
             self.parent.strip_size = 0
             self.parent.width = 0
             self.background_normal = ""
             self.width = 0
-            self.size_hint_x = None
 
             self.scroller_visible = False
         else:
             self.width = self.prev_width
             self.parent.width = self.prev_width
-
             self.parent.strip_size = "10pt"
-            self.parent.size_hint_x = 0.2
-            self.size_hint_x = 0.2
 
             self.scroller_visible = True
 

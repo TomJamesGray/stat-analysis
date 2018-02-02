@@ -148,13 +148,13 @@
 
     BoxLayout:
         orientation:"horizontal"
+        cols:2
         width:root.width
         height:root.height-30
         Splitter:
             sizable_from:"right"
             max_size:300
             min_size:180
-            rescale_with_parent:True
             size_hint_x:None
             ActionsScroller:
                 id:actions_scroller
@@ -168,6 +168,7 @@
                 size_hint_y:1
         GridLayout:
             cols:1
+            size_hint_x:1
             PrimaryPane:
                 size_hint_y:1
                 id:primary_pane
