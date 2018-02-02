@@ -1,6 +1,12 @@
 #:import Factory kivy.factory.Factory
 #:import Window kivy.core.window.Window
 
+#<MainSplitterStrip>:
+#    horizontal:True
+#    background_normal:""
+#    background_down:""
+#    background_color:1,0,0,1
+
 <StatAnalysis>:
     primary_pane:primary_pane
     log_view:log_view
@@ -71,6 +77,16 @@
                     padding:3,3
                     on_press:log_view.toggle_log_view()
 
+                CustomActionBtn:
+                    # The default font (Roboto) doesnt't support the check mark so use Dejavu Sans
+                    text:"[font=res/DejaVuSans.ttf]✓[/font]" +" Action Selector" if actions_scroller.scroller_visible else "× Action Selector"
+                    markup:True
+                    valign:"middle"
+                    font_size:"14px"
+                    text_size:self.size
+                    padding:3,3
+                    on_press:actions_scroller.toggle_view()
+
             CustomActionGroup:
                 background_normal:""
                 background_down:""
@@ -135,13 +151,14 @@
         height:root.height-30
         padding:5,5,0,5
         Splitter:
-            size_hint_x:None
+            size_hint_x:0.2
             sizable_from:"right"
             max_size:300
             min_size:180
             rescale_with_parent:True
-            strip_cls:Factory.get("MainSplitterStrip")
             ActionsScroller:
+                size_hint_x:0.2
+                id:actions_scroller
                 primary_pane_edit:primary_pane
                 canvas.before:
                     Color:
@@ -174,7 +191,6 @@
                 max_size:250
                 keep_within_parent:True
                 rescale_with_parent:True
-                strip_cls:Factory.get("MainSplitterStrip")
                 LogView:
                     size_hint_y:0.2
                     id:log_view

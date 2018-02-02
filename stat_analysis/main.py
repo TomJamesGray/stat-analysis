@@ -83,13 +83,6 @@ logging.config.dictConfig(logging_config)
 logger = logging.getLogger(__name__)
 
 
-class MainSplitterStrip(Button):
-    def __init__(self,**kwargs):
-        super().__init__(**kwargs)
-        self.background_normal = ""
-        self.text = "HI"
-
-
 class StatAnalysis(Widget):
     """
     Root widget for the app
@@ -103,6 +96,8 @@ class ActionsScroller(ScrollView):
     Widget that displays the available actions in a tree format
     """
     primary_pane_edit = ObjectProperty(None)
+    prev_width = NumericProperty()
+    scroller_visible = BooleanProperty(True)
 
     def __init__(self,**kwargs):
         super().__init__(**kwargs)
@@ -119,6 +114,28 @@ class ActionsScroller(ScrollView):
                 tv.add_node(x,parent_node)
 
         self.add_widget(tv)
+
+    def toggle_view(self):
+        if self.scroller_visible:
+            # Minimise the actions scroller
+            self.prev_width = self.width
+            self.parent.size_hint_x = 0
+            self.parent.strip_size = 0
+            self.parent.width = 0
+            self.background_normal = ""
+            self.width = 0
+            self.size_hint_x = 0
+
+            self.scroller_visible = False
+        else:
+            self.width= self.prev_width
+            self.parent.width = self.prev_width
+
+            self.parent.strip_size = "10pt"
+            self.parent.size_hint_x = 0.2
+            self.size_hint_x = 0.2
+
+            self.scroller_visible = True
 
 
 class HomeView(ScrollView):
