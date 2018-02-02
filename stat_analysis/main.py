@@ -247,7 +247,7 @@ class PrimaryPane(GridLayout):
             # Remove all widgets that aren't the title pane
             if type(item) != TitlePane:
                 self.remove_widget(item)
-        self.title = action.type
+        self.title = action.view_name
         output_widget = GridLayout(size_hint=(1,1),cols=2,spacing=(5,5))
         self.add_widget(output_widget)
         self.active_action = action(output_widget,**kwargs)
@@ -260,7 +260,7 @@ class PrimaryPane(GridLayout):
             # Remove all widgets that aren't the title pane
             if type(item) != TitlePane:
                 self.remove_widget(item)
-        self.title = action.type
+        self.title = action.view_name
         output_widget = GridLayout(size_hint=(1, 1), cols=2,spacing=(5,5))
         self.add_widget(output_widget)
         self.active_action = action
