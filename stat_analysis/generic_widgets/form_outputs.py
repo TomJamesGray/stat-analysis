@@ -73,6 +73,10 @@ class DataSpreadsheet(GridLayout):
 
             split = WidthAdjust(size_hint_x=None,width=self.adjuster_show_width,adjust=[lbl,data_column])
 
+            if i == 0:
+                lbl.left_border = True
+                data_column.left_border = True
+
             self.rv_container.add_widget(data_column)
             self.width_adjusters.append(split)
             self.data_columns.append(data_column)
