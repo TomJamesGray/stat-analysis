@@ -280,14 +280,24 @@ class GraphOptions(TabbedPanel):
                 "set": lambda x, val: x.set_ylabel(val)
             },
             {
-                "prop": lambda x: x.get_xticks()[1] - x.get_xticks()[0],
-                "text": "X Step",
-                "set": lambda x,val: x.set_xticks(np.arange(x.get_xticks()[0],x.get_xlim()[1],float(val)))
+                "prop": lambda x:x.get_xlim()[1],
+                "text": "X Upper limit",
+                "set": lambda x,val:x.set_xlim(xmax=float(val))
             },
             {
-                "prop": lambda x: x.get_yticks()[1] - x.get_yticks()[0],
-                "text": "Y Step",
-                "set": lambda x, val: x.set_yticks(np.arange(x.get_yticks()[0], x.get_ylim()[1], float(val)))
+                "prop": lambda x: x.get_xlim()[0],
+                "text": "X Lower limit",
+                "set": lambda x, val: x.set_xlim(xmin=float(val))
+            },
+            {
+                "prop": lambda x: x.get_ylim()[1],
+                "text": "Y Upper limit",
+                "set": lambda x, val: x.set_ylim(ymax=float(val))
+            },
+            {
+                "prop": lambda x: x.get_ylim()[0],
+                "text": "Y Lower limit",
+                "set": lambda x, val: x.set_ylim(ymin=float(val))
             }
         ]
 
@@ -319,6 +329,7 @@ class GraphOptions(TabbedPanel):
 
     def update_graph(self,*args):
         logger.info("Updating graph with opts {}".format(self.opts_out))
+        print(self.axis[0].step)
         for i in range(0,len(self.opts_out)):
             for opt in self.opts_out[i]:
                 opt["set"](self.axis[i],opt["form"].text)
