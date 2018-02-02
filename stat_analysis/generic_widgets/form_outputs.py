@@ -146,7 +146,7 @@ class ColumnRV(RecycleView):
     def __init__(self,**kwargs):
         super().__init__(**kwargs)
         self.data = [{"text":str(x)} for x in self.raw_data]
-        self.scroll_type = ["bars"]
+        # self.scroll_type = ["bars"]
         self.actual_bg_color = (0,0,0,1)
 
     def on_scroll_start(self, touch, check_children=True, root=True):
@@ -171,11 +171,12 @@ class ColumnRV(RecycleView):
                     touch.x = sibling.center_x
                     touch.y = sibling.center_y
                     touch.pos = (touch.x, touch.y)
-                    sibling.on_scroll_start(touch,root=False)
+                    # sibling.on_scroll_move(touch,root=False)
+                    sibling.scroll_y -= self.convert_distance_to_scroll(touch.dx,touch.dy)[1]
 
-            super().on_scroll_start(touch)
+            self.scroll_y -= self.convert_distance_to_scroll(touch.dx, touch.dy)[1]
         else:
-            super().on_scroll_start(touch)
+            self.scroll_y -= self.convert_distance_to_scroll(touch.dx, touch.dy)[1]
 
         self.refresh_from_layout()
 
