@@ -33,6 +33,10 @@ class ImportSetColTypes(SetColTypes):
         self.result_output.add_widget(self.data_spreadsheet)
         self.data_spreadsheet.bind(minimum_width=self.result_output.setter("width"))
 
+        # Draw the left border on the first column rv and header so the table looks complete
+        self.data_spreadsheet.data_columns[0].left_border = True
+        self.data_spreadsheet.spreadsheet_header_labels[0].left_border = True
+
         total_errors = 0
         errors_ouptputs = Label(color=(0,0,0,1),size_hint=(None,None),markup=True,font_size="12")
         errors_ouptputs.bind(texture_size=errors_ouptputs.setter("size"))

@@ -615,6 +615,14 @@
         Rectangle:
             pos:self.x,self.y
             size:self.width,2
+        # Top horizontal border
+        Rectangle:
+            pos:self.x,self.y+self.height-2
+            size:self.width,2
+        # Left vertical border
+        Rectangle:
+            pos:(self.x,self.y) if self.left_border else (0,0)
+            size:(2,self.height) if self.left_border else (0,0)
 
 <ColumnRV>:
     viewclass:"DataTableLabel"
@@ -626,6 +634,11 @@
         size_hint_y: None
         height: self.minimum_height
         orientation: 'vertical'
+        canvas.before:
+            # Left vertical border
+            Rectangle:
+                pos:(self.x,self.y) if root.left_border else (0,0)
+                size:(1,self.height) if root.left_border else (0,0)
 
 <WidthAdjust>:
     background_down:""

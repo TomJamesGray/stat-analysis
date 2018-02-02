@@ -51,5 +51,3 @@ class FormFile(GridLayout):
 
     def get_val(self):
         return self.file_location
-
-

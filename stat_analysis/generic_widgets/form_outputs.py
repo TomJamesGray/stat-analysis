@@ -41,6 +41,7 @@ class DataSpreadsheet(GridLayout):
         self.adjuster_click_width = 10
         self.width_adjusters = []
         self.data_columns = []
+        self.spreadsheet_header_labels = []
         self.resize_cursor_active = False
 
         self.spreadsheet_headers = GridLayout(rows=1,size_hint=(None,None),height=30,
@@ -76,6 +77,7 @@ class DataSpreadsheet(GridLayout):
             self.width_adjusters.append(split)
             self.data_columns.append(data_column)
             self.spreadsheet_headers.add_widget(lbl)
+            self.spreadsheet_header_labels.append(lbl)
             self.spreadsheet_headers.add_widget(split)
 
         # Since all the Column RVs are separate, all the RVs need to be aware of each other
@@ -141,6 +143,9 @@ class DataSpreadsheet(GridLayout):
 class ColumnRV(RecycleView):
     raw_data = ListProperty()
     siblings = ListProperty()
+    # This draws a left border down the side of the Column, only really used for import_set_col_types as
+    # there is padding so it's visible ColumnRV doesn't normally have a left broder
+    left_border = BooleanProperty(False)
 
     def __init__(self,**kwargs):
         super().__init__(**kwargs)
@@ -190,7 +195,7 @@ class ColumnRV(RecycleView):
 
 
 class GridAdjustHeader(Label):
-    pass
+    left_border = BooleanProperty(False)
 
 
 class WidthAdjust(Button):
