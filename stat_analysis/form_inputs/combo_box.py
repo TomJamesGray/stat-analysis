@@ -69,6 +69,10 @@ class FormDropDown(GridLayout):
 
         if "default" in input_dict.keys():
             self.main_btn_text = input_dict["default"]
+            if "on_change" in input_dict.keys():
+                # Run the on change event, this is important if this is a dataset, because it means
+                # the columns that would rely on this work as expected
+                input_dict["on_change"](self,self.main_btn_text)
         else:
             self.main_btn_text = ""
 
