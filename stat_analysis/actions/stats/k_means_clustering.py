@@ -162,6 +162,9 @@ K is the amount of clusters that the algorithm will try and split the dataset in
                 plt.scatter(model.centroids[i][0],model.centroids[i][1],marker="x",color=cols[i])
 
             axis.legend()
+            axis.set_xlabel(vals["x_var"])
+            axis.set_ylabel(vals["y_var"])
+
             path = os.path.join(App.get_running_app().tmp_folder, "plot.png")
             fig.savefig(path)
             self.result_output.clear_outputs()
