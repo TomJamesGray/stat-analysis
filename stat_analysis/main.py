@@ -306,6 +306,8 @@ class LogView(GridLayout):
         else:
             self.output.text  += msg
 
+        self.scroll_view.scroll_y = 0
+
     def toggle_log_view(self):
         if self.log_visible:
             # Minimise the scroll view
