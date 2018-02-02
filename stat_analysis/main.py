@@ -119,16 +119,16 @@ class ActionsScroller(ScrollView):
         if self.scroller_visible:
             # Minimise the actions scroller
             self.prev_width = self.width
-            self.parent.size_hint_x = 0
+            self.parent.size_hint_x = None
             self.parent.strip_size = 0
             self.parent.width = 0
             self.background_normal = ""
             self.width = 0
-            self.size_hint_x = 0
+            self.size_hint_x = None
 
             self.scroller_visible = False
         else:
-            self.width= self.prev_width
+            self.width = self.prev_width
             self.parent.width = self.prev_width
 
             self.parent.strip_size = "10pt"
@@ -159,7 +159,7 @@ class ActionsGrid(GridLayout):
             self.add_btn(header,header=True)
 
     def add_btn(self,text,header=False):
-        x = BorderedButton(b_width=1, padding=(2, 2), size_hint_x=0.4, color=(0, 0, 0, 1), text=str(text),
+        x = BorderedButton(b_width=1, padding=(5, 5), size_hint_x=0.4, color=(0, 0, 0, 1), text=str(text),
                           valign="middle", halign="left",background_color=(1,1,1,1),background_normal="")
         if header:
             x.color = App.get_running_app().accent_col
@@ -332,7 +332,8 @@ class LogView(GridLayout):
             self.parent.size_hint_y = 0
             self.parent.strip_size = 0
             self.scroll_view.height = 0
-            self.height = self.close_btn.height
+            # self.height = self.close_btn.height
+            self.height = 0
             self.size_hint_y = None
 
             self.close_btn.background_normal = "res/un_minimise.png"

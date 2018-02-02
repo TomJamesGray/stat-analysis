@@ -17,6 +17,8 @@
         height:30
         size_hint:1,None
         pos:0,root.height-self.height
+        background_image:""
+        background_color:35/255,34/255,34/255,1
         ActionView:
             size_hint:1,None
             height:30
@@ -146,10 +148,8 @@
 
     BoxLayout:
         orientation:"horizontal"
-        spacing:5,5
         width:root.width
         height:root.height-30
-        padding:5,5,0,5
         Splitter:
             size_hint_x:0.2
             sizable_from:"right"
@@ -169,8 +169,6 @@
                 size_hint_y:1
         GridLayout:
             cols:1
-            padding:5,0,5,0
-            spacing:5,5
             PrimaryPane:
                 size_hint_y:1
                 id:primary_pane
@@ -593,6 +591,7 @@
     font_name:"res/Hack-Regular.ttf"
     text_size:self.size
     valign:"middle"
+    padding:2,2
     canvas.before:
         Color:
             rgba:.4,.4,.4,1
