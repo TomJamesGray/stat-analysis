@@ -156,9 +156,15 @@ class ColumnRV(RecycleView):
                     touch.x = sibling.center_x
                     touch.y = sibling.center_y
                     touch.pos = (touch.x,touch.y)
-                    sibling.on_scroll_start(touch,check_children=check_children,root=False)
+                    if touch.button in ("scrollup","scrolldown"):
+                        sibling.on_scroll_start(touch,check_children=check_children,root=False)
+                    elif touch.button == "left":
+                        sibling.scroll_y -= self.convert_distance_to_scroll(touch.dx, touch.dy)[1]
 
-            super().on_scroll_start(touch, check_children=check_children)
+            if touch.button in ("scrollup", "scrolldown"):
+                super().on_scroll_start(touch,check_children)
+            elif touch.button == "left":
+                self.scroll_y -= self.convert_distance_to_scroll(touch.dx, touch.dy)[1]
         else:
             super().on_scroll_start(touch,check_children=check_children)
 
@@ -179,28 +185,6 @@ class ColumnRV(RecycleView):
             self.scroll_y -= self.convert_distance_to_scroll(touch.dx, touch.dy)[1]
 
         self.refresh_from_layout()
-
-    def on_scroll_stop(self, touch, check_children=True, root=True):
-        if root:
-            for sibling in self.siblings:
-                if sibling is not self:
-                    touch.x = sibling.center_x
-                    touch.y = sibling.center_y
-                    touch.pos = (touch.x, touch.y)
-                    sibling.on_scroll_stop(touch,check_children=check_children,root=False)
-
-            super().on_scroll_start(touch, check_children=check_children)
-        else:
-            super().on_scroll_start(touch, check_children=check_children)
-
-        self.refresh_from_layout()
-
-    # def draw_bg(self,*args):
-    #     """
-    #     Manually colour the background, this is only really used as an alternative to setting the cursor
-    #     to the resize cursor (ie "<->") for window providers other than PyGame
-    #     """
-    #     self.actual_bg_color = (1,0,0,1)
 
 
 class GridAdjustHeader(Label):
