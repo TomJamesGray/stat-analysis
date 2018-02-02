@@ -62,10 +62,11 @@ class Regression(base_action.BaseAction):
                         "step":1,
                         "min":1,
                         "max":10,
+                        "int_only": True,
                         "required": "false",
                         "form_name": "regression_degree",
                         "required_if": "regression=True",
-                        "visible_name": "Regression Degree:"
+                        "visible_name": "Regression Degree"
                     },
                     {
                         "input_type": "numeric_bounded",
@@ -73,9 +74,12 @@ class Regression(base_action.BaseAction):
                         "step":1,
                         "min":0,
                         "max":10,
+                        "int_only":True,
                         "required": "false",
                         "form_name": "regression_out_precision",
-                        "visible_name": "Precision of output for regression line"
+                        "visible_name": "Output Precision",
+                        "tip":"This controls the amount of decimal points to be shown in the output for"
+                              "the regression line"
                     }]
             },
             {
