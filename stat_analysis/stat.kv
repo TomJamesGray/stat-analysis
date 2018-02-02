@@ -151,13 +151,12 @@
         width:root.width
         height:root.height-30
         Splitter:
-            size_hint_x:0.2
             sizable_from:"right"
             max_size:300
             min_size:180
             rescale_with_parent:True
+            size_hint_x:None
             ActionsScroller:
-                size_hint_x:0.2
                 id:actions_scroller
                 primary_pane_edit:primary_pane
                 canvas.before:
