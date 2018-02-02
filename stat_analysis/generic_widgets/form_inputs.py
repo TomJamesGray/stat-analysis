@@ -9,11 +9,12 @@ from kivy.core.window import Window
 
 class FormInputLabel(GridLayout):
     def __init__(self,text=None,tip=None,**kwargs):
+        self.height = 20
         super().__init__(**kwargs)
         self.rows = 1
         self.size_hint_x = 1
         self.size_hint_y = None
-        self.minimum_height = 20
+
         if tip == None:
             main_lbl = FormInputLabelText(text=text)
             self.add_widget(main_lbl)
@@ -24,8 +25,6 @@ class FormInputLabel(GridLayout):
             tooltip = ToolTip(source="res/tooltip.png",width=15,height=15,size_hint=(None,1),tip_text=tip)
             Window.bind(mouse_pos=tooltip.mouse_pos)
             self.add_widget(tooltip)
-
-        main_lbl.bind(height=self.setter("height"))
 
 
 class FormInputLabelText(Label):
