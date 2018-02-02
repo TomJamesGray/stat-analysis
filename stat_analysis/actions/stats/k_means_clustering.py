@@ -12,8 +12,8 @@ logger = logging.getLogger(__name__)
 
 class KMeansClustering(BaseAction):
     type = "stats.k_means_clustering"
-    view_name  = "K Means Clustering"
-    help_text=\
+    view_name = "K Means Clustering"
+    help_text =\
 """[size=16][b]K Means Clustering[/b][/size]
 
 This takes an input data set, comprised of an x and y variable and tries to estimate appropriate centers for clusters. This is done by aiming to minimise the distance between the cluster centers and the data points.

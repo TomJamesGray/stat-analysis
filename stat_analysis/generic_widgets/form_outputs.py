@@ -11,7 +11,7 @@ except:
     pass
 
 from stat_analysis.generic_widgets.files import FileChooserSaveDialog
-from stat_analysis.generic_widgets.bordered import BorderedLabel
+from kivy.effects.scroll import ScrollEffect
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.tabbedpanel import TabbedPanel,TabbedPanelItem
 from kivy.uix.popup import Popup
@@ -19,8 +19,6 @@ from kivy.uix.label import Label
 from kivy.uix.textinput import TextInput
 from kivy.uix.button import Button
 from kivy.uix.recycleview import RecycleView
-from kivy.graphics import Rectangle,Color
-from kivy.uix.scrollview import ScrollView
 from kivy.properties import StringProperty,BooleanProperty,Property,ListProperty,ObjectProperty
 from kivy.core.window import Window
 
@@ -146,7 +144,7 @@ class ColumnRV(RecycleView):
     def __init__(self,**kwargs):
         super().__init__(**kwargs)
         self.data = [{"text":str(x)} for x in self.raw_data]
-        # self.scroll_type = ["bars"]
+        self.effect_cls = ScrollEffect
         self.actual_bg_color = (0,0,0,1)
 
     def on_scroll_start(self, touch, check_children=True, root=True):
@@ -159,36 +157,40 @@ class ColumnRV(RecycleView):
                     if touch.button in ("scrollup","scrolldown"):
                         sibling.on_scroll_start(touch,check_children=check_children,root=False)
                     elif touch.button == "left":
-                        sibling.scroll_y -= self.convert_distance_to_scroll(touch.dx, touch.dy)[1]
+                        sibling.touch_scroll(touch)
 
             if touch.button in ("scrollup", "scrolldown"):
                 super().on_scroll_start(touch,check_children)
             elif touch.button == "left":
-                self.scroll_y -= self.convert_distance_to_scroll(touch.dx, touch.dy)[1]
+                self.touch_scroll(touch)
         else:
             super().on_scroll_start(touch,check_children=check_children)
 
         self.refresh_from_layout()
 
     def on_scroll_move(self, touch, root=True):
-        if root:
-            for sibling in self.siblings:
-                if sibling is not self:
-                    touch.x = sibling.center_x
-                    touch.y = sibling.center_y
-                    touch.pos = (touch.x, touch.y)
-                    # sibling.on_scroll_move(touch,root=False)
-                    sibling.scroll_y -= self.convert_distance_to_scroll(touch.dx,touch.dy)[1]
+        for sibling in self.siblings:
+            if sibling is not self:
+                touch.x = sibling.center_x
+                touch.y = sibling.center_y
+                touch.pos = (touch.x, touch.y)
+                sibling.touch_scroll(touch)
 
-            self.scroll_y -= self.convert_distance_to_scroll(touch.dx, touch.dy)[1]
-        else:
-            self.scroll_y -= self.convert_distance_to_scroll(touch.dx, touch.dy)[1]
+        self.touch_scroll(touch)
 
         self.refresh_from_layout()
+
+    def touch_scroll(self,touch):
+        new_scroll_y = self.scroll_y - self.convert_distance_to_scroll(touch.dx, touch.dy)[1]
+        if 0 > new_scroll_y or new_scroll_y > 1:
+            # This scroll would be going further than allowed
+            return
+        self.scroll_y -= self.convert_distance_to_scroll(touch.dx, touch.dy)[1]
 
 
 class GridAdjustHeader(Label):
     pass
+
 
 class WidthAdjust(Button):
     pressed = BooleanProperty(False)
