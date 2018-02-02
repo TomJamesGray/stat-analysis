@@ -67,7 +67,8 @@ class DataSpreadsheet(GridLayout):
             self.spreadsheet_headers.bind(height=data_column.setter("height"))
             if i == self.data_cols -1:
                 data_column.bar_color = (.7,.7,.7,.9)
-                data_column.bar_inactive_color = (.7,.7,.7,.2)
+                data_column.bar_inactive_color = (.7,.7,.7,.9)
+                data_column.bar_width = 10
 
             split = WidthAdjust(size_hint_x=None,width=self.adjuster_show_width,adjust=[lbl,data_column])
 
