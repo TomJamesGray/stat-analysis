@@ -126,6 +126,11 @@ class FormDropDown(GridLayout):
         """
         if "get_cols_from" in self.input_dict.keys():
             self.try_populate()
+        elif self.input_dict["data_type"] == "dataset":
+            # Remake the dropwon with the list of datasets, because this could change
+            # if an "example dataset" is imported
+            self.mk_dropdown([x.save_name for x in App.get_running_app().datasets])
+            self.dropdown.open(self.main_btn)
         else:
             self.dropdown.open(self.main_btn)
 
