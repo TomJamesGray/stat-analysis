@@ -202,8 +202,8 @@ An example of a logistic regression can be found in the "exam passes" dataset. I
                 fig = plt.figure()
                 axis = plt.subplot(111)
                 axis.set_ylim([0,1])
-                axis.scatter([a[0] for a in x],y)
-                axis.plot(x_line,y_line)
+                axis.scatter([a[0] for a in x],y,color=App.get_running_app().graph_colors[1])
+                axis.plot(x_line,y_line,color=App.get_running_app().graph_colors[0])
 
                 # Set axis labels
                 axis.set_xlabel(vals["x_var"])

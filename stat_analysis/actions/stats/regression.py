@@ -162,8 +162,8 @@ class Regression(base_action.BaseAction):
 
             fig = plt.figure()
             axis = plt.subplot(111)
-            axis.scatter(x,y)
-            axis.plot(x_line,y_line)
+            axis.scatter(x,y,color=App.get_running_app().graph_colors[1])
+            axis.plot(x_line,y_line,color=App.get_running_app().graph_colors[0])
 
             # Set axis labels
             axis.set_xlabel(vals["x_var"])

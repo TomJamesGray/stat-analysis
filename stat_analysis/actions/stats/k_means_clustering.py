@@ -144,7 +144,7 @@ K is the amount of clusters that the algorithm will try and split the dataset in
             model.fit(x,y)
             self.stored_model = model
 
-        cols = ["r","g","b","c","k"]
+        cols = App.get_running_app().graph_colors
         if not quiet:
             fig = plt.figure()
             axis = plt.subplot(111)

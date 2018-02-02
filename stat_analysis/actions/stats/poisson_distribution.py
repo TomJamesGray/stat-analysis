@@ -130,7 +130,7 @@ class PoissonDistribution(BaseAction):
 
             fig = plt.figure()
             axis = plt.subplot(111)
-            axis.plot(x_line,y_line)
+            axis.plot(x_line,y_line,color=App.get_running_app().graph_colors[0])
 
             if vals["show_bars"]:
                 # Get the x values
@@ -145,7 +145,7 @@ class PoissonDistribution(BaseAction):
                 x_counts = OrderedDict(sorted(x_counts.items(),key=lambda x:x[0]))
 
                 x_relative_freq = [x/len(col_data) for x in x_counts.values()]
-                axis.bar(list(x_vals),x_relative_freq,color="red")
+                axis.bar(list(x_vals),x_relative_freq,color=App.get_running_app().graph_colors[1])
 
             axis.set_xlabel(vals["col"])
             axis.set_ylabel("Probability Density")

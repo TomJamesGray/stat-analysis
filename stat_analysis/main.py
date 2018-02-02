@@ -353,6 +353,9 @@ class LogText(TextInput):
 class StatApp(App):
     accent_col = (219/255,46/255,52/255,1)
     title_pane_col = (34/255,34/255,34/255,1)
+    # These are the colors that should be used for graphs, order: Green, sky blue, red, purple, blue
+    graph_colors = [(80/255,167/255,31/255),(64/255,175/255,194/255),(223/255,46/255,29/255),(156/255,68/255,181/255),
+                    (52/255,99/255,233/255)]
 
     def __init__(self,**kwargs):
         super().__init__(**kwargs)

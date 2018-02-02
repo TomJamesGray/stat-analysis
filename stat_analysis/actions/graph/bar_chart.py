@@ -130,7 +130,7 @@ class BarChart(BaseAction):
         fig = plt.figure()
         axis = plt.subplot(111)
 
-        axis.bar(y_data.keys(),y_data.values())
+        axis.bar(y_data.keys(),y_data.values(),color=App.get_running_app().graph_colors[0])
 
         # Set axis labels
         axis.set_xlabel(vals["x_var"])
