@@ -439,11 +439,11 @@ Some actions also have additional help available via Help > 'Help for this actio
         }
         str_input = PopupStringInput(label="Dataset name")
         str_input.text_input.text = datasets[name][0]
-        popup = Popup(size_hint=(None,None),size=(400,150))
+        popup = Popup(size_hint=(None,None),size=(400,150),title="Example Dataset Save Name")
 
         str_input.submit_btn.bind(on_press=lambda *args:self.submit_load_example(
             str_input,popup,datasets[name][1]))
-
+        str_input.dismiss_btn.bind(on_press=lambda *args:popup.dismiss())
         popup.content = str_input
         popup.open()
 
@@ -462,7 +462,7 @@ Some actions also have additional help available via Help > 'Help for this actio
         self.root_widget.primary_pane.try_refresh_home_view()
 
     def load_btn(self):
-        self.load_popup = Popup(size_hint=(None,None),size=(400,400))
+        self.load_popup = Popup(size_hint=(None,None),size=(400,400),title="Load Save File")
         f_chooser = FileChooserLoadDialog()
         f_chooser.on_load = self.do_load
         f_chooser.on_cancel = lambda :self.load_popup.dismiss()
@@ -511,7 +511,7 @@ Some actions also have additional help available via Help > 'Help for this actio
         return actions_loaded
 
     def save_btn(self,*args):
-        self.save_popup = Popup(size_hint=(None,None),size=(400,400))
+        self.save_popup = Popup(size_hint=(None,None),size=(400,400),title="Save Project")
         f_chooser = FileChooserSaveDialog(default_file_name="Project.stat")
         f_chooser.on_save = self.do_save
         f_chooser.on_cancel = lambda: self.save_popup.dismiss()

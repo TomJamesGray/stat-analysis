@@ -219,7 +219,7 @@ class ExportableGraph(GridLayout):
         shutil.copyfile(self.source,os.path.join(path,filename))
 
     def graph_opts(self):
-        self.graph_options_popup = Popup(size_hint=(None,None),size=(400,400))
+        self.graph_options_popup = Popup(size_hint=(None,None),size=(400,400),title="Graph Options")
         opts = GraphOptions(fig=self.fig,axis=self.axis)
         opts.on_graph_update = self.update_graph
         self.graph_options_popup.content = opts

@@ -3,7 +3,7 @@ from kivy.uix.label import Label
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.button import Button
 from kivy.uix.popup import Popup
-from stat_analysis.generic_widgets.files import FileChooserListViewFormAction
+from stat_analysis.generic_widgets.files import FileChooserLoadDialog
 from stat_analysis.generic_widgets.form_inputs import FormInputLabel
 
 
@@ -38,11 +38,16 @@ class FormFile(GridLayout):
 
     def open_f_selector(self,*args):
         self.popup = Popup(title="Select file",size_hint=(None,None),size=(400,400))
-        f_chooser = FileChooserListViewFormAction(popup=self.popup,file_chooser_btn=self.file_chooser_btn,
-                                                  filters=[lambda _,filename: filename.endswith(".csv")],
-                                                  path=os.path.expanduser("~"),form_parent=self)
+        f_chooser = FileChooserLoadDialog(filters=[lambda _,filename: filename.endswith(".csv")])
+        f_chooser.on_cancel = lambda :self.popup.dismiss()
+        f_chooser.on_load = self.f_selector_load
         self.popup.content = f_chooser
         self.popup.open()
+
+    def f_selector_load(self,_,file_location):
+        self.popup.dismiss()
+        self.file_location = file_location[0]
+        self.file_chooser_btn.text = os.path.basename(file_location[0])
 
     def get_val(self):
         return self.file_location
