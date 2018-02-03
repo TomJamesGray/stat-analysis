@@ -291,8 +291,6 @@ class PrimaryPane(GridLayout):
             self.home_view.actions_grid.data_tbl = App.get_running_app().saved_actions
             self.home_view.actions_grid.render(re_render=True)
 
-    # def show_help(self):
-
 
 class TitlePane(Label):
     """
@@ -315,7 +313,7 @@ class LogView(GridLayout):
         if self.output.text != "":
             self.output.text += "\n" + msg
         else:
-            self.output.text  += msg
+            self.output.text += msg
 
         self.scroll_view.scroll_y = 0
 
