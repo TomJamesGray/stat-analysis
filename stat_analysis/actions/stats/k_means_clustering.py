@@ -49,7 +49,7 @@ K is the amount of clusters that the algorithm will try and split the dataset in
                     },
                     {
                         "input_type": "combo_box",
-                        "data_type": "column",
+                        "data_type": "column_numeric",
                         "get_cols_from": lambda x: x.parent_action.tmp_dataset,
                         "add_dataset_listener": lambda x: x.parent_action.add_dataset_listener(x),
                         "required": True,
