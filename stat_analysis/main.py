@@ -28,7 +28,7 @@ from stat_analysis.generic_widgets.right_click_menu import RightClickMenu
 from stat_analysis.generic_widgets.popup_inputs import PopupStringInput
 from kivy.app import App
 
-Config.set('input', 'mouse', 'mouse,multitouch_on_demand')
+# Config.set('input', 'mouse', 'mouse,multitouch_on_demand')
 
 class LogViewOutputHandler(logging.StreamHandler):
     def emit(self,record):
@@ -359,6 +359,7 @@ class StatApp(App):
 
     def __init__(self,**kwargs):
         super().__init__(**kwargs)
+        self.devel_mode = False
         self.load_popup,self.save_popup = None, None
         self.actions = [
             {
@@ -400,7 +401,19 @@ Some actions also have additional help available via Help > 'Help for this actio
         Window.clearcolor = (.85,.85,.85,1)
         Window.size = (1336,768)
         self.root_widget = StatAnalysis()
-        inspector.create_inspector(Window,self.root_widget)
+
+        if self.devel_mode:
+            # Enable any development options
+            inspector.create_inspector(Window,self.root_widget)
+            self.startup_messages += "Enabling development mode\n"
+        else:
+            # Disable the dots that show on left click
+            Config.set('input', 'mouse', 'mouse,multitouch_on_demand')
+            # Disable exiting on escape
+            Config.set('kivy', 'exit_on_escape', '0')
+            # Disable the default kivy settings window
+            self.open_settings = lambda *args:None
+
         self.started_up = True
         self.log_this(self.startup_messages)
         return self.root_widget
@@ -557,12 +570,10 @@ Some actions also have additional help available via Help > 'Help for this actio
         """
         subprocess.Popen(["python", resource_find("help_view.py"), self.help_text])
 
-def main():
-    parser = argparse.ArgumentParser(description="Stat Analysis")
-    parser.add_argument("save_file",nargs="?",default=None,type=str)
-    results = parser.parse_args()
+def main(results):
 
     app = StatApp()
+    app.devel_mode = results.devel
     if results.save_file != None:
         app.load_file(results.save_file)
     app.run()
