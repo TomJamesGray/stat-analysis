@@ -471,6 +471,7 @@ Some actions also have additional help available via Help > 'Help for this actio
 
     def do_load(self,path,filename):
         self.load_file(os.path.join(path,filename[0]))
+        self.root_widget.primary_pane.try_refresh_home_view()
 
     def load_file(self,fpath,**kwargs):
         """
