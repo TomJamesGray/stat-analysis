@@ -25,7 +25,9 @@ class SetColTypes(base_action.BaseAction):
                         "data_type":"dataset",
                         "form_name": "data_set",
                         "visible_name": "Data set",
-                        "on_change":lambda x,val:x.parent_action.form_add_cols(val)
+                        "on_change":lambda x,val:x.parent_action.form_add_cols(val),
+                        # Setting this means an infinite loop of calling on_change and re-rendering doesn't occur
+                        "run_on_default_set": False
                     }
                 ]
             }
