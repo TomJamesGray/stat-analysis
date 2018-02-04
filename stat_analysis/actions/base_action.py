@@ -23,7 +23,6 @@ form_input_maps = {
     "numeric":numeric.FormNumeric,
     "file":file.FormFile,
     "string":string.FormString,
-    "action_columns":action_columns.ActionColumns
 }
 
 

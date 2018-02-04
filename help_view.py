@@ -4,7 +4,8 @@ from kivy.modules import inspector
 from kivy.core.window import Window
 from kivy.uix.widget import Widget
 from kivy.properties import StringProperty
-
+# Import CustomActionBtn so it can be used in the KV file¬
+from stat_analysis.generic_widgets.action_bar import CustomActionBtn
 
 class HelpView(Widget):
     help_text = StringProperty("")
