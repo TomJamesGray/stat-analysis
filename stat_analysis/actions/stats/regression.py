@@ -12,6 +12,17 @@ logger = logging.getLogger(__name__)
 class Regression(base_action.BaseAction):
     type = "stats.regression"
     view_name = "Regression"
+    help_text = \
+"""[size=16][b]Linear and polynomial regression[/b][/size]
+
+This action performs a regression of the given degree for the given dataset
+
+[b]Outputs[/b]
+
+The formula for the output line is given as well as a graph containing a scatter plot of the dataset and the regression line generated. This graph can be modified by pressing the "graph options" button where you can customise the axis labels and the minimum and maximum x and y values.
+
+"""
+
 
     def __init__(self,output_widget):
         self.user_name = "XYZ"
@@ -50,12 +61,6 @@ class Regression(base_action.BaseAction):
             {
                 "group_name":"Regression",
                 "inputs":[
-                    {
-                        "input_type": "check_box",
-                        "required": True,
-                        "form_name": "regression",
-                        "visible_name": "Regression"
-                    },
                     {
                         "input_type": "numeric_bounded",
                         "default": 1,

@@ -14,6 +14,25 @@ logger = logging.getLogger(__name__)
 class NormalDistribution(BaseAction):
     type = "stats.normal_distribution"
     view_name = "Normal Distribution"
+    help_text = \
+"""[size=16][b]Normal distribution[/b][/size]
+
+This action creates a normal distribution from a given dataset by calculating the mean [font=res/equation.otf]μ[/font] and the variance [font=res/equation.otf]σ[sup]2[/sup][/font]. Then the probability density function is created using the formula:
+
+[font=res/equation.otf][size=20](1/√2π) · exp(-(x-μ)[sup]2[/sup]/2σ[sup]2[/sup])[/size][/font]
+
+where exp is the exponential function ie [font=res/equation.otf][size=16] e[sup]x[/sup] = exp(x)[/size][/font]
+
+[b]Inputs[/b]
+
+Show data bars displays a bar chart of the probability that a random value would fall into this category.
+
+To get a probability from the generated normal distribution you can input the "x" values to get the corresponding value from the generated probability density function. To get the probabilities for multiple x values you can separate the values with commas.
+
+[b]Example[/b]
+
+A good example dataset is the "heights" example dataset as if you run the normal distribution action with the column "height" and enable "Show data bars" (this displays a bar chart of the data) you can see the data fits the generated probability density function reasonably well.
+"""
 
     def __init__(self,output_widget):
         self.user_name = "XYZ"
