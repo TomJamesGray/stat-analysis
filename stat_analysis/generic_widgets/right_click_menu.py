@@ -1,5 +1,4 @@
 from kivy.uix.gridlayout import GridLayout
-from kivy.uix.button import Button
 from kivy.core.window import Window
 from kivy.properties import Property
 from stat_analysis.generic_widgets.bordered import BorderedHoverButton

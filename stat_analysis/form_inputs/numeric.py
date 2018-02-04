@@ -1,6 +1,4 @@
-from kivy.uix.label import Label
 from kivy.uix.gridlayout import GridLayout
-from kivy.uix.checkbox import CheckBox
 from kivy.uix.textinput import TextInput
 from stat_analysis.generic_widgets.form_inputs import FormInputLabel
 

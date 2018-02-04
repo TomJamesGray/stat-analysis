@@ -1,11 +1,7 @@
-import numpy as np
 from kivy.uix.label import Label
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.slider import Slider
 from kivy.resources import resource_find
-from kivy.graphics import Rectangle,Color
-from kivy.uix.textinput import TextInput
-from stat_analysis.generic_widgets.bordered import BorderedLabel
 from stat_analysis.generic_widgets.form_inputs import FormInputLabel
 
 
@@ -33,11 +29,6 @@ class FormNumericBounded(GridLayout):
         slider = Slider(min=input_dict["min"],max=input_dict["max"],value=input_dict["default"],step=input_dict["step"],
                         cursor_height=20,cursor_width=20,cursor_image=resource_find("res/slider_image.png"))
 
-        # Draw the increments on the slider
-        with slider.canvas.after:
-            Color(1,0,0,1)
-            for x in np.arange(0,slider.width,slider.width/input_dict["step"]):
-                Rectangle(pos=(x,slider.y+slider.height/2),size=(1,10))
 
         slider.bind(value=self.on_slider_change)
 

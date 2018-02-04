@@ -10,10 +10,6 @@ types = {
     },
     "string":{
         "convert":lambda x:str(x)
-    },
-    "datetime":{
-        "convert":lambda x,fmt:str(x),
-        "format_required":True
     }
 }
 

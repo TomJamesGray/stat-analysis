@@ -1,10 +1,9 @@
 import shutil
 import os
 import logging
-import numpy as np
 
 try:
-    # Try and import pygame to allow cursor to be set, currently not implemnted
+    # Try and import pygame to allow cursor to be set but don't crash if a different window provider is used, ie SDL2
     import pygame.cursors
     import pygame.mouse
 except:

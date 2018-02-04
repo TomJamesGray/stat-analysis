@@ -1,7 +1,6 @@
 import logging
 import os.path
 import numpy as np
-import time
 import matplotlib.pyplot as plt
 from kivy.app import App
 from sklearn.linear_model import LogisticRegression as LR

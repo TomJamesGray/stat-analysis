@@ -2,7 +2,6 @@ import logging
 import numpy as np
 from kivy.app import App
 from stat_analysis.actions.base_action import BaseAction
-from stat_analysis.generic_widgets.bordered import BorderedTable
 
 logger = logging.getLogger(__name__)
 

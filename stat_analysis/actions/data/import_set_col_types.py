@@ -1,8 +1,6 @@
-from stat_analysis.generic_widgets.bordered import BorderedTable
 from stat_analysis.actions.data.set_col_types import SetColTypes
 from kivy.uix.label import Label
 from kivy.app import App
-from collections import OrderedDict
 
 
 class ImportSetColTypes(SetColTypes):

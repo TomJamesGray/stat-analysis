@@ -2,8 +2,6 @@ from kivy.uix.label import Label
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.image import Image
 from kivy.properties import StringProperty,BooleanProperty
-from kivy.uix.button import ButtonBehavior,Button
-from kivy.uix.floatlayout import FloatLayout
 from kivy.app import App
 from kivy.core.window import Window
 

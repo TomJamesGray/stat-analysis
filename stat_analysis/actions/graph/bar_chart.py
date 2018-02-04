@@ -1,8 +1,6 @@
 import logging
 import os
-import numpy as np
 from stat_analysis.actions.base_action import BaseAction
-from stat_analysis.generic_widgets.bordered import BorderedTable
 from kivy.app import App
 from stat_analysis.generic_widgets.form_outputs import ExportableGraph
 from collections import OrderedDict

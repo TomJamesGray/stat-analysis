@@ -25,7 +25,8 @@ class ImportCSV(base_action.BaseAction):
                         "input_type":"file",
                         "required":True,
                         "form_name":"file",
-                        "visible_name":"File"
+                        "visible_name":"File",
+                        "filters":[lambda _,filename: filename.endswith(".csv")]
                     }
                 ]
             },

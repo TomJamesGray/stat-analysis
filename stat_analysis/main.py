@@ -4,9 +4,7 @@ import subprocess
 import os
 import logging.config
 import pickle
-import argparse
 from kivy.config import Config
-from kivy.resources import resource_find
 from kivy.uix.widget import Widget
 from kivy.uix.popup import Popup
 from kivy.uix.scrollview import ScrollView
@@ -14,9 +12,8 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.uix.treeview import TreeView,TreeViewLabel
 from kivy.uix.label import Label
 from kivy.uix.textinput import TextInput
-from kivy.uix.button import Button
 from kivy.core.window import Window
-from kivy.properties import StringProperty,ObjectProperty,BooleanProperty,NumericProperty,ListProperty,Property
+from kivy.properties import StringProperty,ObjectProperty,BooleanProperty,NumericProperty,ListProperty
 from kivy.modules import inspector
 from kivy.resources import resource_find
 from stat_analysis.actions import stats,data,graph
@@ -474,7 +471,7 @@ Some actions also have additional help available via Help > 'Help for this actio
 
     def load_btn(self):
         self.load_popup = Popup(size_hint=(None,None),size=(400,400),title="Load Save File")
-        f_chooser = FileChooserLoadDialog()
+        f_chooser = FileChooserLoadDialog(filters=[lambda _,filename: filename.endswith(".stat")])
         f_chooser.on_load = self.do_load
         f_chooser.on_cancel = lambda :self.load_popup.dismiss()
         self.load_popup.content = f_chooser
@@ -497,7 +494,11 @@ Some actions also have additional help available via Help > 'Help for this actio
             for action in group["actions"]:
                 actions.append(action)
         with open(fpath, "rb") as f:
-            dump = pickle.load(f)
+            try:
+                dump = pickle.load(f)
+            except pickle.UnpicklingError:
+                logger.error("Error in loading save file {}, possibly corrupted".format(fpath))
+                return
 
         actions_loaded = 0
         for item in dump:

@@ -12,7 +12,7 @@ from kivy.uix.label import Label
 from kivy.uix.popup import Popup
 from kivy.uix.scrollview import ScrollView
 
-from stat_analysis.form_inputs import combo_box,check_box,numeric_bounded,numeric,file,string,action_columns
+from stat_analysis.form_inputs import combo_box,check_box,numeric_bounded,numeric,file,string
 
 logger = logging.getLogger(__name__)
 
