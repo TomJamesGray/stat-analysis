@@ -2,6 +2,7 @@ from kivy.uix.actionbar import ActionItem,ActionButton,ActionGroup
 from kivy.properties import BooleanProperty,ListProperty
 from kivy.core.window import Window
 
+
 class GenericActionBtn(ActionItem):
     hovering = BooleanProperty(False)
     background_normal_color = ListProperty([34/255,34/255,34/255,1])
@@ -23,12 +24,19 @@ class GenericActionBtn(ActionItem):
             return
         elif collision and not self.hovering:
             # Mouse enter button
-            self.background_color = self.background_hover_color
+            self.on_enter()
         elif self.hovering and not collision:
             # Mouse exit button
-            self.background_color = self.background_normal_color
+            self.on_exit()
 
         self.hovering = collision
+
+    def on_exit(self):
+        self.background_color = self.background_normal_color
+
+    def on_enter(self):
+        self.background_color = self.background_hover_color
+
 
 class CustomActionBtn(GenericActionBtn,ActionButton):
     def __init__(self,**kwargs):
@@ -38,10 +46,9 @@ class CustomActionBtn(GenericActionBtn,ActionButton):
         self.height = 30
         self.size_hint_y = None
 
-    def mouse_pos(self,*args):
-        super().mouse_pos(*args)
-        # self.height = 30
-        # self.background_normal = ""
+    def on_press(self,**kwargs):
+        self.on_exit()
+        super().on_press(**kwargs)
 
 
 class CustomActionGroup(GenericActionBtn,ActionGroup):
