@@ -59,7 +59,7 @@ class ViewData(base_action.BaseAction):
             self.result_output.clear_outputs(all=True)
             self.result_output.size_hint_y = 1
             self.result_output.size_hint_x = None
-            self.result_output.padding = (0,5)
+            self.result_output.padding = (0,0,0,5)
 
             sheet = DataSpreadsheet(headers=cur_set.get_headers(),table_data=cur_set.get_data())
 

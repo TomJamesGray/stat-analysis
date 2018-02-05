@@ -66,9 +66,9 @@ class DataSpreadsheet(GridLayout):
 
             self.spreadsheet_headers.bind(height=data_column.setter("height"))
             if i == self.data_cols -1:
-                data_column.bar_color = (1,0,0,.9)
-                data_column.bar_inactive_color = (.7,.7,.7,.9)
-                data_column.bar_width = 10
+                data_column.bar_color = (.7,.7,.7,.9)
+                data_column.bar_inactive_color = (.7,.7,.7,.4)
+                data_column.bar_width = 15
 
             split = WidthAdjust(size_hint_x=None,width=self.adjuster_show_width,adjust=[lbl,data_column])
 
@@ -99,6 +99,7 @@ class DataSpreadsheet(GridLayout):
             split.pressed = False
         for col in self.data_columns:
             col.scroll_bar_active = False
+            col.horiz_scroll_bar_active = False
 
         self.resize_cursor_active = False
 
@@ -158,6 +159,7 @@ class ColumnRV(RecycleView):
         self.effect_cls = ScrollEffect
         self.actual_bg_color = (0,0,0,1)
         self.scroll_bar_active = False
+        self.horiz_scroll_bar_active = False
         self.scroll_timeout = -1
 
     def on_scroll_start(self, touch, check_children=True, root=True):
@@ -167,7 +169,7 @@ class ColumnRV(RecycleView):
             for sibling in self.siblings:
                 sibling.scroll_bar_scroll(touch)
             return
-        elif root:
+        elif root and self.touch_collide_grid(touch) and not self.collide_with_horiz_scroll_bar(touch):
             for sibling in self.siblings:
                 if sibling is not self:
                     touch.x = sibling.center_x
@@ -182,6 +184,8 @@ class ColumnRV(RecycleView):
                 super().on_scroll_start(touch,check_children)
             elif touch.button == "left":
                 self.touch_scroll(touch)
+        elif self.collide_with_horiz_scroll_bar(touch):
+            self.horiz_scroll_bar_active = True
         else:
             super().on_scroll_start(touch,check_children=check_children)
 
@@ -196,7 +200,8 @@ class ColumnRV(RecycleView):
             for sibling in self.siblings:
                 sibling.scroll_bar_scroll(touch)
             return
-        else:
+        elif self.touch_collide_grid(touch) and not self.collide_with_horiz_scroll_bar(touch) and\
+                not self.horiz_scroll_bar_active:
             for sibling in self.siblings:
                 if sibling is not self:
                     touch.x = sibling.center_x
@@ -216,7 +221,31 @@ class ColumnRV(RecycleView):
         grid_pos = parent_grid.to_window(*parent_grid.pos)
         click_pos = parent_grid.to_window(*touch.pos)
 
-        return grid_pos[0] + parent_grid.width - self.bar_width <= click_pos[0] <= grid_pos[0] + parent_grid.width
+        horiz = grid_pos[0] + parent_grid.width - self.bar_width <= click_pos[0] <= grid_pos[0] + parent_grid.width
+        vertical = grid_pos[1] <= click_pos[1] <= grid_pos[1] + parent_grid.height
+
+        return horiz and vertical
+
+    def touch_collide_grid(self,touch):
+        parent_grid = self.parent
+        grid_pos = parent_grid.to_window(*parent_grid.pos)
+        click_pos = parent_grid.to_window(*touch.pos)
+
+        horiz = grid_pos[0] <= click_pos[0] <= grid_pos[0] + parent_grid.width
+        vertical = grid_pos[1] <= click_pos[1] <= grid_pos[1] + parent_grid.height
+
+        return horiz and vertical
+
+    def collide_with_horiz_scroll_bar(self,touch):
+        # Width of the horizontal scroll bar for the result output
+        scroll_width = 20
+        parent_grid = self.parent
+        grid_pos = parent_grid.to_window(*parent_grid.pos)
+        click_pos = parent_grid.to_window(*touch.pos)
+
+        horiz = grid_pos[0] <= click_pos[0] <= grid_pos[0] + parent_grid.width
+        vertical = grid_pos[1] <= click_pos[1] <= grid_pos[1] + scroll_width
+        return horiz and vertical
 
     def touch_scroll(self,touch):
         new_scroll_y = self.scroll_y - self.convert_distance_to_scroll(touch.dx, touch.dy)[1]
