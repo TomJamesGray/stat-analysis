@@ -66,7 +66,7 @@ class DataSpreadsheet(GridLayout):
 
             self.spreadsheet_headers.bind(height=data_column.setter("height"))
             if i == self.data_cols -1:
-                data_column.bar_color = (.7,.7,.7,.9)
+                data_column.bar_color = (1,0,0,.9)
                 data_column.bar_inactive_color = (.7,.7,.7,.9)
                 data_column.bar_width = 10
 
@@ -97,6 +97,8 @@ class DataSpreadsheet(GridLayout):
     def mouse_release(self,*args):
         for split in self.width_adjusters:
             split.pressed = False
+        for col in self.data_columns:
+            col.scroll_bar_active = False
 
         self.resize_cursor_active = False
 
@@ -147,7 +149,7 @@ class ColumnRV(RecycleView):
     raw_data = ListProperty()
     siblings = ListProperty()
     # This draws a left border down the side of the Column, only really used for import_set_col_types as
-    # there is padding so it's visible ColumnRV doesn't normally have a left broder
+    # there is padding so it's visible ColumnRV doesn't normally have a left border
     left_border = BooleanProperty(False)
 
     def __init__(self,**kwargs):
@@ -155,9 +157,17 @@ class ColumnRV(RecycleView):
         self.data = [{"text":str(x)} for x in self.raw_data]
         self.effect_cls = ScrollEffect
         self.actual_bg_color = (0,0,0,1)
+        self.scroll_bar_active = False
+        self.scroll_timeout = -1
 
     def on_scroll_start(self, touch, check_children=True, root=True):
-        if root:
+        if self.bar_width != 0 and touch.button == "left" and root and self.collide_with_scroll_bar(touch):
+            print("Collide with bar (on scroll start)")
+            self.scroll_bar_active = True
+            for sibling in self.siblings:
+                sibling.scroll_bar_scroll(touch)
+            return
+        elif root:
             for sibling in self.siblings:
                 if sibling is not self:
                     touch.x = sibling.center_x
@@ -178,24 +188,58 @@ class ColumnRV(RecycleView):
         self.refresh_from_layout()
 
     def on_scroll_move(self, touch, root=True):
-        for sibling in self.siblings:
-            if sibling is not self:
-                touch.x = sibling.center_x
-                touch.y = sibling.center_y
-                touch.pos = (touch.x, touch.y)
-                sibling.touch_scroll(touch)
+        # print("On scroll move")
+        # super().on_scroll_start(touch)
+        # return
 
-        self.touch_scroll(touch)
+        if self.scroll_bar_active:
+            for sibling in self.siblings:
+                sibling.scroll_bar_scroll(touch)
+            return
+        else:
+            for sibling in self.siblings:
+                if sibling is not self:
+                    touch.x = sibling.center_x
+                    touch.y = sibling.center_y
+                    touch.pos = (touch.x, touch.y)
+                    sibling.touch_scroll(touch)
+
+            self.touch_scroll(touch)
 
         self.refresh_from_layout()
+
+    def on_scroll_stop(self, touch, check_children=True):
+        return
+
+    def collide_with_scroll_bar(self,touch):
+        parent_grid = self.parent
+        grid_pos = parent_grid.to_window(*parent_grid.pos)
+        click_pos = parent_grid.to_window(*touch.pos)
+
+        return grid_pos[0] + parent_grid.width - self.bar_width <= click_pos[0] <= grid_pos[0] + parent_grid.width
 
     def touch_scroll(self,touch):
         new_scroll_y = self.scroll_y - self.convert_distance_to_scroll(touch.dx, touch.dy)[1]
         if 0 > new_scroll_y or new_scroll_y > 1:
             # This scroll would be going further than allowed
             return
+        print("New touch scroll y {}".format(new_scroll_y))
         self.scroll_y -= self.convert_distance_to_scroll(touch.dx, touch.dy)[1]
 
+    def scroll_bar_scroll(self,touch):
+        # Convert the y position of the touch to "scroll_y", 0 is the bottom, 1 is the top
+        parent_grid = self.parent
+        grid_pos = parent_grid.to_window(*parent_grid.pos)
+        click_pos = parent_grid.to_window(*touch.pos)
+
+        new_scroll_y = (click_pos[1]-grid_pos[1])/parent_grid.height
+
+        # new_scroll_y = self.scroll_y - self.convert_distance_to_scroll(-touch.dx, -touch.dy)[1]
+        if 0 > new_scroll_y or new_scroll_y > 1:
+            # This scroll would be going further than allowed
+            return
+        print("New scroll scroll y {}".format(new_scroll_y))
+        self.scroll_y = new_scroll_y
 
 class GridAdjustHeader(Label):
     left_border = BooleanProperty(False)

@@ -88,7 +88,7 @@ class BaseAction(object):
         self.output_widget.bind(size=self._draw_border)
 
         # Create the generic output area
-        result_output_scroller = ScrollView(size_hint=(1,1),effect_cls=ScrollEffect,bar_color=(.7,.7,.7,.9),bar_inactive_color=(.7,.7,.7,.9),bar_width=10)
+        result_output_scroller = ScrollView(size_hint=(1,1),effect_cls=ScrollEffect,bar_color=(.7,.7,.7,.9),bar_inactive_color=(.7,.7,.7,.9),bar_width=10,scroll_type=["bars", "content"])
 
         result_output = ResultOutputWidget(cols=1,size_hint=(1,None))
         result_output.bind(minimum_height=result_output.setter('height'))
