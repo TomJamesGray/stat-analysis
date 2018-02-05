@@ -95,6 +95,7 @@ class DataSpreadsheet(GridLayout):
         self.add_widget(self.rv_container)
 
     def mouse_release(self,*args):
+        print("Mouse up")
         for split in self.width_adjusters:
             split.pressed = False
         for col in self.data_columns:
@@ -163,7 +164,9 @@ class ColumnRV(RecycleView):
         self.scroll_timeout = -1
 
     def on_scroll_start(self, touch, check_children=True, root=True):
-        if self.bar_width != 0 and touch.button == "left" and root and self.collide_with_scroll_bar(touch):
+        print("Scroll start root {} collide {}".format(root,self.collide_with_scroll_bar(touch)))
+        if self.scroll_bar_active or (self.bar_width != 0 and touch.button == "left" and root and\
+                                              self.collide_with_scroll_bar(touch)):
             print("Collide with bar (on scroll start)")
             self.scroll_bar_active = True
             for sibling in self.siblings:
@@ -214,16 +217,20 @@ class ColumnRV(RecycleView):
         self.refresh_from_layout()
 
     def on_scroll_stop(self, touch, check_children=True):
+        print("Scroll STOP")
         return
 
     def collide_with_scroll_bar(self,touch):
         parent_grid = self.parent
         grid_pos = parent_grid.to_window(*parent_grid.pos)
         click_pos = parent_grid.to_window(*touch.pos)
+        self.bar_width = 15
 
         horiz = grid_pos[0] + parent_grid.width - self.bar_width <= click_pos[0] <= grid_pos[0] + parent_grid.width
         vertical = grid_pos[1] <= click_pos[1] <= grid_pos[1] + parent_grid.height
 
+        print("{} < {} < {}".format(grid_pos[0] + parent_grid.width - self.bar_width,click_pos[0],grid_pos[0] + parent_grid.width))
+        print("Horiz {} vertical {} bar width {}\n".format(horiz,vertical,self.bar_width))
         return horiz and vertical
 
     def touch_collide_grid(self,touch):
@@ -252,7 +259,6 @@ class ColumnRV(RecycleView):
         if 0 > new_scroll_y or new_scroll_y > 1:
             # This scroll would be going further than allowed
             return
-        print("New touch scroll y {}".format(new_scroll_y))
         self.scroll_y -= self.convert_distance_to_scroll(touch.dx, touch.dy)[1]
 
     def scroll_bar_scroll(self,touch):
@@ -269,6 +275,7 @@ class ColumnRV(RecycleView):
             return
         print("New scroll scroll y {}".format(new_scroll_y))
         self.scroll_y = new_scroll_y
+
 
 class GridAdjustHeader(Label):
     left_border = BooleanProperty(False)
