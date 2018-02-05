@@ -209,7 +209,19 @@ class ActionsGrid(GridLayout):
                 if action == False:
                     # Action not found
                     return False
-                App.get_running_app().root_widget.primary_pane.reload_action(action)
+
+                try:
+                    App.get_running_app().root_widget.primary_pane.reload_action(action)
+                except Exception as e:
+                    if not App.get_running_app().devel_mode:
+                        # Not in development mode so don't crash
+                        logger.error("Error in running action {}\nGoing back to home".format(repr(e)))
+                        # Go back home
+                        App.get_running_app().root_widget.primary_pane.go_home()
+                    else:
+                        # Raise the error since we're in development mode so the traceback would display useful info
+                        raise e
+
             elif touch.button == "right":
                 new_pos = self.to_window(touch.x,touch.y)
                 menu = RightClickMenu(x=new_pos[0],y=new_pos[1])
