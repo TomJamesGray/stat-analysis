@@ -139,6 +139,7 @@ class HomeView(ScrollView):
 
 class ActionsGrid(GridLayout):
     data_tbl = ListProperty([])
+    empty_msg = StringProperty("")
 
     def __init__(self,btn_fn={},**kwargs):
         self.btn_fn = btn_fn
@@ -146,8 +147,6 @@ class ActionsGrid(GridLayout):
         self.headers = ["Name","Type"]
         self.cols = len(self.headers)
         self.click_menu_active = False
-        for header in self.headers:
-            self.add_btn(header,header=True)
 
     def add_btn(self,text,header=False):
         x = BorderedButton(b_width=1, padding=(5, 5), size_hint_x=0.4, color=(0, 0, 0, 1), text=str(text),
@@ -159,10 +158,18 @@ class ActionsGrid(GridLayout):
         return x
 
     def render(self,re_render=False):
-        if re_render:
-            self.clear_widgets()
-            for header in self.headers:
-                self.add_btn(header,header=True)
+        self.clear_widgets()
+
+        if len(self.data_tbl) == 0:
+            print("Exiting")
+            x = Label(text=self.empty_msg,color=(0,0,0,1))
+            x.bind(size=x.setter("text_size"))
+            self.add_widget(x)
+
+            return
+
+        for header in self.headers:
+            self.add_btn(header,header=True)
 
         for action in self.data_tbl:
             if action.save_name == None:
@@ -234,11 +241,11 @@ class ActionsGrid(GridLayout):
 
     def delete_action_callback(self,*args):
         self.data_tbl = App.get_running_app().saved_actions
-        self.render(re_render=True)
+        self.render()
 
     def delete_dataset_callback(self,*args):
         self.data_tbl = App.get_running_app().datasets
-        self.render(re_render=True)
+        self.render()
 
 class ActionTreeViewLabel(TreeViewLabel):
     stored_action = ObjectProperty(None)
@@ -296,9 +303,9 @@ class PrimaryPane(GridLayout):
     def try_refresh_home_view(self):
         if self.home_view_active:
             self.home_view.datasets_grid.data_tbl = App.get_running_app().datasets
-            self.home_view.datasets_grid.render(re_render=True)
+            self.home_view.datasets_grid.render()
             self.home_view.actions_grid.data_tbl = App.get_running_app().saved_actions
-            self.home_view.actions_grid.render(re_render=True)
+            self.home_view.actions_grid.render()
 
 
 class TitlePane(Label):

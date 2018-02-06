@@ -295,6 +295,7 @@
             on_parent:self.render()
             height:self.minimum_height
             btn_fn:{0:self.view_dataset }
+            empty_msg:"No datasets to show"
         Label:
             color:0,0,0,1
             text:"Saved Actions"
@@ -315,6 +316,7 @@
             data_tbl:app.saved_actions
             on_parent:self.render()
             btn_fn:{0:self.load_action}
+            empty_msg:"No actions to show"
 
 
 <BorderedLabel>
