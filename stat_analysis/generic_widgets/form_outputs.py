@@ -217,6 +217,7 @@ class ColumnRV(RecycleView):
         self.refresh_from_layout()
 
     def on_scroll_stop(self, touch, check_children=True):
+        super().on_scroll_stop(touch,check_children=check_children)
         print("Scroll STOP")
         return
 
@@ -268,7 +269,7 @@ class ColumnRV(RecycleView):
         click_pos = parent_grid.to_window(*touch.pos)
 
         new_scroll_y = (click_pos[1]-grid_pos[1])/parent_grid.height
-
+        print("Scroll delta {}".format(new_scroll_y-self.scroll_y))
         # new_scroll_y = self.scroll_y - self.convert_distance_to_scroll(-touch.dx, -touch.dy)[1]
         if 0 > new_scroll_y or new_scroll_y > 1:
             # This scroll would be going further than allowed
