@@ -149,10 +149,13 @@ class ActionsGrid(GridLayout):
         self.click_menu_active = False
 
     def add_btn(self,text,header=False):
-        x = BorderedButton(b_width=1, padding=(5, 5), size_hint_x=0.4, color=(0, 0, 0, 1), text=str(text),
-                          valign="middle", halign="left",background_color=(1,1,1,1),background_normal="")
+        x = BorderedHoverButton(b_width=1, padding=(5, 5), size_hint_x=0.4, color=(0, 0, 0, 1), text=str(text),
+                                valign="middle", halign="left",background_color=(1,1,1,1),background_normal="",
+                                markup=True)
         if header:
             x.color = App.get_running_app().accent_col
+        else:
+            Window.bind(mouse_pos=x.mouse_pos)
         x.bind(size=x.setter("text_size"))
         self.add_widget(x)
         return x
@@ -246,6 +249,32 @@ class ActionsGrid(GridLayout):
     def delete_dataset_callback(self,*args):
         self.data_tbl = App.get_running_app().datasets
         self.render()
+
+
+class BorderedHoverButton(BorderedButton):
+    hovering = BooleanProperty(False)
+    bottom = BooleanProperty(False)
+
+    def mouse_pos(self,*args):
+        if not self.get_root_window():
+            # Widget isn't displayed so exit
+            return
+        # Determine whether mouse is over the button
+        collision = self.collide_point(*self.to_widget(*args[1]))
+        if self.hovering and collision:
+            # Mouse moved within the button
+            return
+        elif collision and not self.hovering:
+            # Mouse enter button
+            self.text = "[b]{}[/b]".format(self.text)
+            print(self.text)
+            print("enter")
+        elif self.hovering and not collision:
+            # Mouse exit button
+            self.text = self.text.replace("[b]","").replace("[/b]","")
+
+        self.hovering = collision
+
 
 class ActionTreeViewLabel(TreeViewLabel):
     stored_action = ObjectProperty(None)
