@@ -95,7 +95,10 @@ class DataSpreadsheet(GridLayout):
         self.add_widget(self.rv_container)
 
     def mouse_release(self,*args):
-        print("Mouse up")
+        """
+        Called when the mouse is released. Resets all the width adjuster states to not pressed. Resets the scroll
+        bar and horiz scroll bar active properties on the columns and takes off the resize cursor
+        """
         for split in self.width_adjusters:
             split.pressed = False
         for col in self.data_columns:
@@ -105,14 +108,20 @@ class DataSpreadsheet(GridLayout):
         self.resize_cursor_active = False
 
     def check_width_adjusters(self,instance,touch,*args):
-        # Since the Buttons don't work when near(??) a scrollview this is a custom
-        # handler to handle button presses
+        """
+        Called on touch down and handles the collision detection for the width adjusters
+        """
         for a in self.width_adjusters:
             if a.collide_point(*a.to_widget(*touch.pos)):
                 a.pressed = True
+                # Since only one adjuster can be pressed at once exit
                 return
 
     def mouse_move(self,instance,touch,*args):
+        """
+        Called when the mouse is moved and a mouse button is pressed down. Handles the resizing of the content
+        from the width adjusters.
+        """
         for split_no,split in enumerate(self.width_adjusters):
             if split.pressed:
                 self.resize_cursor_active = True
@@ -127,6 +136,10 @@ class DataSpreadsheet(GridLayout):
                 return
 
     def set_cursor_hover_adjuster(self,instance,pos,*args):
+        """
+        Called when the mouse is moved. Tries to set the mouse cursor to the resize cursor if the mouse
+        is over a "width adjuster" but if it can't, ie the window provider isn't pygame then color the width adjuster
+        """
         for split in self.width_adjusters:
             if split.collide_point(*split.to_widget(*pos)) and not self.resize_cursor_active:
                 # Set cursor to the column reisizer one, ie "<->"
@@ -164,15 +177,21 @@ class ColumnRV(RecycleView):
         self.scroll_timeout = -1
 
     def on_scroll_start(self, touch, check_children=True, root=True):
-        print("Scroll start root {} collide {}".format(root,self.collide_with_scroll_bar(touch)))
+        """
+        Handles the start of a scroll event. Determines what kind of scroll is used, ie scroll bar, touch or
+        mouse wheel and executes it. This over-rides the default behaviour because all the columns need to scroll
+        in sync with each other
+        """
         if self.scroll_bar_active or (self.bar_width != 0 and touch.button == "left" and root and\
                                               self.collide_with_scroll_bar(touch)):
-            print("Collide with bar (on scroll start)")
+            # The scroll bar has been pressed
             self.scroll_bar_active = True
             for sibling in self.siblings:
                 sibling.scroll_bar_scroll(touch)
             return
+
         elif root and self.touch_collide_grid(touch) and not self.collide_with_horiz_scroll_bar(touch):
+            # This is the "root" scroller and the touch is within the grid, so scroll the content
             for sibling in self.siblings:
                 if sibling is not self:
                     touch.x = sibling.center_x
@@ -187,7 +206,10 @@ class ColumnRV(RecycleView):
                 super().on_scroll_start(touch,check_children)
             elif touch.button == "left":
                 self.touch_scroll(touch)
+
         elif self.collide_with_horiz_scroll_bar(touch):
+            # Touch is on the horizontal scroll bar that doesn't belong to this widget so disable any
+            # scrolling until a mouse up event occurs
             self.horiz_scroll_bar_active = True
         else:
             super().on_scroll_start(touch,check_children=check_children)
@@ -195,22 +217,31 @@ class ColumnRV(RecycleView):
         self.refresh_from_layout()
 
     def on_touch_move(self, touch):
+        """
+        Handles the touch move event, this is only used for the touch bar scrolling when the initial movement is
+        minimal
+        """
         if self.scroll_bar_active:
             for sibling in self.siblings:
                 sibling.scroll_bar_scroll(touch)
             return
+        else:
+            super().on_scroll_move(touch)
 
     def on_scroll_move(self, touch, root=True):
-        print("On scroll move")
-        # super().on_scroll_start(touch)
-        # return
+        """
+        Handles the on scroll move event, this is only used by touch scrolling and the scroll bar
+        """
 
         if self.scroll_bar_active:
+            # Vertical scrollbar is active so scroll with that
             for sibling in self.siblings:
                 sibling.scroll_bar_scroll(touch)
             return
         elif self.touch_collide_grid(touch) and not self.collide_with_horiz_scroll_bar(touch) and\
                 not self.horiz_scroll_bar_active:
+            # Touch intersects with the grid and doesn't collide with the horizontal scroll bar and the horizontal
+            # scroll bar isn't active so run a "touch scroll"
             for sibling in self.siblings:
                 if sibling is not self:
                     touch.x = sibling.center_x
@@ -222,46 +253,55 @@ class ColumnRV(RecycleView):
 
         self.refresh_from_layout()
 
-    def on_scroll_stop(self, touch, check_children=True):
-        print("Scroll STOP")
-        super().on_scroll_stop(touch,check_children=check_children)
-        return
-
     def collide_with_scroll_bar(self,touch):
+        """
+        Determines if the given touch collides with the horizontal scroll bar that is displayed for the final column
+        """
         parent_grid = self.parent
         grid_pos = parent_grid.to_window(*parent_grid.pos)
         click_pos = parent_grid.to_window(*touch.pos)
         self.bar_width = 15
-
+        # Determine if the touch collides on the x and y axis
         horiz = grid_pos[0] + parent_grid.width - self.bar_width <= click_pos[0] <= grid_pos[0] + parent_grid.width
         vertical = grid_pos[1] <= click_pos[1] <= grid_pos[1] + parent_grid.height
 
-        print("{} < {} < {}".format(grid_pos[0] + parent_grid.width - self.bar_width,click_pos[0],grid_pos[0] + parent_grid.width))
-        print("Horiz {} vertical {} bar width {}\n".format(horiz,vertical,self.bar_width))
         return horiz and vertical
 
     def touch_collide_grid(self,touch):
+        """
+        Determines if the given touch collides with the main grid that contains all the column RVs
+        """
         parent_grid = self.parent
         grid_pos = parent_grid.to_window(*parent_grid.pos)
         click_pos = parent_grid.to_window(*touch.pos)
 
+        # Determine if the touch collides on the x and y axis
         horiz = grid_pos[0] <= click_pos[0] <= grid_pos[0] + parent_grid.width
         vertical = grid_pos[1] <= click_pos[1] <= grid_pos[1] + parent_grid.height
 
         return horiz and vertical
 
     def collide_with_horiz_scroll_bar(self,touch):
+        """
+        Determines if the given touch collides with the horizontal scroll bar that is displayed by the result
+        output scrollview.
+        """
         # Width of the horizontal scroll bar for the result output
         scroll_width = 20
         parent_grid = self.parent
         grid_pos = parent_grid.to_window(*parent_grid.pos)
         click_pos = parent_grid.to_window(*touch.pos)
 
+        # Determine if the touch collides on the x and y axis
         horiz = grid_pos[0] <= click_pos[0] <= grid_pos[0] + parent_grid.width
         vertical = grid_pos[1] <= click_pos[1] <= grid_pos[1] + scroll_width
         return horiz and vertical
 
     def touch_scroll(self,touch):
+        """
+        Calculates and sets the amount to scroll the content for touch scrolls based on the change in x and y for the
+        given touch
+        """
         new_scroll_y = self.scroll_y - self.convert_distance_to_scroll(touch.dx, touch.dy)[1]
         if 0 > new_scroll_y or new_scroll_y > 1:
             # This scroll would be going further than allowed
@@ -269,18 +309,22 @@ class ColumnRV(RecycleView):
         self.scroll_y -= self.convert_distance_to_scroll(touch.dx, touch.dy)[1]
 
     def scroll_bar_scroll(self,touch):
-        # Convert the y position of the touch to "scroll_y", 0 is the bottom, 1 is the top
+        """
+        Calculates and sets the amount to scroll the content based on the y position of the touch, note
+        this method doesn't check if the touch intersects with the scroll bar.
+        :param touch:
+        :return:
+        """
         parent_grid = self.parent
         grid_pos = parent_grid.to_window(*parent_grid.pos)
         click_pos = parent_grid.to_window(*touch.pos)
 
+        # Convert the y position of the touch to "scroll_y", 0 is the bottom, 1 is the top
         new_scroll_y = (click_pos[1]-grid_pos[1])/parent_grid.height
-        print("Scroll delta {}".format(new_scroll_y-self.scroll_y))
-        # new_scroll_y = self.scroll_y - self.convert_distance_to_scroll(-touch.dx, -touch.dy)[1]
         if 0 > new_scroll_y or new_scroll_y > 1:
             # This scroll would be going further than allowed
             return
-        print("New scroll scroll y {}".format(new_scroll_y))
+
         self.scroll_y = new_scroll_y
 
 
