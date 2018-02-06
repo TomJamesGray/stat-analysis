@@ -194,8 +194,14 @@ class ColumnRV(RecycleView):
 
         self.refresh_from_layout()
 
+    def on_touch_move(self, touch):
+        if self.scroll_bar_active:
+            for sibling in self.siblings:
+                sibling.scroll_bar_scroll(touch)
+            return
+
     def on_scroll_move(self, touch, root=True):
-        # print("On scroll move")
+        print("On scroll move")
         # super().on_scroll_start(touch)
         # return
 
@@ -217,8 +223,8 @@ class ColumnRV(RecycleView):
         self.refresh_from_layout()
 
     def on_scroll_stop(self, touch, check_children=True):
-        super().on_scroll_stop(touch,check_children=check_children)
         print("Scroll STOP")
+        super().on_scroll_stop(touch,check_children=check_children)
         return
 
     def collide_with_scroll_bar(self,touch):

@@ -32,7 +32,7 @@ The percentage accuracy value is a measure of how well the dataset fits the mode
 
 [b]Example[/b]
 
-An example of a logistic regression can be found in the "exam passes" dataset. If you do a linear regression with the binary variable being "pass" and the x variable being the hours of revision done, you can predict the probability that a student will pass the exam given the amount of revision they do.
+An example of a logistic regression can be found in the "exam passes" dataset. If you do a logistic regression with the binary variable being "pass" and the x variable being the hours of revision done, you can predict the probability that a student will pass the exam given the amount of revision they do.
     """
 
     def __init__(self,output_widget):
