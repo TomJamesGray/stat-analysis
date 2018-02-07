@@ -660,10 +660,7 @@ Some actions also have additional help available via Help > 'Help for this actio
         """
         provider = self.get_window_provider()
         if provider == "pygame":
-            try:
-                pygame.mouse.set_cursor(*self.pygame_cursors[cursor_name])
-            except NameError:
-                pass
+            pygame.mouse.set_cursor(*self.pygame_cursors[cursor_name])
         elif provider == "sdl2":
             Window.set_system_cursor(cursor_name)
         else:
