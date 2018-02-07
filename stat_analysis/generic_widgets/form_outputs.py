@@ -141,6 +141,7 @@ class DataSpreadsheet(GridLayout):
 
         if not self.resize_cursor_active:
             App.get_running_app().set_cursor("arrow")
+            self.resize_cursor_active = False
 
 
 class ColumnRV(RecycleView):
@@ -370,14 +371,19 @@ class ToolBoxButton(Button):
         collision = self.collide_point(*self.to_widget(*args[1]))
         if self.hovering and collision:
             # Mouse moved within the button
+            if App.get_running_app().current_cursor != "hand":
+                App.get_running_app().set_cursor("hand")
             return
         elif collision and not self.hovering:
             # Mouse enter button
             # self.background_color = (210 / 255, 210 / 255, 210 / 255, 1)
             self.background_color = (.6,.6,.6,1)
+            App.get_running_app().set_cursor("hand")
+
         elif self.hovering and not collision:
             # Mouse exit button
             self.background_color = (1, 1, 1, 1)
+            App.get_running_app().set_cursor("arrow")
 
         self.hovering = collision
 

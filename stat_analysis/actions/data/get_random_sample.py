@@ -65,7 +65,15 @@ class DataSample(BaseAction):
         self.cols_structure = copy.copy(self.base_dataset.get_header_structure())
 
         if vals["n_records"] > self.base_dataset.records:
-            logger.error("Number of records desired is greater than number of records in dataset")
+            e = "Number of records desired is greater than number of records in dataset"
+            logger.error(e)
+            self.make_err_message(e)
+            return False
+
+        if vals["n_records"] <= 0:
+            e = "Zero or less records desired"
+            logger.error(e)
+            self.make_err_message(e)
             return False
 
         self.stored_data = []

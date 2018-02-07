@@ -15,7 +15,15 @@ from kivy.uix.textinput import TextInput
 from kivy.core.window import Window
 
 try:
+    # Try and import pygame stuff
+    import pygame.cursors
+    import pygame.mouse
     from kivy.core.window.window_pygame import WindowPygame
+except ModuleNotFoundError:
+    pass
+
+try:
+    # Try and import sdl stuff
     from kivy.core.window.window_sdl2 import WindowSDL
 except ModuleNotFoundError:
     pass
@@ -454,6 +462,15 @@ Some actions also have additional help available via Help > 'Help for this actio
         self.saved_actions = []
         self.datasets = []
         self.current_cursor = "arrow"
+        self.pygame_cursors = {}
+        # Get cursor info setup, ie for pygame import the modules and any xbms
+        if self.get_window_provider() == "pygame":
+            cursor, mask = pygame.cursors.compile(pygame.cursors.sizer_x_strings, "X", ".")
+            self.pygame_cursors["size_we"] = ((24, 16), (7, 11), cursor, mask)
+
+            cursor = pygame.cursors.load_xbm(resource_find("res/handarrow.xbm"),resource_find("res/handarrow-mask.xbm"))
+            self.pygame_cursors["hand"] = cursor
+            self.pygame_cursors["arrow"] = pygame.cursors.arrow
 
     def build(self):
         self.title = "Stat Analysis"
@@ -643,18 +660,10 @@ Some actions also have additional help available via Help > 'Help for this actio
         """
         provider = self.get_window_provider()
         if provider == "pygame":
-            import pygame.cursors
-            import pygame.mouse
-            if cursor_name == "size_we":
-                cursor, mask = pygame.cursors.compile(pygame.cursors.sizer_x_strings, "X", ".")
-                cursor_data = ((24, 16), (7, 11), cursor, mask)
-                pygame.mouse.set_cursor(*cursor_data)
-            elif cursor_name == "hand":
-                cursor = pygame.cursors.load_xbm(resource_find("res/handarrow.xbm"),resource_find("res/handarrow-mask.xbm"))
-                pygame.mouse.set_cursor(*cursor)
-            elif cursor_name == "arrow":
-                pygame.mouse.set_cursor(*pygame.cursors.arrow)
-
+            try:
+                pygame.mouse.set_cursor(*self.pygame_cursors[cursor_name])
+            except NameError:
+                pass
         elif provider == "sdl2":
             Window.set_system_cursor(cursor_name)
         else:
