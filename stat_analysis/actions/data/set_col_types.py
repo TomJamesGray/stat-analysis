@@ -1,4 +1,5 @@
 import logging
+import copy
 from kivy.app import App
 from stat_analysis.actions import base_action
 from stat_analysis.generic_widgets.bordered import BorderedTable
@@ -34,7 +35,6 @@ class SetColTypes(base_action.BaseAction):
         ]
         self.form = self.base_form
         self.output_widget = output_widget
-        self.drop_err_cols = True
 
     def form_add_cols(self,dataset_name,set_dataset_selector=True,re_render=True):
         self.dataset = App.get_running_app().get_dataset_by_name(dataset_name)
@@ -77,6 +77,10 @@ class SetColTypes(base_action.BaseAction):
             vals = self.form_outputs
             logger.debug("Form validated, form outputs: {}".format(vals))
 
+            # Make copies of the stored data and header structure in case this causes all data to be lost
+            stored_data_copy = copy.copy(self.dataset.get_data())
+            header_struct_copy = copy.copy(self.dataset.get_header_structure())
+
             n_cols = len(self.dataset.get_headers())
             header_struct = OrderedDict()
             for i in range(0,n_cols):
@@ -84,7 +88,17 @@ class SetColTypes(base_action.BaseAction):
                 header_struct[vals["{}_name".format(i)]] = (vals["{}_type".format(i)],convert)
 
             logger.info("Header structure generated: {}".format(header_struct))
-            self.dataset.set_header_structure(header_struct,drop_err_cols=self.drop_err_cols)
+            self.dataset.set_header_structure(header_struct)
+            # Make sure there are more than 0 records
+            if self.dataset.records == 0:
+                # This set_cols_type has caused all the records to be dropped, so restore dataset
+                # to prev state
+                self.make_err_message("Generated dataset has length zero. Likely caused by setting a column to a "
+                                      "value that would cause errors, ie trying to pass strings as integers. "
+                                      "Restoring dataset")
+                self.dataset.set_data(stored_data_copy)
+                self.dataset.set_header_structure(header_struct_copy)
+                return
 
             self.result_output.clear_outputs()
             self.result_output.add_widget(BorderedTable(

@@ -40,12 +40,6 @@ class ImportCSV(base_action.BaseAction):
                         "required":True
                     },
                     {
-                        "input_type":"check_box",
-                        "visible_name":"Drop columns with errors",
-                        "form_name":"drop_err_cols",
-                        "required":True
-                    },
-                    {
                         "input_type": "numeric",
                         "required": True,
                         "form_name": "start_line",
@@ -133,10 +127,7 @@ class ImportCSV(base_action.BaseAction):
             tbl.bind(minimum_width=tbl.setter("width"))
 
             self.output_widget.parent.refresh(ImportSetColTypes,dataset_name=vals["save_name"],
-                                              drop_err_cols=vals["drop_err_cols"],spreadsheet=tbl,
-                                              possible_errors=possible_col_errors)
-
-
+                                              spreadsheet=tbl,possible_errors=possible_col_errors)
 
     def get_data(self):
         return self.stored_data
@@ -183,6 +174,9 @@ class ImportCSV(base_action.BaseAction):
             self.stored_data[i].append(col_data[i])
 
         self.cols_structure[col_name] = (col_type,types[col_type]["convert"])
+
+    def set_data(self,data):
+        self.stored_data = data
 
     @property
     def records(self):
