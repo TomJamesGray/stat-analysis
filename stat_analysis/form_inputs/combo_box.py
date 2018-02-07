@@ -139,7 +139,6 @@ class FormDropDown(GridLayout):
         else:
             self.dropdown.open(self.main_btn)
 
-
     def mk_dropdown(self,dropdown_options):
         self.dropdown = DropDown()
         for i,txt in enumerate(dropdown_options):

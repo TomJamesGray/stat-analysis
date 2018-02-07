@@ -13,6 +13,13 @@ from kivy.uix.treeview import TreeView,TreeViewLabel
 from kivy.uix.label import Label
 from kivy.uix.textinput import TextInput
 from kivy.core.window import Window
+
+try:
+    from kivy.core.window.window_pygame import WindowPygame
+    from kivy.core.window.window_sdl2 import WindowSDL
+except ModuleNotFoundError:
+    pass
+
 from kivy.properties import StringProperty,ObjectProperty,BooleanProperty,NumericProperty,ListProperty
 from kivy.modules import inspector
 from kivy.resources import resource_find
@@ -25,7 +32,6 @@ from stat_analysis.generic_widgets.right_click_menu import RightClickMenu
 from stat_analysis.generic_widgets.popup_inputs import PopupStringInput
 from kivy.app import App
 
-# Config.set('input', 'mouse', 'mouse,multitouch_on_demand')
 
 class LogViewOutputHandler(logging.StreamHandler):
     def emit(self,record):
@@ -149,9 +155,9 @@ class ActionsGrid(GridLayout):
         self.click_menu_active = False
 
     def add_btn(self,text,header=False):
-        x = BorderedHoverButton(b_width=1, padding=(5, 5), size_hint_x=0.4, color=(0, 0, 0, 1), text=str(text),
+        x = BorderedHoverButton(b_width=1, padding=(5, 5), size_hint_x=0.4, color=(0, 0, 0, 1), raw_text=str(text),
                                 valign="middle", halign="left",background_color=(1,1,1,1),background_normal="",
-                                markup=True)
+                                markup=True,text=str(text))
         if header:
             x.color = App.get_running_app().accent_col
         else:
@@ -195,13 +201,13 @@ class ActionsGrid(GridLayout):
                     return False
 
             if touch.button == "left":
-                App.get_running_app().root_widget.primary_pane.refresh(data.view_data.ViewData,dataset=instance.text)
+                App.get_running_app().root_widget.primary_pane.refresh(data.view_data.ViewData,dataset=instance.raw_text)
 
             elif touch.button == "right":
                 new_pos = self.to_window(touch.x,touch.y)
                 menu = RightClickMenu(x=new_pos[0],y=new_pos[1])
-                menu.add_opt("Delete",lambda *args: App.get_running_app().get_dataset_by_name(instance.text).delete_dataset(
-                    callback=self.delete_dataset_callback
+                menu.add_opt("Delete",lambda *args: App.get_running_app().get_dataset_by_name(instance.raw_text).
+                             delete_dataset(callback=self.delete_dataset_callback
                 ))
                 menu.open()
                 self.click_menu_active = menu
@@ -215,7 +221,7 @@ class ActionsGrid(GridLayout):
                     return False
 
             if touch.button == "left":
-                action = App.get_running_app().get_action_by_name(instance.text)
+                action = App.get_running_app().get_action_by_name(instance.raw_text)
                 if action == False:
                     # Action not found
                     return False
@@ -235,7 +241,7 @@ class ActionsGrid(GridLayout):
             elif touch.button == "right":
                 new_pos = self.to_window(touch.x,touch.y)
                 menu = RightClickMenu(x=new_pos[0],y=new_pos[1])
-                menu.add_opt("Delete",lambda *args: App.get_running_app().get_action_by_name(instance.text).delete_action(
+                menu.add_opt("Delete",lambda *args: App.get_running_app().get_action_by_name(instance.raw_text).delete_action(
                     callback=self.delete_action_callback
                 ))
                 menu.open()
@@ -254,6 +260,7 @@ class ActionsGrid(GridLayout):
 class BorderedHoverButton(BorderedButton):
     hovering = BooleanProperty(False)
     bottom = BooleanProperty(False)
+    raw_text = StringProperty("")
 
     def mouse_pos(self,*args):
         if not self.get_root_window():
@@ -266,12 +273,16 @@ class BorderedHoverButton(BorderedButton):
             return
         elif collision and not self.hovering:
             # Mouse enter button
-            self.text = "[b]{}[/b]".format(self.text)
+            self.text = "[b]{}[/b]".format(self.raw_text)
+
+            App.get_running_app().set_cursor("size_we")
+
             print(self.text)
             print("enter")
         elif self.hovering and not collision:
             # Mouse exit button
-            self.text = self.text.replace("[b]","").replace("[/b]","")
+            self.text = self.raw_text
+            App.get_running_app().set_cursor("arrow")
 
         self.hovering = collision
 
@@ -616,6 +627,41 @@ Some actions also have additional help available via Help > 'Help for this actio
         Shows the help window for the app
         """
         subprocess.Popen(["python", resource_find("help_view.py"), self.help_text])
+
+    def set_cursor(self,cursor_name):
+        """
+        Sets the cursor for the window, this is different to the kivy window `set_system_cursor` as it has
+        support for pygame and sdl2 windows
+        """
+        provider = self.get_window_provider()
+        if provider == "pygame":
+            import pygame.cursors
+            import pygame.mouse
+            if cursor_name == "size_we":
+                cursor, mask = pygame.cursors.compile(pygame.cursors.sizer_x_strings, "X", ".")
+                cursor_data = ((24, 16), (7, 11), cursor, mask)
+                pygame.mouse.set_cursor(*cursor_data)
+            elif cursor_name == "hand":
+                pygame.mouse.set_cursor(*pygame.cursors.ball)
+            elif cursor_name == "arrow":
+                pygame.mouse.set_cursor(*pygame.cursors.arrow)
+
+        elif provider == "sdl2":
+            Window.set_system_cursor(cursor_name)
+        else:
+            logger.warning("Window provider {} currently has no support to set cursor".format(provider))
+
+    def get_window_provider(self):
+        """
+        Determines the window provider being used
+        :return: "pygame", "sdl2" or "other
+        """
+        if isinstance(Window,WindowPygame):
+            return "pygame"
+        elif isinstance(Window,WindowSDL):
+            return "sdl2"
+        else:
+            return "other"
 
 def main(results):
 
