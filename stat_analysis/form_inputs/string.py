@@ -28,4 +28,7 @@ class FormString(GridLayout):
         self.add_widget(self.str_input)
 
     def get_val(self):
-        return self.str_input.text
+        if self.str_input.text == "":
+            return None
+        else:
+            return self.str_input.text
