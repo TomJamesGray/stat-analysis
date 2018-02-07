@@ -636,7 +636,10 @@ Some actions also have additional help available via Help > 'Help for this actio
     def set_cursor(self,cursor_name):
         """
         Sets the cursor for the window, this is different to the kivy window `set_system_cursor` as it has
-        support for pygame and sdl2 windows
+        support for pygame and sdl2 windows. Currently on size_we,hand and arrow are implemented for pygame, however
+        it is easy to add support for more.
+        :param cursor_name: Cursor name recognized by sdl window provider
+        https://kivy.org/docs/api-kivy.core.window.html#kivy.core.window.WindowBase.set_system_cursor
         """
         provider = self.get_window_provider()
         if provider == "pygame":
@@ -647,7 +650,6 @@ Some actions also have additional help available via Help > 'Help for this actio
                 cursor_data = ((24, 16), (7, 11), cursor, mask)
                 pygame.mouse.set_cursor(*cursor_data)
             elif cursor_name == "hand":
-                # pygame.mouse.set_cursor(*pygame.cursors.ball)
                 cursor = pygame.cursors.load_xbm(resource_find("res/handarrow.xbm"),resource_find("res/handarrow-mask.xbm"))
                 pygame.mouse.set_cursor(*cursor)
             elif cursor_name == "arrow":
