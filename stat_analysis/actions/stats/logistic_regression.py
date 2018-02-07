@@ -89,6 +89,14 @@ An example of a logistic regression can be found in the "exam passes" dataset. I
                         "form_name":"predict_on",
                         "visible_name":"Get probability for values",
                         "tip":"For multiple values input them with commas separating them"
+                    },
+                    {
+                        "input_type": "numeric",
+                        "required": False,
+                        "allow_comma_separated": True,
+                        "form_name": "inverse_logit",
+                        "visible_name": "Get values from probabilities",
+                        "tip": "For multiple values input them with commas separating them"
                     }
                 ]
             },
@@ -187,6 +195,22 @@ An example of a logistic regression can be found in the "exam passes" dataset. I
                 predicted_vals = [str(np.round(1/(1+np.exp(-(y*x_coeff+const))),3)) for y in vals["predict_on"]]
                 self.result_output.add_widget(BorderedTable(
                     headers=[vals["x_var"],"Probability"],data=[[str(x) for x in vals["predict_on"]],predicted_vals],
+                    row_default_height=40,row_force_default=True,orientation="vertical",size_hint_y=None,
+                    for_scroller=True
+                ))
+
+            if vals["inverse_logit"] != None:
+                predicted_x = []
+                used_p_vals = []
+                for val in vals["inverse_logit"]:
+                    if not (0 < val <1):
+                        logger.warning("Invalid probability {}".format(val))
+
+                    predicted_x.append(str(np.round(-1/x_coeff * (np.log(1/val -1)+const),3)))
+                    used_p_vals.append(val)
+
+                self.result_output.add_widget(BorderedTable(
+                    headers=["Probability",vals["x_var"]],data=[predicted_x,used_p_vals],
                     row_default_height=40,row_force_default=True,orientation="vertical",size_hint_y=None,
                     for_scroller=True
                 ))
