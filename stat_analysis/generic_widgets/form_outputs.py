@@ -137,11 +137,10 @@ class DataSpreadsheet(GridLayout):
             if split.collide_point(*split.to_widget(*pos)) and not self.resize_cursor_active:
                 # Set cursor to the column reisizer one, ie "<->"
                 App.get_running_app().set_cursor("size_we")
-                self.resize_cursor_active = True
+                return
 
         if not self.resize_cursor_active:
             App.get_running_app().set_cursor("arrow")
-            self.resize_cursor_active = False
 
 
 class ColumnRV(RecycleView):
