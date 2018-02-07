@@ -155,13 +155,12 @@ class ActionsGrid(GridLayout):
         self.click_menu_active = False
 
     def add_btn(self,text,header=False):
-        x = BorderedHoverButton(b_width=1, padding=(5, 5), size_hint_x=0.4, color=(0, 0, 0, 1), raw_text=str(text),
+        x = BorderedHoverButton(b_width=1, padding=(5, 5), size_hint_x=0.4, color=(0, 0, 0, 1), text=str(text),
                                 valign="middle", halign="left",background_color=(1,1,1,1),background_normal="",
-                                markup=True,text=str(text))
+                                markup=True)
         if header:
             x.color = App.get_running_app().accent_col
-        else:
-            Window.bind(mouse_pos=x.mouse_pos)
+
         x.bind(size=x.setter("text_size"))
         self.add_widget(x)
         return x
@@ -189,24 +188,27 @@ class ActionsGrid(GridLayout):
             col1 = self.add_btn(action.save_name)
             if 0 in self.btn_fn.keys():
                 col1.bind(on_touch_down=self.btn_fn[0])
+                Window.bind(mouse_pos=col1.mouse_pos)
 
             col2 = self.add_btn(action.type)
             if 1 in self.btn_fn.keys():
-                col1.bind(on_touch_down=self.btn_fn[1])
+                col2.bind(on_touch_down=self.btn_fn[1])
+                Window.bind(mouse_pos=col2.mouse_pos)
 
     def view_dataset(self,instance,touch):
+        App.get_running_app().set_cursor("arrow")
         if instance.collide_point(touch.x, touch.y):
             if self.click_menu_active != False:
                 if self.click_menu_active.collide_point(touch.x,touch.y):
                     return False
 
             if touch.button == "left":
-                App.get_running_app().root_widget.primary_pane.refresh(data.view_data.ViewData,dataset=instance.raw_text)
+                App.get_running_app().root_widget.primary_pane.refresh(data.view_data.ViewData,dataset=instance.text)
 
             elif touch.button == "right":
                 new_pos = self.to_window(touch.x,touch.y)
                 menu = RightClickMenu(x=new_pos[0],y=new_pos[1])
-                menu.add_opt("Delete",lambda *args: App.get_running_app().get_dataset_by_name(instance.raw_text).
+                menu.add_opt("Delete",lambda *args: App.get_running_app().get_dataset_by_name(instance.text).
                              delete_dataset(callback=self.delete_dataset_callback
                 ))
                 menu.open()
@@ -215,13 +217,14 @@ class ActionsGrid(GridLayout):
 
 
     def load_action(self,instance,touch):
+        App.get_running_app().set_cursor("arrow")
         if instance.collide_point(touch.x,touch.y):
             if self.click_menu_active != False:
                 if self.click_menu_active.collide_point(touch.x,touch.y):
                     return False
 
             if touch.button == "left":
-                action = App.get_running_app().get_action_by_name(instance.raw_text)
+                action = App.get_running_app().get_action_by_name(instance.text)
                 if action == False:
                     # Action not found
                     return False
@@ -241,7 +244,7 @@ class ActionsGrid(GridLayout):
             elif touch.button == "right":
                 new_pos = self.to_window(touch.x,touch.y)
                 menu = RightClickMenu(x=new_pos[0],y=new_pos[1])
-                menu.add_opt("Delete",lambda *args: App.get_running_app().get_action_by_name(instance.raw_text).delete_action(
+                menu.add_opt("Delete",lambda *args: App.get_running_app().get_action_by_name(instance.text).delete_action(
                     callback=self.delete_action_callback
                 ))
                 menu.open()
@@ -260,7 +263,6 @@ class ActionsGrid(GridLayout):
 class BorderedHoverButton(BorderedButton):
     hovering = BooleanProperty(False)
     bottom = BooleanProperty(False)
-    raw_text = StringProperty("")
 
     def mouse_pos(self,*args):
         if not self.get_root_window():
@@ -270,21 +272,23 @@ class BorderedHoverButton(BorderedButton):
         collision = self.collide_point(*self.to_widget(*args[1]))
         if self.hovering and collision:
             # Mouse moved within the button
+            # Ensure the curreent cursor is the "hand" cursor
+            if App.get_running_app().current_cursor != "hand":
+                App.get_running_app().set_cursor("hand")
             return
         elif collision and not self.hovering:
             # Mouse enter button
-            self.text = "[b]{}[/b]".format(self.raw_text)
-
-            App.get_running_app().set_cursor("size_we")
-
-            print(self.text)
-            print("enter")
+            App.get_running_app().set_cursor("hand")
         elif self.hovering and not collision:
             # Mouse exit button
-            self.text = self.raw_text
             App.get_running_app().set_cursor("arrow")
 
         self.hovering = collision
+
+    def on_touch_down(self, touch):
+        # Reset hover state of button
+        self.hovering = False
+        super().on_touch_down(touch)
 
 
 class ActionTreeViewLabel(TreeViewLabel):
@@ -449,6 +453,7 @@ Some actions also have additional help available via Help > 'Help for this actio
         self.started_up = False
         self.saved_actions = []
         self.datasets = []
+        self.current_cursor = "arrow"
 
     def build(self):
         self.title = "Stat Analysis"
@@ -642,7 +647,9 @@ Some actions also have additional help available via Help > 'Help for this actio
                 cursor_data = ((24, 16), (7, 11), cursor, mask)
                 pygame.mouse.set_cursor(*cursor_data)
             elif cursor_name == "hand":
-                pygame.mouse.set_cursor(*pygame.cursors.ball)
+                # pygame.mouse.set_cursor(*pygame.cursors.ball)
+                cursor = pygame.cursors.load_xbm(resource_find("res/handarrow.xbm"),resource_find("res/handarrow-mask.xbm"))
+                pygame.mouse.set_cursor(*cursor)
             elif cursor_name == "arrow":
                 pygame.mouse.set_cursor(*pygame.cursors.arrow)
 
@@ -650,6 +657,8 @@ Some actions also have additional help available via Help > 'Help for this actio
             Window.set_system_cursor(cursor_name)
         else:
             logger.warning("Window provider {} currently has no support to set cursor".format(provider))
+            return
+        self.current_cursor = cursor_name
 
     def get_window_provider(self):
         """

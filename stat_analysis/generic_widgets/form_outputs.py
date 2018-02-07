@@ -1,14 +1,7 @@
 import shutil
 import os
 import logging
-
-try:
-    # Try and import pygame to allow cursor to be set but don't crash if a different window provider is used, ie SDL2
-    import pygame.cursors
-    import pygame.mouse
-except:
-    pass
-
+from kivy.app import App
 from stat_analysis.generic_widgets.files import FileChooserSaveDialog
 from kivy.effects.scroll import ScrollEffect
 from kivy.uix.gridlayout import GridLayout
@@ -143,21 +136,11 @@ class DataSpreadsheet(GridLayout):
         for split in self.width_adjusters:
             if split.collide_point(*split.to_widget(*pos)) and not self.resize_cursor_active:
                 # Set cursor to the column reisizer one, ie "<->"
-                try:
-                    cursor,mask = pygame.cursors.compile(pygame.cursors.sizer_x_strings,"X",".")
-                    cursor_data = ((24,16),(7,11),cursor,mask)
-                    pygame.mouse.set_cursor(*cursor_data)
-                except:
-                    # Cursor can't be changed so change the color of the adjuster
-                    split.actual_bg_color = (1, 0, 0, 1)
-                return
+                App.get_running_app().set_cursor("size_we")
+                self.resize_cursor_active = True
 
         if not self.resize_cursor_active:
-            try:
-                pygame.mouse.set_cursor(*pygame.cursors.arrow)
-            except:
-                for split in self.width_adjusters:
-                    split.actual_bg_color = (0, 0, 0, 1)
+            App.get_running_app().set_cursor("arrow")
 
 
 class ColumnRV(RecycleView):
