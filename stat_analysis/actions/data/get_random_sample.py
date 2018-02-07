@@ -3,6 +3,7 @@ import random
 import copy
 from kivy.app import App
 from stat_analysis.actions.base_action import BaseAction
+from stat_analysis.generic_widgets.bordered import BorderedTable
 
 logger = logging.getLogger(__name__)
 
@@ -95,6 +96,14 @@ class DataSample(BaseAction):
             logger.error("Dataset with name '{}' already exists, please choose a different name".format(self.save_name))
             return False
 
+        if not quiet:
+            self.result_output.clear_outputs()
+            self.result_output.add_widget(BorderedTable(
+                headers=["Records", "Columns", "Data types"],
+                data=[[str(self.records)], [str(self.columns)],
+                      [str((", ".join((["{} -> {}".format(x, y[0]) for x, y in self.cols_structure.items()]))))]],
+                row_default_height=30, row_force_default=True, orientation="horizontal", for_scroller=True,
+                size_hint_x=1, size_hint_y=None))
 
     def get_data(self):
         return self.stored_data

@@ -2,6 +2,7 @@ import logging
 import numpy as np
 from kivy.app import App
 from stat_analysis.actions.base_action import BaseAction
+from stat_analysis.generic_widgets.bordered import BorderedTable
 
 logger = logging.getLogger(__name__)
 
@@ -99,6 +100,14 @@ class TransformData(BaseAction):
 
         self.save_name = None
         App.get_running_app().add_action(self)
+        if not quiet:
+            self.result_output.clear_outputs()
+            self.result_output.add_widget(BorderedTable(
+                headers=["Records", "Columns", "Data types"],
+                data=[[str(dataset.records)], [str(dataset.columns)],
+                      [str((", ".join((["{} -> {}".format(x, y[0]) for x, y in dataset.get_header_structure().items()]))))]],
+                row_default_height=30, row_force_default=True, orientation="horizontal", for_scroller=True,
+                size_hint_x=1, size_hint_y=None))
         return True
 
     def load(self,state):
