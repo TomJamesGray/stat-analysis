@@ -135,7 +135,7 @@ class BaseAction(object):
                 # in numeric input
                 val = item.get_val()
             except Exception as e:
-                errors.append(repr(e))
+                errors.append(e)
                 logger.warning(errors[-1])
                 continue
 
@@ -183,7 +183,7 @@ class BaseAction(object):
 
         popup = Popup(size_hint=(None,None),title="Error",width=300)
         cont = GridLayout(cols=1)
-        cont.bind(minimum_height=lambda _,height:popup.__setattr__("height",height+150))
+        cont.bind(minimum_height=lambda _,height:popup.__setattr__("height",height+200))
         if isinstance(msg,str):
             disp_msg = "{} {}".format(bullet,msg)
         else:
@@ -191,7 +191,7 @@ class BaseAction(object):
             for line in msg:
                 disp_msg += "{} {}\n".format(bullet,line)
 
-        error_label = Label(text=disp_msg,halign="left",valign="middle")
+        error_label = Label(text=disp_msg,halign="left",valign="top",padding=(5,5))
         error_label.bind(size=error_label.setter("text_size"))
         cont.add_widget(error_label)
 
