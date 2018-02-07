@@ -603,9 +603,10 @@
             size:self.width,1
 
 <GridAdjustHeader>:
-    color:app.accent_col
     height:30
     size_hint:None,None
+    effect_cls:Factory.get("ScrollEffect")
+    scroll_distance:5
     canvas.before:
         Color:
             rgba:0,0,0,1
@@ -618,8 +619,16 @@
             size:self.width,2
         # Left vertical border
         Rectangle:
-            pos:(self.x,self.y) if self.left_border else (0,0)
-            size:(2,self.height) if self.left_border else (0,0)
+            pos:(self.x,self.y) if root.left_border else (0,0)
+            size:(2,self.height) if root.left_border else (0,0)
+    Label:
+        height:root.height
+        color:app.accent_col
+        size_hint:None,None
+        text:root.text
+        text_size:None,root.height
+        width:root.width if root.width > self.texture_size[0] else self.texture_size[0]
+
 
 <ColumnRV>:
     viewclass:"DataTableLabel"

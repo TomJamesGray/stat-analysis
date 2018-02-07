@@ -5,6 +5,7 @@ from kivy.app import App
 from stat_analysis.generic_widgets.files import FileChooserSaveDialog
 from kivy.effects.scroll import ScrollEffect
 from kivy.uix.gridlayout import GridLayout
+from kivy.uix.scrollview import ScrollView
 from kivy.uix.tabbedpanel import TabbedPanel,TabbedPanelItem
 from kivy.uix.popup import Popup
 from kivy.uix.label import Label
@@ -311,8 +312,9 @@ class ColumnRV(RecycleView):
         self.scroll_y = new_scroll_y
 
 
-class GridAdjustHeader(Label):
+class GridAdjustHeader(ScrollView):
     left_border = BooleanProperty(False)
+    text = StringProperty("")
 
 
 class WidthAdjust(Button):
