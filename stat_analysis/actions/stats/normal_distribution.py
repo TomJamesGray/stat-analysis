@@ -135,7 +135,7 @@ A good example dataset is the "heights" example dataset as if you run the normal
             y_func = lambda x:(1/(2*np.pi*variance)**0.5) * np.e ** (-(x-mean)**2/(2*variance))
 
             # Get x values for the line
-            x_line = np.arange(min(col_data),max(col_data),(max(col_data)-min(col_data))/100)
+            x_line = np.linspace(min(col_data),max(col_data),500)
             y_line = [y_func(x) for x in x_line]
 
             if vals["predict_on"] != None:

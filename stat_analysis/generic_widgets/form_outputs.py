@@ -386,6 +386,10 @@ class ToolBoxButton(Button):
 
         self.hovering = collision
 
+    def on_press(self):
+        App.get_running_app().set_cursor("arrow")
+        super().on_press()
+
 
 class GraphOptions(TabbedPanel):
     fig = Property(None)
