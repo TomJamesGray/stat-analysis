@@ -211,7 +211,7 @@ An example of a logistic regression can be found in the "exam passes" dataset. I
                     used_p_vals.append(val)
 
                 self.result_output.add_widget(BorderedTable(
-                    headers=["Probability",vals["x_var"]],data=[predicted_x,used_p_vals],
+                    headers=["Probability",vals["x_var"]],data=[used_p_vals,predicted_x],
                     row_default_height=40,row_force_default=True,orientation="vertical",size_hint_y=None,
                     for_scroller=True
                 ))

@@ -1,3 +1,4 @@
+#:import Factory kivy.factory.Factory
 <HelpView>:
     ActionBar:
         width:root.width
@@ -25,6 +26,7 @@
                 on_press:app.stop()
 
     ScrollView:
+        effect_cls:Factory.get("ScrollEffect")
         width:root.width
         height:root.height-30
         pos:0,0
