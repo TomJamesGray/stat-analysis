@@ -111,9 +111,10 @@ An example of a logistic regression can be found in the "exam passes" dataset. I
                     },
                     {
                         "input_type": "string",
-                        "required": True,
+                        "required": False,
                         "visible_name": "Action save name",
-                        "form_name": "action_save_name"
+                        "form_name": "action_save_name",
+                        "required_if":[lambda x:x["save_action"] == True]
                     }
                 ]
             }

@@ -146,6 +146,14 @@ class BaseAction(object):
             # Add the input value to the output dictionary
             output[item.input_dict["form_name"]] = val
 
+        # Run any "Required if" statements
+        for item in self.form_items:
+            for condition in item.input_dict.get("required_if",[]):
+                if condition(output) and output[item.input_dict["form_name"]] == None:
+                    # Under these conditions this field is required but it is not filled out
+                    errors.append("Field {} is required under these conditions".format(item.input_dict["visible_name"]))
+                    logger.warning(errors[-1])
+
         if errors == []:
             self.form_outputs = output
             return True
