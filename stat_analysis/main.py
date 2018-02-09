@@ -177,7 +177,6 @@ class ActionsGrid(GridLayout):
         self.clear_widgets()
 
         if len(self.data_tbl) == 0:
-            print("Exiting")
             x = Label(text=self.empty_msg,color=(0,0,0,1))
             x.bind(size=x.setter("text_size"))
             self.add_widget(x)

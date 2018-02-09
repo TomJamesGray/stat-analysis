@@ -462,7 +462,6 @@ class GraphOptions(TabbedPanel):
 
     def update_graph(self,*args):
         logger.info("Updating graph with opts {}".format(self.opts_out))
-        print(self.axis[0].step)
         for i in range(0,len(self.opts_out)):
             for opt in self.opts_out[i]:
                 opt["set"](self.axis[i],opt["form"].text)

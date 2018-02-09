@@ -69,7 +69,6 @@ class FormDropDown(GridLayout):
 
         if "default" in input_dict.keys():
             self.main_btn_text = input_dict["default"]
-            print(input_dict)
             if "on_change" in input_dict.keys():
                 if input_dict.get("run_on_default_set",True):
                     input_dict["on_change"](self, self.main_btn_text)
