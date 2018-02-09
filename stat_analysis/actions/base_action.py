@@ -272,18 +272,18 @@ class BaseAction(object):
         Removes this action from saved_actions
         """
         App.get_running_app().saved_actions.remove(self)
-        logger.info("Removed action: {}".format(App.get_running_app().saved_actions))
         if callback != None:
             callback()
+        del self
 
     def delete_dataset(self,callback=None):
         """
-        Removes this action from saved_actions
+        Removes this action from datasets
         """
         App.get_running_app().datasets.remove(self)
-        logger.info("Removed dataset: {}".format(App.get_running_app().datasets))
         if callback != None:
             callback()
+        del self
 
     def display_help(self):
         subprocess.Popen(["python",resource_find("help_view.py"),self.help_text])

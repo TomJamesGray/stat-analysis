@@ -106,10 +106,6 @@ K is the amount of clusters that the algorithm will try and split the dataset in
         vals = self.form_outputs
         dataset = App.get_running_app().get_dataset_by_name(vals["dataset"])
 
-        if dataset == False:
-            # Dataset not found
-            return False
-
         x_pos = list(dataset.get_header_structure().keys()).index(vals["x_var"])
         y_pos = list(dataset.get_header_structure().keys()).index(vals["y_var"])
         x,y = [],[]
