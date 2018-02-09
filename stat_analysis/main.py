@@ -685,5 +685,8 @@ def main(results):
     app = StatApp()
     app.devel_mode = results.devel
     if results.save_file != None:
-        app.load_file(results.save_file)
+        if os.path.isfile(results.save_file):
+            app.load_file(results.save_file)
+        else:
+            app.startup_messages += "Save file {} doesn't exist\n".format(results.save_file)
     app.run()

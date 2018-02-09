@@ -90,9 +90,10 @@ A good example dataset is the "heights" example dataset as if you run the normal
                     },
                     {
                         "input_type": "string",
-                        "required": True,
+                        "required": False,
                         "visible_name": "Action save name",
-                        "form_name": "action_save_name"
+                        "form_name": "action_save_name",
+                        "required_if": [lambda x: x["save_action"] == True]
                     }
                 ]
             }
