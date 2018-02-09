@@ -12,8 +12,6 @@ class DataSample(BaseAction):
     view_name = "Dataset Sample"
 
     def __init__(self,output_widget):
-        self.save_name = "XYZ"
-        self.status = "OK"
         self.form = [
             {
                 "group_name":"Dataset",

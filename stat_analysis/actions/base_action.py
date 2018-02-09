@@ -120,16 +120,16 @@ class BaseAction(object):
         self.result_output = result_output
 
     def timed_run(self,**kwargs):
-        # Make a copy of this instance and run the action on that copy, this is done to prevent any saves to be
-        # overwritten
-        cpy = copy.copy(self)
         start_time = time.time()
-        self.run(**kwargs)
+        success = self.run(**kwargs)
         logger.info("Action {} finished in {} seconds".format(self.type,time.time()-start_time))
+        return success
 
     def save_action_btn(self,**kwargs):
         # Run the action then save it
-        self.timed_run()
+        if not self.timed_run():
+            # Action didn't run successfully as False returned
+            return
         str_input = PopupStringInput(label="Action Save Name")
         popup = Popup(size_hint=(None, None), size=(400, 150), title="Save Action")
 
@@ -144,6 +144,7 @@ class BaseAction(object):
         popup.dismiss()
         # if str_input
         self.save_name = str_input.text_input.text
+        self.output_widget.parent.title = "{} - {}".format(self.view_name,self.save_name)
         self.save_action()
         # Update the run action buttons to the saved action buttons, ie update action and new action
         self.run_action_container.clear_widgets()
