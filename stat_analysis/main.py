@@ -61,11 +61,11 @@ logging_config = {
         "gui":{
             "class":"logging.StreamHandler",
             "formatter":"main",
-            "level":"DEBUG"},
+            "level":"INFO"},
         "actions":{
             "class":"logging.StreamHandler",
             "formatter":"main",
-            "level":"DEBUG"},
+            "level":"INFO"},
         "log_view":{
             "class":"logging.handlers.log_view_output_handler",
             "formatter":"main",
@@ -78,11 +78,11 @@ logging_config = {
         },
         "stat_analysis.actions":{
             "handlers":["actions","log_view"],
-            "level":"DEBUG"
+            "level":"INFO"
         },
         "stat_analysis.form_inputs":{
             "handlers":["gui"],
-            "level":"DEBUG"
+            "level":"INFO"
         },
         "stat_analysis.generic_widgets":{
             "handlers":["gui"],
