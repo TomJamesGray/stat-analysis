@@ -1,6 +1,7 @@
 import logging
 import subprocess
 import time
+import copy
 from kivy.effects.scroll import ScrollEffect
 from kivy.app import App
 from kivy.graphics import Color,Rectangle
@@ -13,6 +14,7 @@ from kivy.uix.popup import Popup
 from kivy.uix.scrollview import ScrollView
 
 from stat_analysis.form_inputs import combo_box,check_box,numeric_bounded,numeric,file,string
+from stat_analysis.generic_widgets.popup_inputs import PopupStringInput
 
 logger = logging.getLogger(__name__)
 
@@ -31,6 +33,8 @@ class BaseAction(object):
     help_text = """
     No help is available for this action
     """
+    saveable = False
+    saved_action = False
 
     def render(self):
         """
@@ -76,9 +80,21 @@ class BaseAction(object):
                 form_layout.add_widget(form_cls)
                 self.form_items.append(form_cls)
 
-        # Add the run action button to end of form
-        form_layout.add_widget(Button(text="Run action",on_press=lambda *_:self.timed_run(),size_hint=(1,None),
-                                      height=30))
+        self.run_action_container = GridLayout(size_hint=(1,None),spacing=(0,5),cols=1)
+        # Add the save action button
+        if self.saved_action:
+            # If this is a saved action show update button and new action buttons
+            self.run_action_container.add_widget(Button(text="Update action", on_press=lambda *_: self.timed_run(),
+                                                        size_hint=(1, None),height=30))
+            self.run_action_container.add_widget(Button(text="New action", size_hint=(1, None),height=30))
+        else:
+            # If this isn't a saved action show run action and save action buttons
+            self.run_action_container.add_widget(Button(text="Run action", on_press=lambda *_: self.timed_run(),
+                                                        size_hint=(1, None),height=30))
+            self.run_action_container.add_widget(Button(text="Save action", on_press=lambda *_: self.save_action_btn(),
+                                                        size_hint=(1, None), height=30))
+
+        form_layout.add_widget(self.run_action_container)
 
         scroller = ScrollView(size_hint=(None,1),width=self.form_width,effect_cls=ScrollEffect)
         scroller.add_widget(form_layout)
@@ -101,9 +117,43 @@ class BaseAction(object):
         self.result_output = result_output
 
     def timed_run(self,**kwargs):
+        # Make a copy of this instance and run the action on that copy, this is done to prevent any saves to be
+        # overwritten
+        cpy = copy.copy(self)
         start_time = time.time()
         self.run(**kwargs)
         logger.info("Action {} finished in {} seconds".format(self.type,time.time()-start_time))
+
+    def save_action_btn(self,**kwargs):
+        # Run the action then save it
+        self.timed_run()
+        str_input = PopupStringInput(label="Action Save Name")
+        popup = Popup(size_hint=(None, None), size=(400, 150), title="Save Action")
+
+        str_input.submit_btn.bind(on_press=lambda *args: self.do_save_action(str_input, popup))
+        str_input.dismiss_btn.bind(on_press=lambda *args: popup.dismiss())
+
+        popup.content = str_input
+        popup.open()
+
+    def do_save_action(self,str_input,popup):
+        logger.info("Saving action: {}".format(str_input.text_input.text))
+        popup.dismiss()
+        # if str_input
+        self.save_name = str_input.text_input.text
+        self.save_action()
+        # Update the run action buttons to the saved action buttons, ie update action and new action
+        self.run_action_container.clear_widgets()
+        self.run_action_container.add_widget(Button(text="Update action", on_press=lambda *_: self.timed_run(),
+                                                    size_hint=(1, None), height=30))
+        self.run_action_container.add_widget(Button(text="New action", size_hint=(1, None), height=30))
+
+    def save_action(self):
+        self.saved_action = True
+        try:
+            App.get_running_app().add_action(self)
+        except ValueError:
+            logger.error("Dataset with that name already exists")
 
     def _draw_border(self,*args):
         try:
@@ -168,17 +218,19 @@ class BaseAction(object):
                     _input["default"] = self.form_outputs[_input["form_name"]]
 
     def serialize(self):
-        return {"type":self.type,"form_outputs":self.form_outputs}
+        return {"type":self.type,"form_outputs":self.form_outputs,"save_name":self.save_name}
 
     def load(self,state):
         self.form_outputs = state["form_outputs"]
+        self.save_name = state["save_name"]
         try:
             success = self.run(validate=False,quiet=True)
         except Exception as e:
             err = "Error in loading {}\n{}".format(self.type,repr(e))
             logger.error(err)
             return err
-
+        # Save the action
+        self.save_action()
         return True
 
     def make_err_message(self,msg):

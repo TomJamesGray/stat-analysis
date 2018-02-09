@@ -34,6 +34,7 @@ The percentage accuracy value is a measure of how well the dataset fits the mode
 
 An example of a logistic regression can be found in the "exam passes" dataset. If you do a logistic regression with the binary variable being "pass" and the x variable being the hours of revision done, you can predict the probability that a student will pass the exam given the amount of revision they do.
     """
+    saveable = True
 
     def __init__(self,output_widget):
         self.status = "OK"
@@ -97,24 +98,6 @@ An example of a logistic regression can be found in the "exam passes" dataset. I
                         "form_name": "inverse_logit",
                         "visible_name": "Get values from probabilities",
                         "tip": "For multiple values input them with commas separating them"
-                    }
-                ]
-            },
-            {
-                "group_name": "Save",
-                "inputs": [
-                    {
-                        "input_type": "check_box",
-                        "required": True,
-                        "form_name": "save_action",
-                        "visible_name": "Save action"
-                    },
-                    {
-                        "input_type": "string",
-                        "required": False,
-                        "visible_name": "Action save name",
-                        "form_name": "action_save_name",
-                        "required_if":[lambda x:x["save_action"] == True]
                     }
                 ]
             }
@@ -239,10 +222,3 @@ An example of a logistic regression can be found in the "exam passes" dataset. I
 
                 self.result_output.add_widget(ExportableGraph(source=path, fig=fig, axis=[axis], nocache=True,
                                                           size_hint_y=None))
-        if vals["save_action"] and not preloaded:
-            # Save the action
-            self.save_name = vals["action_save_name"]
-            try:
-                App.get_running_app().add_action(self)
-            except ValueError:
-                logger.error("Dataset with that name already exists")

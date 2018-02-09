@@ -195,7 +195,8 @@ class ImportCSV(base_action.BaseAction):
         return {
             "form_outputs":self.form_outputs,
             "header_structure":col_struct,
-            "type":self.type
+            "type":self.type,
+            "save_name": self.save_name
         }
 
     def load(self,state,**kwargs):
