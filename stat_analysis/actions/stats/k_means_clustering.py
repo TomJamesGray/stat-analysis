@@ -22,6 +22,8 @@ This takes an input data set, comprised of an x and y variable and tries to esti
 K is the amount of clusters that the algorithm will try and split the dataset into. The value for K is highly dependent on the dataset and inappropriate values of K could mean clusters being very different across runs.
 
 """
+    saveable = True
+
     def __init__(self,output_widget):
         self.save_name = ""
         self.status = "OK"
@@ -75,24 +77,6 @@ K is the amount of clusters that the algorithm will try and split the dataset in
                         "tip":"The centroids will either be initialised with a random point from the dataset"
                               " or a random point in the data's range. Initialising with a random point can"
                               " cause centroids to not be used"
-                    }
-                ]
-            },
-            {
-                "group_name": "Save",
-                "inputs": [
-                    {
-                        "input_type": "check_box",
-                        "required": True,
-                        "form_name": "save_action",
-                        "visible_name": "Save action"
-                    },
-                    {
-                        "input_type": "string",
-                        "required": False,
-                        "visible_name": "Action save name",
-                        "form_name": "action_save_name",
-                        "required_if": [lambda x: x["save_action"] == True]
                     }
                 ]
             }
@@ -177,15 +161,6 @@ K is the amount of clusters that the algorithm will try and split the dataset in
 
             self.result_output.add_widget(ExportableGraph(source=path, fig=fig, axis=[axis], nocache=True,
                                                           size_hint_y=None))
-
-        if vals["save_action"] and not preloaded:
-            # Save the action
-            self.save_name = vals["action_save_name"]
-            try:
-                App.get_running_app().add_action(self)
-            except ValueError:
-                logger.error("Dataset with that name already exists")
-
 
 class KMeans(object):
     def __init__(self, k=3, tolerance=0.0001, max_iterations=500, init_rnd_point=False):

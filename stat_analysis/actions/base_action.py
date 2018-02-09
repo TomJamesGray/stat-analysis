@@ -87,11 +87,14 @@ class BaseAction(object):
             self.run_action_container.add_widget(Button(text="Update action", on_press=lambda *_: self.timed_run(),
                                                         size_hint=(1, None),height=30))
             self.run_action_container.add_widget(Button(text="New action", size_hint=(1, None),height=30))
-        else:
+        elif self.saveable:
             # If this isn't a saved action show run action and save action buttons
             self.run_action_container.add_widget(Button(text="Run action", on_press=lambda *_: self.timed_run(),
                                                         size_hint=(1, None),height=30))
             self.run_action_container.add_widget(Button(text="Save action", on_press=lambda *_: self.save_action_btn(),
+                                                        size_hint=(1, None), height=30))
+        else:
+            self.run_action_container.add_widget(Button(text="Run action", on_press=lambda *_: self.timed_run(),
                                                         size_hint=(1, None), height=30))
 
         form_layout.add_widget(self.run_action_container)

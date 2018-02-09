@@ -15,6 +15,7 @@ logger = logging.getLogger(__name__)
 class PoissonDistribution(BaseAction):
     type = "stats.poisson_distribution"
     view_name = "Poisson Distribution"
+    saveable = True
 
     def __init__(self,output_widget):
         self.user_name = "XYZ"
@@ -61,24 +62,6 @@ class PoissonDistribution(BaseAction):
                     }
                 ]
             },
-            {
-                "group_name": "Save",
-                "inputs": [
-                    {
-                        "input_type": "check_box",
-                        "required": True,
-                        "form_name": "save_action",
-                        "visible_name": "Save action"
-                    },
-                    {
-                        "input_type": "string",
-                        "required": False,
-                        "visible_name": "Action save name",
-                        "form_name": "action_save_name",
-                        "required_if": [lambda x: x["save_action"] == True]
-                    }
-                ]
-            }
         ]
         self.output_widget = output_widget
         self.tmp_dataset = None
@@ -157,11 +140,3 @@ class PoissonDistribution(BaseAction):
 
             self.result_output.add_widget(ExportableGraph(source=path, fig=fig, axis=[axis], nocache=True,
                                                           size_hint_y=None))
-
-        if vals["save_action"] and not preloaded:
-            # Save the action
-            self.save_name = vals["action_save_name"]
-            try:
-                App.get_running_app().add_action(self)
-            except ValueError:
-                logger.error("Dataset with that name already exists")

@@ -118,6 +118,5 @@ class TransformData(BaseAction):
             err = "Error in loading transform data\n{}".format(repr(e))
             logger.error(err)
             return err
-
         return True
 

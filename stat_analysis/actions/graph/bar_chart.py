@@ -12,6 +12,7 @@ logger = logging.getLogger(__name__)
 class BarChart(BaseAction):
     type = "graph.bar_chart"
     view_name  = "Bar Chart"
+    saveable = True
 
     def __init__(self,output_widget):
         self.save_name = ""
@@ -52,24 +53,6 @@ class BarChart(BaseAction):
                         "required":True,
                         "form_name":"sort_x",
                         "visible_name":"Sort the data on the X variable"
-                    }
-                ]
-            },
-            {
-                "group_name":"Save",
-                "inputs":[
-                    {
-                        "input_type":"check_box",
-                        "required":True,
-                        "form_name":"save_action",
-                        "visible_name":"Save action"
-                    },
-                    {
-                        "input_type":"string",
-                        "required":False,
-                        "visible_name":"Action save name",
-                        "form_name":"action_save_name",
-                        "required_if": [lambda x: x["save_action"] == True]
                     }
                 ]
             }
@@ -142,11 +125,6 @@ class BarChart(BaseAction):
         axis.legend()
         path = os.path.join(App.get_running_app().tmp_folder, "plot.png")
         fig.savefig(path)
-
-        if vals["save_action"] and not preloaded:
-            # Save the action
-            self.save_name = vals["action_save_name"]
-            App.get_running_app().add_action(self)
 
         if not quiet:
             self.result_output.clear_outputs()

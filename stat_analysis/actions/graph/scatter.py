@@ -11,6 +11,7 @@ logger = logging.getLogger(__name__)
 class ScatterPlot(BaseAction):
     type = "graph.scatter"
     view_name  = "Scatter Plot"
+    saveable = True
 
     def __init__(self,output_widget):
         self.save_name = ""
@@ -44,24 +45,6 @@ class ScatterPlot(BaseAction):
                         "required": False,
                         "form_name": "y_var",
                         "visible_name": "Y Variable",
-                    }
-                ]
-            },
-            {
-                "group_name":"Save",
-                "inputs":[
-                    {
-                        "input_type":"check_box",
-                        "required":True,
-                        "form_name":"save_action",
-                        "visible_name":"Save action"
-                    },
-                    {
-                        "input_type":"string",
-                        "required":False,
-                        "visible_name":"Action save name",
-                        "form_name":"action_save_name",
-                        "required_if": [lambda x: x["save_action"] == True]
                     }
                 ]
             }
@@ -120,13 +103,5 @@ class ScatterPlot(BaseAction):
             self.result_output.clear_outputs()
             self.result_output.add_widget(ExportableGraph(source=path, fig=fig, axis=[axis], nocache=True,
                                                           size_hint_y=None))
-
-        if vals["save_action"] and not preloaded:
-            # Save the action
-            self.save_name = vals["action_save_name"]
-            try:
-                App.get_running_app().add_action(self)
-            except ValueError:
-                logger.error("Dataset with that name already exists")
 
 

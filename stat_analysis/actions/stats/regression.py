@@ -22,7 +22,7 @@ This action performs a regression of the given degree for the given dataset
 The formula for the output line is given as well as a graph containing a scatter plot of the dataset and the regression line generated. This graph can be modified by pressing the "graph options" button where you can customise the axis labels and the minimum and maximum x and y values.
 
 """
-
+    saveable = True
 
     def __init__(self,output_widget):
         self.user_name = "XYZ"
@@ -86,25 +86,6 @@ The formula for the output line is given as well as a graph containing a scatter
                               "the regression line"
                     }]
             },
-            {
-                "group_name": "Save",
-                "inputs": [
-                    {
-                        "input_type": "check_box",
-                        "required": True,
-                        "form_name": "save_action",
-                        "visible_name": "Save action"
-                    },
-                    {
-                        "input_type": "string",
-                        "required": False,
-                        "visible_name": "Action save name",
-                        "form_name": "action_save_name",
-                        "required_if": [lambda x: x["save_action"] == True]
-                    }
-                ]
-            }
-
         ]
         self.output_widget = output_widget
         self.tmp_dataset = None
@@ -190,12 +171,4 @@ The formula for the output line is given as well as a graph containing a scatter
 
             self.result_output.add_widget(ExportableGraph(source=path, fig=fig, axis=[axis], nocache=True,
                                                           size_hint_y=None))
-        if vals["save_action"] and not preloaded:
-            # Save the action
-            self.save_name = vals["action_save_name"]
-            try:
-                App.get_running_app().add_action(self)
-            except ValueError:
-                logger.error("Dataset with that name already exists")
-
 

@@ -593,13 +593,6 @@ Some actions also have additional help available via Help > 'Help for this actio
                 logger.error("In loading save file action type {} not found, stopping load".format(item[1]["type"]))
                 continue
             success = type_action.load(item[1],**kwargs)
-            # # type_a
-            # # Try and save the action
-            # try:
-            #     App.get_running_app().add_action(type_action)
-            # except ValueError:
-            #     logger.error("Dataset with that name already exists")
-            #     continue
 
             if success == True:
                 actions_loaded += 1

@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 class Summary(BaseAction):
     type = "stats.summary"
     view_name = "Summary statistics"
-
+    saveable = True
     def __init__(self,output_widget):
         self.user_name = "XYZ"
         self.status = "OK"
