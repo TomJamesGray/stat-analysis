@@ -68,10 +68,17 @@ class Summary(BaseAction):
     def add_dataset_listener(self, val):
         self.tmp_dataset_listeners.append(val)
 
-    def run(self):
+    def run(self, validate=True, quiet=False, preloaded=False, use_cached=False, **kwargs):
         logger.info("Running action {}".format(self.type))
-        if self.validate_form():
-            logger.debug("Form validated, form outputs: {}".format(self.form_outputs))
+        if validate:
+            if not self.validate_form():
+                logger.warning("Form not validated, form errors: {}".format(self.form_errors))
+                self.make_err_message(self.form_errors)
+                return False
+            else:
+                logger.debug("Form validated, form outputs: {}".format(self.form_outputs))
+
+        if not quiet:
             vals = self.form_outputs
             dataset = App.get_running_app().get_dataset_by_name(vals["dataset"])
             col_vals = []
@@ -85,5 +92,3 @@ class Summary(BaseAction):
                 headers=[vals["action"].replace(" ","\n")],data=[[str(round(val,5))]],row_default_height=60,
                 row_force_default=True,orientation="horizontal",size_hint_y=None,size_hint_x=1,for_scroller=True
             ))
-        else:
-            self.make_err_message(self.form_errors)
