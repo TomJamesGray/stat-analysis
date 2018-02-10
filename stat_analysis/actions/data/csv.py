@@ -142,9 +142,6 @@ class ImportCSV(base_action.BaseAction):
     def set_header_structure(self,struct,drop_err_cols=True):
         """
         Sets the header structure, and changes the data types of the items to match
-        :param struct: The new structure to be used, format
-        :param drop_err_cols:
-        :return:
         """
         self.cols_structure = struct
         # Get converter functions in a list
@@ -159,9 +156,9 @@ class ImportCSV(base_action.BaseAction):
             for col in range(0,len(self.stored_data[0])):
                 try:
                     tmp_data[row].append(converters[col](self.stored_data[row][col]))
-                except:
-                    if drop_err_cols:
-                        to_drop.append(row)
+                except Exception:
+                    # This data item causes an error, like interpreting a string as an int so drop the row
+                    to_drop.append(row)
 
         if to_drop != []:
             # Remove rows that have been flagged to be dropped
