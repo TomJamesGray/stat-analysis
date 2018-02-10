@@ -436,7 +436,7 @@ class StatApp(App):
             {
                 "group_name": "Data",
                 "actions": [data.csv.ImportCSV, data.view_data.ViewData, data.set_col_types.SetColTypes,
-                            data.get_random_sample.DataSample,data.transform_data.TransformData]
+                            data.transform_data.TransformData]
             },
             {
                 "group_name": "Graph",
