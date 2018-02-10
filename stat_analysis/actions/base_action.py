@@ -310,7 +310,6 @@ class BaseAction(object):
         subprocess.Popen(["python",resource_find("help_view.py"),self.help_text])
 
 
-
 class ResultOutputWidgetLabelHeader(Label):
     pass
 

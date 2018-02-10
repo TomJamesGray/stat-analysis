@@ -370,6 +370,7 @@ class ToolBoxButton(Button):
             return
         # Determine whether mouse is over the button
         collision = self.collide_point(*self.to_widget(*args[1]))
+
         if self.hovering and collision:
             # Mouse moved within the button
             if App.get_running_app().current_cursor != "hand":

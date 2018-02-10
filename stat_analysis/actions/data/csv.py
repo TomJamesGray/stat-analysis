@@ -71,9 +71,11 @@ class ImportCSV(base_action.BaseAction):
                 return False
             else:
                 logger.debug("Form validated, form outputs: {}".format(self.form_outputs))
+
         # Get the values from the form validation
         vals = self.form_outputs
         with open(vals["file"],"r") as f:
+            # Read in the data all as strings
             reader = csv.reader(f)
             data = []
             for row in reader:
@@ -122,7 +124,6 @@ class ImportCSV(base_action.BaseAction):
             return False
 
         if not quiet:
-            # TODO: better way of setting height rather than just manually working it out?
             tbl = DataSpreadsheet(table_data=self.stored_data[:5],headers=self.headers,height=155)
             tbl.bind(minimum_width=tbl.setter("width"))
 
@@ -139,6 +140,12 @@ class ImportCSV(base_action.BaseAction):
         return self.cols_structure
 
     def set_header_structure(self,struct,drop_err_cols=True):
+        """
+        Sets the header structure, and changes the data types of the items to match
+        :param struct: The new structure to be used, format
+        :param drop_err_cols:
+        :return:
+        """
         self.cols_structure = struct
         # Get converter functions in a list
         converters = []
