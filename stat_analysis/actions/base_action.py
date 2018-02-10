@@ -86,7 +86,8 @@ class BaseAction(object):
             # If this is a saved action show update button and new action buttons
             self.run_action_container.add_widget(Button(text="Update action", on_press=lambda *_: self.timed_run(),
                                                         size_hint=(1, None),height=30))
-            self.run_action_container.add_widget(Button(text="New action", size_hint=(1, None),height=30))
+            self.run_action_container.add_widget(Button(text="New action", on_press=lambda *_:self.make_new_action(),
+                                                        size_hint=(1, None),height=30))
         elif self.saveable:
             # If this isn't a saved action show run action and save action buttons
             self.run_action_container.add_widget(Button(text="Run action", on_press=lambda *_: self.timed_run(),
@@ -126,10 +127,16 @@ class BaseAction(object):
         return success
 
     def save_action_btn(self,**kwargs):
+        """
+        Method called when the save action button in the form is pressed
+        """
         # Run the action then save it
-        if not self.timed_run():
+        success = self.timed_run()
+        if success == False:
             # Action didn't run successfully as False returned
+            logger.warning("Action didn't execute successfully, returned False so not saving")
             return
+
         str_input = PopupStringInput(label="Action Save Name")
         popup = Popup(size_hint=(None, None), size=(400, 150), title="Save Action")
 
@@ -140,6 +147,9 @@ class BaseAction(object):
         popup.open()
 
     def do_save_action(self,str_input,popup):
+        """
+        Method called when the submit button is pressed in the save action prompt
+        """
         logger.info("Saving action: {}".format(str_input.text_input.text))
         popup.dismiss()
         # if str_input
@@ -150,14 +160,25 @@ class BaseAction(object):
         self.run_action_container.clear_widgets()
         self.run_action_container.add_widget(Button(text="Update action", on_press=lambda *_: self.timed_run(),
                                                     size_hint=(1, None), height=30))
-        self.run_action_container.add_widget(Button(text="New action", size_hint=(1, None), height=30))
+        self.run_action_container.add_widget(Button(text="New action", on_press=lambda *_:self.make_new_action(),
+                                                    size_hint=(1, None), height=30))
 
     def save_action(self):
+        """
+        Try and append the current action to the saved actions list
+        :return:
+        """
         self.saved_action = True
         try:
             App.get_running_app().add_action(self)
         except ValueError:
             logger.error("Dataset with that name already exists")
+
+    def make_new_action(self):
+        """
+        Create a new action of this type and reload the primary pane with it
+        """
+        App.get_running_app().root_widget.primary_pane.refresh(self.__class__)
 
     def _draw_border(self,*args):
         try:
