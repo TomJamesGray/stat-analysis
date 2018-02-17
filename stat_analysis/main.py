@@ -176,7 +176,14 @@ class ActionsGrid(GridLayout):
     def render(self,re_render=False):
         self.clear_widgets()
 
-        if len(self.data_tbl) == 0:
+        # Make sure there are saved actions with saved names that aren't None
+        empty = True
+        for x in self.data_tbl:
+            if x.save_name != None:
+                empty = False
+                break
+
+        if empty:
             x = Label(text=self.empty_msg,color=(0,0,0,1))
             x.bind(size=x.setter("text_size"))
             self.add_widget(x)
@@ -637,12 +644,13 @@ Some actions also have additional help available via Help > 'Help for this actio
 
         self.datasets.append(dataset)
 
-    def add_action(self,action):
-        for set in self.saved_actions:
-            if action.save_name == set.save_name and action.save_name != None:
-                raise ValueError("A dataset with that name already exists")
+    def add_action(self,save_action):
+        if save_action.save_name != None:
+            for set in self.saved_actions:
+                if save_action.save_name == set.save_name:
+                    raise ValueError("An action with that name already exists")
 
-        self.saved_actions.append(action)
+        self.saved_actions.append(save_action)
 
     def show_app_help(self):
         """
@@ -679,6 +687,7 @@ Some actions also have additional help available via Help > 'Help for this actio
             return "sdl2"
         else:
             return "other"
+
 
 def main(results):
     app = StatApp()
