@@ -55,13 +55,20 @@ def guess_d_type(sample):
             probs["float"] *= 1.5
             probs["string"] *= 0.5
 
-        if others == 0 and date_time_chars == 0 and hyphens < 1:
-            if int(float(val)) == float(val):
-                probs["int"] *= 1.2
-                probs["float"] *= 0.9
-            elif float(val) != int(float(val)):
-                probs["float"] *= 1.2
-                probs["int"] *= 0.6
+        if others == 0 and date_time_chars == 0 and hyphens <= 1:
+            try:
+                if int(float(val)) == float(val):
+                    probs["int"] *= 1.2
+                    probs["float"] *= 0.9
+                elif float(val) != int(float(val)):
+                    probs["float"] *= 1.2
+                    probs["int"] *= 0.6
+            except ValueError:
+                # Error in parsing value as a number, eg "5432-32"
+                probs["float"] *= 0.7
+                probs["int"] *= 0.7
+                errors["int"].append(val)
+                errors["float"].append(val)
 
         if val[0] == "0" and len(val) == numbers:
             # Probably a phone number?

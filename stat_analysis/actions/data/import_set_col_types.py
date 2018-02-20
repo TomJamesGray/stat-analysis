@@ -51,10 +51,8 @@ class ImportSetColTypes(SetColTypes):
             for val in error_vals:
                 if val == "":
                     blanks += 1
-                    total_errors += 1
                 else:
                     outputs.append("• Recommended type {} conflicts with '{}'\n".format(guessed_type,val))
-                    total_errors += 1
 
             errors_ouptputs.text += "\n[size=14]Column '{}' errors:[/size]\n".format(col_name)
 
@@ -64,7 +62,6 @@ class ImportSetColTypes(SetColTypes):
 
             for out in outputs:
                 errors_ouptputs.text += out
-
         errors_ouptputs.text = "[size=18]Total potential errors {}[/size]\n".format(total_errors) + \
                                errors_ouptputs.text
         self.result_output.add_widget(errors_ouptputs)

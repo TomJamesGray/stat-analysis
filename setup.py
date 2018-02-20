@@ -20,4 +20,5 @@ setup(
     packages=['stat_analysis'],
     long_description=read('README.md'),
     include_package_data=True,
+    scripts=["statanalysis.py"]
 )
