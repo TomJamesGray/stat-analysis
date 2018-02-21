@@ -4,6 +4,7 @@ import subprocess
 import os
 import logging.config
 import pickle
+from kivy.factory import Factory
 from kivy.config import Config
 from kivy.uix.widget import Widget
 from kivy.uix.popup import Popup
@@ -32,13 +33,15 @@ from kivy.properties import StringProperty,ObjectProperty,BooleanProperty,Numeri
 from kivy.modules import inspector
 from kivy.resources import resource_find
 from stat_analysis.actions import stats,data,graph
-# # Import CustomActionBtn so kivy is made aware of it for the kv file
 from stat_analysis.generic_widgets.action_bar import CustomActionBtn
 from stat_analysis.generic_widgets.bordered import BorderedButton
 from stat_analysis.generic_widgets.files import FileChooserSaveDialog,FileChooserLoadDialog
 from stat_analysis.generic_widgets.right_click_menu import RightClickMenu
 from stat_analysis.generic_widgets.popup_inputs import PopupStringInput
 from kivy.app import App
+
+# Register the CustomActionBtn class with kivy, otherwise it wouldn't be detected
+Factory.register("CustomActionBtn",cls=CustomActionBtn)
 
 
 class LogViewOutputHandler(logging.StreamHandler):
