@@ -68,7 +68,7 @@ class Summary(BaseAction):
     def add_dataset_listener(self, val):
         self.tmp_dataset_listeners.append(val)
 
-    def run(self, validate=True, quiet=False, preloaded=False, use_cached=False, **kwargs):
+    def run(self, validate=True, quiet=False, use_cached=False, **kwargs):
         logger.info("Running action {}".format(self.type))
         if validate:
             if not self.validate_form():

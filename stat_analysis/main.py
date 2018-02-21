@@ -342,7 +342,7 @@ class PrimaryPane(GridLayout):
 
         self.active_action.set_default_form_vals()
         self.active_action.render()
-        self.active_action.run(quiet=False,validate=False,preloaded=True,use_cached=True)
+        self.active_action.run(quiet=False,validate=False,use_cached=True)
         self.home_view_active = False
 
     def go_home(self,*args):
