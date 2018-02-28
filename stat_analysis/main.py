@@ -453,6 +453,11 @@ class StatApp(App):
                 "actions": [graph.bar_chart.BarChart,graph.scatter.ScatterPlot]
             }
         ]
+        self.example_datasets = {
+            "heights": ("heights", resource_find("res/example_datasets/heights/heights_example_dataset.stat")),
+            "exam_scores": ("exam_scores",
+                            resource_find("res/example_datasets/exam_results/exam_results_example_dataset.stat"))
+        }
         # Get the absolute path of the "temporary" file directory
         self.tmp_folder = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),"tmp")
         self.help_text =\
@@ -530,17 +535,12 @@ Some actions also have additional help available via Help > 'Help for this actio
         return action
 
     def load_example_dataset(self,name):
-        datasets = {
-            "heights":("heights",resource_find("res/example_datasets/heights/heights_example_dataset.stat")),
-            "exam_scores": ("exam_scores",
-                            resource_find("res/example_datasets/exam_results/exam_results_example_dataset.stat"))
-        }
         str_input = PopupStringInput(label="Dataset name")
-        str_input.text_input.text = datasets[name][0]
+        str_input.text_input.text = self.example_datasets[name][0]
         popup = Popup(size_hint=(None,None),size=(400,150),title="Example Dataset Save Name")
 
         str_input.submit_btn.bind(on_press=lambda *args:self.submit_load_example(
-            str_input,popup,datasets[name][1]))
+            str_input,popup,self.example_datasets[name][1]))
         str_input.dismiss_btn.bind(on_press=lambda *args:popup.dismiss())
         popup.content = str_input
         popup.open()
