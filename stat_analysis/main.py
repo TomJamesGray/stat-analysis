@@ -384,7 +384,6 @@ class LogView(GridLayout):
     close_btn = ObjectProperty(None)
     scroll_view = ObjectProperty(None)
     log_visible = BooleanProperty(True)
-    prev_height = NumericProperty(20)
 
     def log_msg(self,msg):
         if self.output.text != "":
@@ -397,7 +396,6 @@ class LogView(GridLayout):
     def toggle_log_view(self):
         if self.log_visible:
             # Minimise the scroll view
-            self.prev_height = self.scroll_view.height
             self.parent.size_hint_y = 0
             self.parent.strip_size = 0
             self.scroll_view.height = 0
@@ -406,7 +404,6 @@ class LogView(GridLayout):
 
             self.log_visible = False
         else:
-            self.scroll_view.height = self.prev_height
             self.height = 100
             self.parent.strip_size = "10pt"
             self.parent.size_hint_y = 0.2
