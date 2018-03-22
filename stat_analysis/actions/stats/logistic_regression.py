@@ -189,15 +189,17 @@ An example of a logistic regression can be found in the "exam passes" dataset. I
                 for val in vals["inverse_logit"]:
                     if not (0 < val <1):
                         logger.warning("Invalid probability {}".format(val))
+                        continue
 
                     predicted_x.append(str(np.round(-1/x_coeff * (np.log(1/val -1)+const),3)))
                     used_p_vals.append(val)
 
-                self.result_output.add_widget(BorderedTable(
-                    headers=["Probability",vals["x_var"]],data=[used_p_vals,predicted_x],
-                    row_default_height=40,row_force_default=True,orientation="vertical",size_hint_y=None,
-                    for_scroller=True
-                ))
+                if len(used_p_vals) != 0:
+                    self.result_output.add_widget(BorderedTable(
+                        headers=["Probability",vals["x_var"]],data=[used_p_vals,predicted_x],
+                        row_default_height=40,row_force_default=True,orientation="vertical",size_hint_y=None,
+                        for_scroller=True
+                    ))
 
             if vals["make_graph"]:
                 # Generate x and y values for the line

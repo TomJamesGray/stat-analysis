@@ -43,7 +43,7 @@ class ImportCSV(base_action.BaseAction):
                         "input_type": "numeric",
                         "required": True,
                         "form_name": "start_line",
-                        "visible_name": "Start reading at line:",
+                        "visible_name": "Start reading at line:"
                     }
                 ]
             },
@@ -90,7 +90,13 @@ class ImportCSV(base_action.BaseAction):
             self.headers = [str(x) for x in range(1,len(data[0])+1)]
 
         # Get rid of data before user specified start line
-        data = data[int(vals["start_line"])-1:]
+        start_line = int(vals["start_line"])
+        if start_line <= 0 or start_line-1 >= len(data):
+            self.make_err_message("Invalid start line {}".format(vals["start_line"]))
+            return False
+        else:
+            data = data[int(vals["start_line"])-1:]
+
 
         # Arrange the data into columns and run the guess_d_type function
         # This returns: ((data_type_name, converter function),[Possible errors caused by this choice])

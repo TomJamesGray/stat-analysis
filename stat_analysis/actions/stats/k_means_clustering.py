@@ -104,6 +104,12 @@ K is the amount of clusters that the algorithm will try and split the dataset in
                 logger.debug("Form validated, form outputs: {}".format(self.form_outputs))
 
         vals = self.form_outputs
+        if int(vals["k"]) <= 0:
+            if not quiet:
+                self.make_err_message("Invalid value of k: {}".format(vals["k"]))
+            return False
+
+
         dataset = App.get_running_app().get_dataset_by_name(vals["dataset"])
 
         x_pos = list(dataset.get_header_structure().keys()).index(vals["x_var"])
