@@ -11,6 +11,7 @@ class FormCheckBox(GridLayout):
         self.bind(minimum_height=self.setter("height"))
         self.width = 200
         self.input_dict = input_dict
+        # Create the actual check box widget
         self.check = CheckBox(size_hint=(None,None),width=30,height=30,color=(0,0,0,1))
         self.add_widget(self.check)
 
@@ -21,6 +22,7 @@ class FormCheckBox(GridLayout):
             input_label = FormInputLabel(text=input_dict["visible_name"],height=30)
 
         if "default" in input_dict.keys():
+            # Set default state if specified
             if input_dict["default"] == True:
                 self.check.active = True
 

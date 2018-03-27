@@ -22,10 +22,10 @@ class FormNumericBounded(GridLayout):
             input_label = FormInputLabel(text=input_dict["visible_name"])
 
         container = GridLayout(rows=1,height=30,width=200,size_hint=(None,None))
-
+        # Create the text readout
         self.text_readout = Label(size_hint=(None,None),width=30,height=30,text=str(input_dict["default"]),
                                           color=(.3,.3,.3,1))
-
+        # Create the slider
         slider = Slider(min=input_dict["min"],max=input_dict["max"],value=input_dict["default"],step=input_dict["step"],
                         cursor_height=20,cursor_width=20,cursor_image=resource_find("res/slider_image.png"))
 
@@ -43,6 +43,8 @@ class FormNumericBounded(GridLayout):
 
     def on_slider_change(self,instance,value):
         if "int_only" in self.input_dict.keys():
+            # This prevents the text readout from being "1.0" even if the step and starting
+            # values are integers
             if self.input_dict["int_only"]:
                 self.text_readout.text = str(int(value))
                 return

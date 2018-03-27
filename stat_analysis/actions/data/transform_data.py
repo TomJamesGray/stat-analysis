@@ -12,8 +12,8 @@ class TransformData(BaseAction):
     view_name = "Transform Data"
 
     def __init__(self,output_widget):
-        self.save_name = "XYZ"
         self.status = "OK"
+        # Define the transforms that can be done on columns
         self.simple_transforms = {
             "Square":lambda x:x**2,
             "Cube":lambda x:x**3,

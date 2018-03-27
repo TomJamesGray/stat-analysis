@@ -6,6 +6,9 @@ from kivy.app import App
 from kivy.core.window import Window
 
 class FormInputLabel(GridLayout):
+    """
+    Container class for form labels, handles the creation of tool tips and the actual text for the label
+    """
     def __init__(self,text=None,tip=None,**kwargs):
         self.height = 20
         super().__init__(**kwargs)
@@ -19,13 +22,16 @@ class FormInputLabel(GridLayout):
         else:
             main_lbl = FormInputLabelText(text=text,size_hint=(1,None))
             self.add_widget(main_lbl)
-
+            # Create tool tip
             tooltip = ToolTip(source="res/tooltip.png",width=15,height=15,size_hint=(None,1),tip_text=tip)
             Window.bind(mouse_pos=tooltip.mouse_pos)
             self.add_widget(tooltip)
 
 
 class FormInputLabelText(Label):
+    """
+    Widget that displays the text for form input labels
+    """
     pass
 
 
@@ -58,4 +64,7 @@ class ToolTip(Image):
         self.hovering = collision
 
 class ToolTipText(Label):
+    """
+    Widget that displays the text when a user hovers over a tool tip
+    """
     pass

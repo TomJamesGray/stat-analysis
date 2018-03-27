@@ -15,9 +15,17 @@ class RightClickMenu(GridLayout):
         super().__init__(**kwargs)
 
     def add_opt(self,text,fn):
+        """
+        Add an option to the list of options
+        :param text: Text to be displayed on the button
+        :param fn: Function to be called when the user presses the button
+        """
         self.options.append(MenuBtn(text=text,func=fn,on_press=self.do_option,color=(1,1,1,1),height=30))
 
     def open(self):
+        """
+        Open the menu
+        """
         for opt in self.options:
             Window.bind(mouse_pos=opt.mouse_pos)
             self.add_widget(opt)
@@ -33,6 +41,10 @@ class RightClickMenu(GridLayout):
                 self.clear_menu()
 
     def clear_menu(self):
+        """
+        Clear the RightClickMenu so nothing is displayed, done when user clicks out of the menu
+        :return:
+        """
         Window.unbind(on_touch_down=self.decide_clear_menu)
         self.clear_widgets()
         self.remove_widget(self)

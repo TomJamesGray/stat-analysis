@@ -36,17 +36,19 @@ class FormNumeric(GridLayout):
 
     def get_val(self):
         def __get_val(x):
+            # Gets the value from a section of the input if comma separated, or the whole input if not
             try:
                 val = float(x)
             except ValueError:
                 raise ValueError("{} should be numeric".format(self.input_dict["visible_name"]))
             return val
-
+        # Input is empty so return None
         if self.num_input.text == "":
             return None
 
         if self.input_dict["allow_comma_separated"]:
             out = []
+            # If comma separated return a list of numbers
             for x in self.num_input.text.split(","):
                 out.append(__get_val(x))
             return out

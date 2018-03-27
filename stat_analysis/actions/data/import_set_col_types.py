@@ -8,12 +8,14 @@ class ImportSetColTypes(SetColTypes):
     view_name = "Set Column Data Types"
 
     def __init__(self,output_widget,**kwargs):
-        self.save_name = "XYZ"
         self.status = "OK"
         self.base_form = []
         self.output_widget = output_widget
+        # Get the data set name from the kwargs
         self.passed_dataset_name = kwargs["dataset_name"]
+        # Modify the form property with the new values
         self.form_add_cols(kwargs["dataset_name"],set_dataset_selector=False,re_render=False)
+        # Get the spreadsheet widget from kwargs
         self.data_spreadsheet = kwargs["spreadsheet"]
         self.possible_errors = kwargs["possible_errors"]
 
@@ -57,6 +59,7 @@ class ImportSetColTypes(SetColTypes):
             errors_ouptputs.text += "\n[size=14]Column '{}' errors:[/size]\n".format(col_name)
 
             if blanks != 0:
+                # Show the blank records in a separate line, before other errors
                 errors_ouptputs.text += "• {} blank records conflicts with recommended type {}\n".format(
                     blanks,guessed_type)
 

@@ -88,11 +88,12 @@ class PoissonDistribution(BaseAction):
         dataset = App.get_running_app().get_dataset_by_name(vals["dataset"])
 
         col_data = []
+        # Get index of column in data set
         col_pos = list(dataset.get_header_structure().keys()).index(vals["col"])
 
         for row in dataset.get_data():
             col_data.append(row[col_pos])
-
+        # Calculate the mean, this is the only input for the Poisson distribution
         mean = np.mean(col_data)
 
         if not quiet:
@@ -105,6 +106,7 @@ class PoissonDistribution(BaseAction):
             y_line = [y_func(x) for x in x_line]
 
             if vals["predict_on"] != None:
+                # Get probabilities for user given values
                 predicted_vals = [str("{:.3g}".format(y_func(value))) for value in vals["predict_on"]]
                 self.result_output.add_widget(BorderedTable(
                     headers=[vals["col"], "Probability"], data=[[str(x) for x in vals["predict_on"]], predicted_vals],
@@ -117,7 +119,7 @@ class PoissonDistribution(BaseAction):
             axis.plot(x_line,y_line,color=App.get_running_app().graph_colors[0])
 
             if vals["show_bars"]:
-                # Get the x values
+                # Show the relative frequency bars for the actual data
                 x_vals = set(col_data)
                 x_counts = {}
                 for val in col_data:

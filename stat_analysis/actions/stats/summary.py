@@ -81,12 +81,15 @@ class Summary(BaseAction):
         if not quiet:
             vals = self.form_outputs
             dataset = App.get_running_app().get_dataset_by_name(vals["dataset"])
-            col_vals = []
+            # Get index of column in data set
             row_pos = list(dataset.get_header_structure().keys()).index(vals["col"])
+            # Create list of the column values that will be used in the action_maps functions
+            col_vals = []
             for row in dataset.get_data():
                 col_vals.append(row[row_pos])
-
+            # Run the specified action
             val = self.action_maps[vals["action"]](col_vals)
+
             self.result_output.clear_outputs()
             self.result_output.add_widget(BorderedTable(
                 headers=[vals["action"].replace(" ","\n")],data=[[str(round(val,5))]],row_default_height=60,

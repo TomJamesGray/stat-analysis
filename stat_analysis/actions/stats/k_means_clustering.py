@@ -105,13 +105,14 @@ K is the amount of clusters that the algorithm will try and split the dataset in
 
         vals = self.form_outputs
         if int(vals["k"]) <= 0:
+            # Invalid value of K used
             if not quiet:
                 self.make_err_message("Invalid value of k: {}".format(vals["k"]))
             return False
 
 
         dataset = App.get_running_app().get_dataset_by_name(vals["dataset"])
-
+        # Get indexes of x and y variables
         x_pos = list(dataset.get_header_structure().keys()).index(vals["x_var"])
         y_pos = list(dataset.get_header_structure().keys()).index(vals["y_var"])
         x,y = [],[]
@@ -154,7 +155,7 @@ K is the amount of clusters that the algorithm will try and split the dataset in
             path = os.path.join(App.get_running_app().tmp_folder, "plot.png")
             fig.savefig(path)
             self.result_output.clear_outputs()
-
+            # Create table displaying centroid positions and iterations performed
             self.result_output.add_widget(
                 BorderedTable(headers=["Centroids","Iterations\nperformed"],
                               data=[[str(model.centroids)],[str(model.iters_to_fit)]],row_default_height=60,
@@ -238,6 +239,7 @@ class KMeans(object):
 
     @staticmethod
     def euclidean_dist(p1, p2):
+        # Get the absolute distance from two points
         squared_dist = 0
 
         for i in range(0, len(p1)):

@@ -10,12 +10,14 @@ logger = logging.getLogger(__name__)
 
 
 class BorderedButton(Button):
+    # Define properties for BorderedButton (used in kv file)
     b_width = NumericProperty(1)
     b_color = ListProperty([0, 0, 0, 1])
     inside = BooleanProperty(False)
 
 
 class BorderedLabel(Label):
+    # Define properties for BorderedLabel (used in kv file)
     b_width = NumericProperty(1)
     b_color = ListProperty([0,0,0,1])
 
@@ -43,16 +45,18 @@ class BorderedTable(GridLayout):
         if self.table_data != []:
             if self.orientation == "vertical":
                 self.cols = len(self.headers)
+                # Create the headers
                 for header in self.headers:
                     self.add_widget(BorderedLabel(text=str(header), color=self.header_col, size_hint_x=None,
                                                   size_hint_y=None,height=30,markup=self.markup))
 
                 for row in self.table_data:
-                        for val in row:
-                            self.add_widget(BorderedLabel(text=str(val), color=(0, 0, 0, 1), size_hint_x=None,
-                                                          size_hint_y=None,height=30,markup=self.markup))
+                    for val in row:
+                        self.add_widget(BorderedLabel(text=str(val), color=(0, 0, 0, 1), size_hint_x=None,
+                                                      size_hint_y=None,height=30,markup=self.markup))
         elif self.data != []:
             if self.orientation == "vertical":
+                # Create table for vertical orientation with normal data
                 self.cols = len(self.headers)
                 for header in self.headers:
                     self.add_widget(BorderedLabel(text=str(header),color=self.header_col,size_hint_x=None,
@@ -64,6 +68,7 @@ class BorderedTable(GridLayout):
                                                       height=30,markup=self.markup))
 
             elif self.orientation == "horizontal":
+                # Create table for horizontal orientation with normal data
                 self.rows = len(self.headers)
                 for x in range(0, len(self.data)):
                     self.add_widget(

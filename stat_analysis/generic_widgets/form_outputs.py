@@ -27,10 +27,13 @@ class DataSpreadsheet(GridLayout):
         super().__init__(**kwargs)
         self.cols = 1
         self.size_hint=(None,None)
+        # Amount of columns that display actual data
         self.data_cols = len(self.table_data[0])
         self.col_default_width = 150
         self.col_min_width = 75
+        # Width of the widgets that resize columns
         self.adjuster_show_width = 2
+        # Width of the box around width adjusters that trigger them
         self.adjuster_click_width = 10
         self.width_adjusters = []
         self.data_columns = []
@@ -53,6 +56,8 @@ class DataSpreadsheet(GridLayout):
                     self.table_data[y][x])
 
         for i,header in enumerate(self.headers):
+            # Create headers, columns and width adjusters
+
             lbl = GridAdjustHeader(text=str(header),width=self.col_default_width)
 
             data_column = ColumnRV(raw_data=self.columns[i],size_hint=(None,1),
@@ -60,6 +65,7 @@ class DataSpreadsheet(GridLayout):
 
             self.spreadsheet_headers.bind(height=data_column.setter("height"))
             if i == self.data_cols -1:
+                # Only show scroll bar for the very last column
                 data_column.bar_color = (.7,.7,.7,.9)
                 data_column.bar_inactive_color = (.7,.7,.7,.4)
                 data_column.bar_width = 15
@@ -67,6 +73,7 @@ class DataSpreadsheet(GridLayout):
             split = WidthAdjust(size_hint_x=None,width=self.adjuster_show_width,adjust=[lbl,data_column])
 
             if i == 0:
+                # Only show left border if it's the 1st column
                 lbl.left_border = True
                 data_column.left_border = True
 
@@ -331,7 +338,11 @@ class ExportableGraph(GridLayout):
     axis = ListProperty()
 
     def save_btn(self):
-        self.save_popup = Popup(size_hint=(None, None), size=(400, 400))
+        """
+        Method called when the user presses the "Save" button
+        """
+        self.save_popup = Popup(size_hint=(None, None), size=(400, 400),title="Save Graph")
+        # Create save dialog
         f_chooser = FileChooserSaveDialog(default_file_name="graph.png")
         f_chooser.on_save = self.do_save
         f_chooser.on_cancel = lambda :self.save_popup.dismiss()
@@ -340,9 +351,13 @@ class ExportableGraph(GridLayout):
 
     def do_save(self,path,filename):
         self.save_popup.dismiss()
+        # Copy the temporary graph image to the user specified location
         shutil.copyfile(self.source,os.path.join(path,filename))
 
     def graph_opts(self):
+        """
+        Method called when the user presses the "Graph options" button
+        """
         self.graph_options_popup = Popup(size_hint=(None,None),size=(400,400),title="Graph Options")
         opts = GraphOptions(fig=self.fig,axis=self.axis)
         opts.on_graph_update = self.update_graph
@@ -350,9 +365,11 @@ class ExportableGraph(GridLayout):
         self.graph_options_popup.open()
 
     def update_graph(self,fig,axis):
+        # Update the graph with the new figure and axis variables
         self.graph_options_popup.dismiss()
         self.fig = fig
         self.axis = axis
+        # Create the new image and reload the image being displayed
         self.fig.savefig(self.source)
         self.image.reload()
 
@@ -401,7 +418,7 @@ class GraphOptions(TabbedPanel):
 
     def __init__(self,**kwargs):
         super().__init__(**kwargs)
-
+        # List of options the user can change about the graph
         self.opts_binds = [
             {
                 "prop":lambda x:x.get_xlabel(),
@@ -451,6 +468,7 @@ class GraphOptions(TabbedPanel):
             grd = GridLayout(cols=2,size_hint=(1,1),row_default_height=30,row_force_default=True)
 
             for opt in self.opts_out[-1]:
+                # Create the inputs for each individual option
                 grd.add_widget(Label(text=opt["text"]))
                 opt["form"] = TextInput(text=str(opt["prop"](axe)))
                 grd.add_widget(opt["form"])
@@ -464,6 +482,7 @@ class GraphOptions(TabbedPanel):
     def update_graph(self,*args):
         logger.info("Updating graph with opts {}".format(self.opts_out))
         for i in range(0,len(self.opts_out)):
+            # Set the graph options with the user specified options
             for opt in self.opts_out[i]:
                 opt["set"](self.axis[i],opt["form"].text)
 

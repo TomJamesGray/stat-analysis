@@ -29,9 +29,8 @@ class FormDropDown(GridLayout):
             input_label = FormInputLabel(text=input_dict["visible_name"],tip=input_dict["tip"])
         else:
             input_label = FormInputLabel(text=input_dict["visible_name"])
-
-
         self.add_widget(input_label)
+        # Set the previous data set name to None, this is used to check if the selection has changed
         self.prev_dataset_name = None
 
         self.main_btn = BorderedButton(size_hint=(1,None), height=30, background_normal="",
@@ -68,9 +67,11 @@ class FormDropDown(GridLayout):
             raise ValueError("Unrecognised data type {} in form layout".format(input_dict["data_type"]))
 
         if "default" in input_dict.keys():
+            # Set default value
             self.main_btn_text = input_dict["default"]
             if "on_change" in input_dict.keys():
                 if input_dict.get("run_on_default_set",True):
+                    # Run on change functions if run_on_default_set is True
                     input_dict["on_change"](self, self.main_btn_text)
 
         else:
@@ -139,9 +140,14 @@ class FormDropDown(GridLayout):
             self.dropdown.open(self.main_btn)
 
     def mk_dropdown(self,dropdown_options):
+        """
+        Generate the actual buttons that are shown in the drop down
+        :param dropdown_options: List of strings to be shown to the user in the drop down
+        """
         self.dropdown = DropDown()
         for i,txt in enumerate(dropdown_options):
             if i == len(dropdown_options)-1:
+                # Display bottom border as last option
                 btn = ButtonDropDown(text=txt,bottom=True)
             else:
                 btn = ButtonDropDown(text=txt)

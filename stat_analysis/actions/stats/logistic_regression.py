@@ -152,6 +152,7 @@ An example of a logistic regression can be found in the "exam passes" dataset. I
             logger.debug("Using cached model for type {} save name {}".format(self.type,self.save_name))
             model = self.stored_model
         else:
+            # Generate logistic model
             model = LR(fit_intercept=True,C=1e9)
             model.fit(x,y)
             self.stored_model = model
@@ -176,6 +177,7 @@ An example of a logistic regression can be found in the "exam passes" dataset. I
             ))
 
             if vals["predict_on"] != None:
+                # Get probabilities for user given values
                 predicted_vals = [str(np.round(1/(1+np.exp(-(y*x_coeff+const))),3)) for y in vals["predict_on"]]
                 self.result_output.add_widget(BorderedTable(
                     headers=[vals["x_var"],"Probability"],data=[[str(x) for x in vals["predict_on"]],predicted_vals],
@@ -184,6 +186,7 @@ An example of a logistic regression can be found in the "exam passes" dataset. I
                 ))
 
             if vals["inverse_logit"] != None:
+                # Get values for user specified probabilities
                 predicted_x = []
                 used_p_vals = []
                 for val in vals["inverse_logit"]:

@@ -25,7 +25,6 @@ The formula for the output line is given as well as a graph containing a scatter
     saveable = True
 
     def __init__(self,output_widget):
-        self.user_name = "XYZ"
         self.status = "OK"
         self.form = [
             {
@@ -85,7 +84,7 @@ The formula for the output line is given as well as a graph containing a scatter
                         "tip":"This controls the amount of decimal points to be shown in the output for"
                               "the regression line"
                     }]
-            },
+            }
         ]
         self.output_widget = output_widget
         self.tmp_dataset = None

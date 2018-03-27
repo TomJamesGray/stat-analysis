@@ -23,11 +23,12 @@ class FormFile(GridLayout):
             input_label = FormInputLabel(text=input_dict["visible_name"], tip=input_dict["tip"])
         else:
             input_label = FormInputLabel(text=input_dict["visible_name"])
-
+        # Create button that opens the file selector when pressed
         self.file_chooser_btn = Button(text="Select File",height=30,size_hint_y=None)
         self.file_chooser_btn.bind(on_press=self.open_f_selector)
 
         if "default" in input_dict.keys():
+            # Set default file location if specified
             if input_dict["default"] != None:
                 self.file_chooser_btn.text  = os.path.basename(input_dict["default"])
                 self.default_path = os.path.dirname(input_dict["default"])
@@ -36,9 +37,14 @@ class FormFile(GridLayout):
         self.add_widget(self.file_chooser_btn)
 
     def open_f_selector(self,*args):
+        """
+        Open the file selector
+        """
         self.popup = Popup(title="Select file",size_hint=(None,None),size=(400,400))
         f_chooser = FileChooserLoadDialog(filters=self.input_dict.get("filters",[]))
+        # Close the popup on the cancel event
         f_chooser.on_cancel = lambda :self.popup.dismiss()
+        # Run the f_selector_load method on the load event
         f_chooser.on_load = self.f_selector_load
         self.popup.content = f_chooser
         self.popup.open()
@@ -46,6 +52,7 @@ class FormFile(GridLayout):
     def f_selector_load(self,_,file_location):
         self.popup.dismiss()
         self.file_location = file_location[0]
+        # Set the text of the button to be the file name
         self.file_chooser_btn.text = os.path.basename(file_location[0])
 
     def get_val(self):

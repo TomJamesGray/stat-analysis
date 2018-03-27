@@ -407,7 +407,6 @@ class LogView(GridLayout):
             self.height = 100
             self.parent.strip_size = "10pt"
             self.parent.size_hint_y = 0.2
-            self.scroll_view.height = self.prev_height
             self.size_hint_y = 0.2
 
             self.log_visible = True

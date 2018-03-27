@@ -29,6 +29,7 @@ class FormString(GridLayout):
 
     def get_val(self):
         if self.str_input.text == "":
+            # Input is empty so return None
             return None
         else:
             return self.str_input.text

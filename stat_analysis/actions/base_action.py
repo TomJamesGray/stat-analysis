@@ -55,7 +55,6 @@ class BaseAction(object):
         the type of input to be used and will be looked up in form_input_maps. Form name is the
         key for the value in the form_outputs that will be set by the validate method. Visible name
         is the label that will be shown to the user
-        :return:
         """
         logger.debug("Rendering action {}".format(self.type))
         form_layout = GridLayout(cols=1,padding=(5,5),spacing=(10,10),width=self.form_width,size_hint=(None,None))
@@ -272,6 +271,7 @@ class BaseAction(object):
         if isinstance(msg,str):
             disp_msg = "{} {}".format(bullet,msg)
         else:
+            # msg is a list so make each error a separate line
             disp_msg = ""
             for line in msg:
                 disp_msg += "{} {}\n".format(bullet,line)
@@ -307,6 +307,7 @@ class BaseAction(object):
         del self
 
     def display_help(self):
+        # Run the help_view file with the help text as the argument
         subprocess.Popen(["python",resource_find("help_view.py"),self.help_text])
 
 

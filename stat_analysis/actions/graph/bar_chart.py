@@ -91,6 +91,7 @@ class BarChart(BaseAction):
         raw_data = OrderedDict()
 
         if vals["y_var"] == None:
+            # Use the amount of occurences as the height of bars
             for row in dataset.get_data():
                 if row[x_pos] in raw_data.keys():
                     raw_data[row[x_pos]] += 1
@@ -105,6 +106,7 @@ class BarChart(BaseAction):
                     raw_data[row[x_pos]] = row[y_pos]
 
         if vals["sort_x"]:
+            # Sort the bars so the x values are in ascending order
             y_data = OrderedDict(sorted(raw_data.items(),key=lambda x:x[1]))
         else:
             y_data = raw_data
@@ -127,6 +129,7 @@ class BarChart(BaseAction):
         fig.savefig(path)
 
         if not quiet:
+            # Create the graph
             self.result_output.clear_outputs()
             self.result_output.add_widget(ExportableGraph(source=path, fig=fig, axis=[axis], nocache=True,
                                                           size_hint_y=None))
