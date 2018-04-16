@@ -68,10 +68,13 @@ class TransformData(BaseAction):
         self.tmp_dataset_listeners = []
 
     def set_tmp_dataset(self, val):
+        """Set temporary data set so it can be accessed by form inputs"""
         self.tmp_dataset = val
+        # Update the form inputs that are listening for the data set being changed
         [form_item.try_populate(quiet=True) for form_item in self.tmp_dataset_listeners]
 
     def add_dataset_listener(self, val):
+        # Add form input to list of listeners for the data set change
         self.tmp_dataset_listeners.append(val)
 
     def run(self,validate=True,quiet=False):
@@ -86,6 +89,7 @@ class TransformData(BaseAction):
                 logger.debug("Form validated, form outputs: {}".format(self.form_outputs))
 
         vals = self.form_outputs
+        # Get data set the user chose
         dataset = App.get_running_app().get_dataset_by_name(vals["dataset"])
 
         if dataset == False:
@@ -93,14 +97,18 @@ class TransformData(BaseAction):
             raise ValueError("Dataset {} couldn't be found".format(vals["dataset"]))
         # Get the position in each row for the column
         col_pos = list(dataset.get_header_structure().keys()).index(vals["transform_col"])
+        # Get the function that is going to be used to transform the values
         transform_func = self.simple_transforms[vals["transform_name"]]
 
+        # Get the new values and add them as a column to the data set
         new_data = [transform_func(x[col_pos]) for x in dataset.get_data()]
         dataset.add_column(new_data,col_type="float",col_name=vals["new_col_name"])
 
+        # Set save_name to None so this action doesn't appear on the home screen but is still saved
         self.save_name = None
         App.get_running_app().add_action(self)
         if not quiet:
+            # Add an output table showing the amount of records, columns and the column -> data type relationships
             self.result_output.clear_outputs()
             self.result_output.add_widget(BorderedTable(
                 headers=["Records", "Columns", "Data types"],

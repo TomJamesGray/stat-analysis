@@ -30,6 +30,7 @@ class ImportSetColTypes(SetColTypes):
         lbl.bind(texture_size=lbl.setter("size"))
         self.result_output.add_widget(lbl)
         self.result_output.add_widget(self.data_spreadsheet)
+        # Make the table use up all the width of the output so it can scroll horizontally if needed
         self.data_spreadsheet.bind(minimum_width=self.result_output.setter("width"))
 
         # Draw the left border on the first column rv and header so the table looks complete
@@ -38,24 +39,28 @@ class ImportSetColTypes(SetColTypes):
 
         total_errors = 0
         errors_ouptputs = Label(color=(0,0,0,1),size_hint=(None,None),markup=True,font_size="12")
+        # Make error outputs use up all available space
         errors_ouptputs.bind(texture_size=errors_ouptputs.setter("size"))
 
         columns = App.get_running_app().get_dataset_by_name(self.passed_dataset_name).get_header_structure()
 
         for col_name,error_vals in self.possible_errors.items():
             if len(error_vals) == 0:
+                # Skip this column if there are no detected errors
                 continue
 
             guessed_type = columns[col_name][0]
             blanks = 0
+            # Increment total errors with the length of this columns errors
             total_errors += len(error_vals)
             outputs = []
             for val in error_vals:
                 if val == "":
+                    # Value is blank
                     blanks += 1
                 else:
                     outputs.append("• Recommended type {} conflicts with '{}'\n".format(guessed_type,val))
-
+            # Create for column with the amount of errors
             errors_ouptputs.text += "\n[size=14]Column '{}' errors:[/size]\n".format(col_name)
 
             if blanks != 0:
@@ -65,6 +70,7 @@ class ImportSetColTypes(SetColTypes):
 
             for out in outputs:
                 errors_ouptputs.text += out
+        # Add header with total errors for all columns at start of error text
         errors_ouptputs.text = "[size=18]Total potential errors {}[/size]\n".format(total_errors) + \
                                errors_ouptputs.text
         self.result_output.add_widget(errors_ouptputs)

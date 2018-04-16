@@ -37,6 +37,7 @@ class SetColTypes(base_action.BaseAction):
         self.output_widget = output_widget
 
     def form_add_cols(self,dataset_name,set_dataset_selector=True,re_render=True):
+        # Get data set that is being modified
         self.dataset = App.get_running_app().get_dataset_by_name(dataset_name)
         # Copy the base_form, don't reference it
         self.form = self.base_form[:]
@@ -46,6 +47,8 @@ class SetColTypes(base_action.BaseAction):
 
         col_pos = 0
         for col_name,col_struc in self.dataset.get_header_structure().items():
+            # Go through each column in the data set and add a form input for it with
+            # the column name and a combo box of possible data types
             self.form.append({
                 "group_name":"Column {}".format(col_pos),
                 "inputs":[
@@ -67,6 +70,8 @@ class SetColTypes(base_action.BaseAction):
                 ]
             })
             col_pos += 1
+        # Clear the form that is being currently displayed and re-render it with the new inputs
+        # for the chosen data set
         self.output_widget.clear_widgets()
         if re_render:
             self.render()
@@ -84,10 +89,13 @@ class SetColTypes(base_action.BaseAction):
             n_cols = len(self.dataset.get_headers())
             header_struct = OrderedDict()
             for i in range(0,n_cols):
+                # Get the converter function for the user specified data type
                 convert = types[vals["{}_type".format(i)]]["convert"]
+                # Create the header structure record with the data type name and converter function
                 header_struct[vals["{}_name".format(i)]] = (vals["{}_type".format(i)],convert)
 
             logger.info("Header structure generated: {}".format(header_struct))
+            # Set the header structure of the data set
             self.dataset.set_header_structure(header_struct)
             # Make sure there are more than 0 records
             if self.dataset.records == 0:
@@ -96,15 +104,19 @@ class SetColTypes(base_action.BaseAction):
                 self.make_err_message("Generated dataset has length zero. Likely caused by setting a column to a "
                                       "value that would cause errors, ie trying to pass strings as integers. "
                                       "Restoring dataset")
+                # Reset data set data
                 self.dataset.set_data(stored_data_copy)
+                # Reset data set header structure
                 self.dataset.set_header_structure(header_struct_copy)
                 return
 
             self.result_output.clear_outputs()
+            # Add an output table showing the amount of records, columns and the column -> data type relationships
             self.result_output.add_widget(BorderedTable(
                 headers=["Records","Columns","Data types"],data=[[str(self.dataset.records)],[str(self.dataset.columns)],
                 [str((", ".join((["{} -> {}".format(x,y[0]) for x,y in header_struct.items()]))))]],
                 row_default_height=30, row_force_default=True,orientation="horizontal",for_scroller=True,
                 size_hint_x=1,size_hint_y=None))
         else:
+            # Create error message with the form errors
             self.make_err_message(self.form_errors)
