@@ -92,9 +92,12 @@ class ImportCSV(base_action.BaseAction):
         # Get rid of data before user specified start line
         start_line = int(vals["start_line"])
         if start_line <= 0 or start_line-1 >= len(data):
+            # Make error message to tell the user their start line is wrong
             self.make_err_message("Invalid start line {}".format(vals["start_line"]))
             return False
         else:
+            # Trim the input data to go from the start line to the end (-1 is because the list is zero indexed
+            # but line numbers aren't
             data = data[int(vals["start_line"])-1:]
 
 
@@ -103,10 +106,12 @@ class ImportCSV(base_action.BaseAction):
         col_d_types = OrderedDict()
         possible_col_errors = OrderedDict()
         for x in range(len(data[0])):
+            # Temporary list for the columns data
             tmp_col_data = []
             for y in range(len(data)):
+                # Append data value to the list
                 tmp_col_data.append(data[y][x])
-
+            # Set col data type and errors with return data from guess_d_type function
             col_d_types[self.headers[x]],possible_col_errors[self.headers[x]] = guess_d_type(tmp_col_data)
 
 
@@ -130,19 +135,23 @@ class ImportCSV(base_action.BaseAction):
             return False
 
         if not quiet:
+            # Create DataSpreadsheet widget that is used in ImportSetColTypes action to show a sample of the data
             tbl = DataSpreadsheet(table_data=self.stored_data[:5],headers=self.headers,height=155)
             tbl.bind(minimum_width=tbl.setter("width"))
-
+            # Redraw output screen with ImportSetColTypes action
             self.output_widget.parent.refresh(ImportSetColTypes,dataset_name=vals["save_name"],
                                               spreadsheet=tbl,possible_errors=possible_col_errors)
 
     def get_data(self):
+        """Get the data of the data set"""
         return self.stored_data
 
     def get_headers(self):
+        """Get the header names of the data set"""
         return list(self.cols_structure.keys())
 
     def get_header_structure(self):
+        """Get the header structure of the data set"""
         return self.cols_structure
 
     def set_header_structure(self,struct,drop_err_cols=True):
@@ -154,10 +163,12 @@ class ImportCSV(base_action.BaseAction):
         converters = []
         for _,x in self.cols_structure.items():
             converters.append(x[1])
-
+        # Create list to store data temporarily while data is being converted and list
+        # that stores indexes of rows that are to be dropped
         tmp_data = []
         to_drop = []
         for row in range(0,len(self.stored_data)):
+            # Append blank list to tmp_data for this row of data
             tmp_data.append([])
             for col in range(0,len(self.stored_data[0])):
                 try:
@@ -181,8 +192,9 @@ class ImportCSV(base_action.BaseAction):
         if len(col_data) != self.records:
             raise ValueError("Length of additional column is not equal to length of existing data")
         for i in range(0,self.records):
+            # Add the new data to the row in the saved data
             self.stored_data[i].append(col_data[i])
-
+        # Update the column structure
         self.cols_structure[col_name] = (col_type,types[col_type]["convert"])
 
     def set_data(self,data):
@@ -219,6 +231,7 @@ class ImportCSV(base_action.BaseAction):
         file_location = resource_find(self.form_outputs["file"])
         if file_location == None:
             return "Error in loading file {} after `resource_find`, file not found".format(file_location)
+        # Update the file attribute in the form outputs
         self.form_outputs["file"] = file_location
         try:
             self.run(validate=False,quiet=True)

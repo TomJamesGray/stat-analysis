@@ -29,8 +29,9 @@ class ViewData(base_action.BaseAction):
         self.run_after_render = False
 
         if "dataset" in kwargs:
-            # Dataset has been specified as a kwarg
+            # Dataset has been specified as a kwarg so run the action when it is rendered
             self.run_after_render = True
+            # Set the form outputs and their defaults to the specified data set
             self.form[0]["inputs"][0]["default"] = kwargs["dataset"]
             self.form_outputs = {"dataset":kwargs["dataset"]}
 
@@ -49,6 +50,7 @@ class ViewData(base_action.BaseAction):
             else:
                 logger.debug("Form validated, form outputs: {}".format(self.form_outputs))
         vals = self.form_outputs
+        # Get data set from the name from form outputs
         cur_set = App.get_running_app().get_dataset_by_name(vals["dataset"])
         if cur_set == None:
             # Exit if somehow data set can't be found
@@ -61,7 +63,7 @@ class ViewData(base_action.BaseAction):
             self.result_output.size_hint_y = 1
             self.result_output.size_hint_x = None
             self.result_output.padding = (0,0,0,5)
-
+            # Create table to show the data sets data
             sheet = DataSpreadsheet(headers=cur_set.get_headers(),table_data=cur_set.get_data())
             # Make DataSpreadsheet fill up screen
             self.result_output.bind(height=sheet.setter("height"))
