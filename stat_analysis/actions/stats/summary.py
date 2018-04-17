@@ -62,10 +62,13 @@ class Summary(BaseAction):
         self.tmp_dataset_listeners = []
 
     def set_tmp_dataset(self, val):
+        """Set temporary data set so it can be accessed by form inputs"""
         self.tmp_dataset = val
+        # Update the form inputs that are listening for the data set being changed
         [form_item.try_populate(quiet=True) for form_item in self.tmp_dataset_listeners]
 
     def add_dataset_listener(self, val):
+        # Add form input to list of listeners for the data set change
         self.tmp_dataset_listeners.append(val)
 
     def run(self, validate=True, quiet=False, use_cached=False, **kwargs):
@@ -80,6 +83,7 @@ class Summary(BaseAction):
 
         if not quiet:
             vals = self.form_outputs
+            # Get data set from the users input
             dataset = App.get_running_app().get_dataset_by_name(vals["dataset"])
             # Get index of column in data set
             row_pos = list(dataset.get_header_structure().keys()).index(vals["col"])
@@ -91,6 +95,7 @@ class Summary(BaseAction):
             val = self.action_maps[vals["action"]](col_vals)
 
             self.result_output.clear_outputs()
+            # Display the output of the summary function to the user
             self.result_output.add_widget(BorderedTable(
                 headers=[vals["action"].replace(" ","\n")],data=[[str(round(val,5))]],row_default_height=60,
                 row_force_default=True,orientation="horizontal",size_hint_y=None,size_hint_x=1,for_scroller=True

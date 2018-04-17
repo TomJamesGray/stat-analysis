@@ -91,11 +91,14 @@ The formula for the output line is given as well as a graph containing a scatter
         self.tmp_dataset_listeners = []
         self.stored_coeffs = None
 
-    def set_tmp_dataset(self,val):
+    def set_tmp_dataset(self, val):
+        """Set temporary data set so it can be accessed by form inputs"""
         self.tmp_dataset = val
+        # Update the form inputs that are listening for the data set being changed
         [form_item.try_populate(quiet=True) for form_item in self.tmp_dataset_listeners]
 
-    def add_dataset_listener(self,val):
+    def add_dataset_listener(self, val):
+        # Add form input to list of listeners for the data set change
         self.tmp_dataset_listeners.append(val)
 
     def run(self,validate=True,quiet=False,use_cached=False,*args):
@@ -108,6 +111,7 @@ The formula for the output line is given as well as a graph containing a scatter
             else:
                 logger.debug("Form validated, form outputs: {}".format(self.form_outputs))
         vals = self.form_outputs
+        # Get data set from the users input
         dataset = App.get_running_app().get_dataset_by_name(vals["dataset"])
 
         # Get the data set for x and y in seperate lists
@@ -117,14 +121,17 @@ The formula for the output line is given as well as a graph containing a scatter
         # Get's the position in each row for the desired columns
         x_pos = list(dataset.get_header_structure().keys()).index(vals["x_var"])
         y_pos = list(dataset.get_header_structure().keys()).index(vals["y_var"])
+        # Get x and y column data in separate lists
         for row in dataset.get_data():
             x.append(x_parse(row[x_pos]))
             y.append(y_parse(row[y_pos]))
 
         if use_cached and self.stored_coeffs != None:
+            # Use the cached coefficients
             logger.debug("Using cached model for type {} save name {}".format(self.type, self.save_name))
             coeffs = self.stored_coeffs
         else:
+            # Fit the regression line with the x and y values for the given degree
             coeffs = numpy.polyfit(x,y,vals["regression_degree"])
 
 
@@ -139,19 +146,24 @@ The formula for the output line is given as well as a graph containing a scatter
             deg = len(coeffs)-1
             for coeff in coeffs:
                 if func != "" and coeff > 0:
+                    # Add "+" sign if positive coeff, not needed if -ve as "-" sign is already present
                     func += "+"
+                # Round the coefficient to the given output precision
                 rnd_coeff = numpy.around(coeff,int(vals["regression_out_precision"]))
                 if deg > 1:
+                    # Use Kivy's superscript for displaying powers of x
                     func += "{}x[sup]{}[/sup]".format(rnd_coeff,deg)
                 elif deg == 1:
                     func += "{}x".format(rnd_coeff)
                 else:
                     func += "{}".format(rnd_coeff)
                 deg -= 1
-
+            # Create figure and subplot for graph
             fig = plt.figure()
             axis = plt.subplot(111)
+            # Plot data points
             axis.scatter(x,y,color=App.get_running_app().graph_colors[1])
+            # Plot regression line
             axis.plot(x_line,y_line,color=App.get_running_app().graph_colors[0])
 
             # Set axis labels
@@ -159,15 +171,17 @@ The formula for the output line is given as well as a graph containing a scatter
             axis.set_ylabel(vals["y_var"])
 
             axis.legend()
+            # Make path for the graph image and save it
             path = os.path.join(App.get_running_app().tmp_folder, "plot.png")
             fig.savefig(path)
 
             self.result_output.clear_outputs()
+            # Show the user the generated function in the table
             self.result_output.add_widget(BorderedTable(
                 headers=["Function"],data=[[func]],row_default_height=30,row_force_default=True,
                 orientation="horizontal",size_hint_y=None,size_hint_x=1,for_scroller=True,markup=True
             ))
-
+            # Show the graph
             self.result_output.add_widget(ExportableGraph(source=path, fig=fig, axis=[axis], nocache=True,
                                                           size_hint_y=None))
 
