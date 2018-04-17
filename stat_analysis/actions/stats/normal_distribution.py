@@ -85,10 +85,13 @@ A good example dataset is the "heights" example dataset as if you run the normal
         self.tmp_dataset_listeners = []
 
     def set_tmp_dataset(self, val):
+        """Set temporary data set so it can be accessed by form inputs"""
         self.tmp_dataset = val
+        # Update the form inputs that are listening for the data set being changed
         [form_item.try_populate(quiet=True) for form_item in self.tmp_dataset_listeners]
 
     def add_dataset_listener(self, val):
+        # Add form input to list of listeners for the data set change
         self.tmp_dataset_listeners.append(val)
 
     def run(self, validate=True, quiet=False, use_cached=False, **kwargs):
@@ -102,6 +105,7 @@ A good example dataset is the "heights" example dataset as if you run the normal
                 logger.debug("Form validated, form outputs: {}".format(self.form_outputs))
 
         vals = self.form_outputs
+        # Get data set from users inputs
         dataset = App.get_running_app().get_dataset_by_name(vals["dataset"])
 
         col_data = []
@@ -109,8 +113,10 @@ A good example dataset is the "heights" example dataset as if you run the normal
         col_pos = list(dataset.get_header_structure().keys()).index(vals["col"])
 
         for row in dataset.get_data():
+            # Get the data for the column in a separate list
             col_data.append(row[col_pos])
 
+        # Calculate variance and mean of the column used
         variance = np.var(col_data)
         mean = np.mean(col_data)
         if not quiet:
@@ -120,6 +126,7 @@ A good example dataset is the "heights" example dataset as if you run the normal
 
             # Get x values for the line
             x_line = np.linspace(min(col_data),max(col_data),500)
+            # Use the normal distribution function on the x values
             y_line = [y_func(x) for x in x_line]
 
             if vals["predict_on"] != None:
@@ -130,9 +137,10 @@ A good example dataset is the "heights" example dataset as if you run the normal
                     row_default_height=40, row_force_default=True, orientation="vertical", size_hint_y=None,
                     for_scroller=True
                 ))
-
+            # Create graph and subplot
             fig = plt.figure()
             axis = plt.subplot(111)
+            # Plot the normal distribution curve
             axis.plot(x_line,y_line,color=App.get_running_app().graph_colors[0])
 
             if vals["show_bars"]:
@@ -141,21 +149,25 @@ A good example dataset is the "heights" example dataset as if you run the normal
                 x_counts = {}
                 for val in col_data:
                     if val in x_counts.keys():
+                        # Value already exists so increment the counter
                         x_counts[val] += 1
                     else:
+                        # Value doesn't already exist so create the key for the value
                         x_counts[val] = 1
-
+                # Sort the data in ascending order so it matches the normal distribution curve
                 x_counts = OrderedDict(sorted(x_counts.items(),key=lambda x:x[0]))
-
+                # Get the relative frequency so heights of bars correspond to the normal curve
                 x_relative_freq = [x/len(col_data) for x in x_counts.values()]
+                # Plot the bars
                 axis.bar(list(x_vals),x_relative_freq,color=App.get_running_app().graph_colors[1])
-
+            # Set axis labels
             axis.set_xlabel(vals["col"])
             axis.set_ylabel("Probability Density")
 
             axis.legend()
+            # Make the path for the graph image and save it
             path = os.path.join(App.get_running_app().tmp_folder, "plot.png")
             fig.savefig(path)
-
+            # Show the graph
             self.result_output.add_widget(ExportableGraph(source=path, fig=fig, axis=[axis], nocache=True,
                                                           size_hint_y=None))

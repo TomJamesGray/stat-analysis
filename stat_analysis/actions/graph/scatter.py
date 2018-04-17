@@ -54,10 +54,13 @@ class ScatterPlot(BaseAction):
         self.tmp_dataset_listeners = []
 
     def set_tmp_dataset(self, val):
+        """Set temporary data set so it can be accessed by form inputs"""
         self.tmp_dataset = val
+        # Update the form inputs that are listening for the data set being changed
         [form_item.try_populate(quiet=True) for form_item in self.tmp_dataset_listeners]
 
     def add_dataset_listener(self, val):
+        # Add form input to list of listeners for the data set change
         self.tmp_dataset_listeners.append(val)
 
     def run(self,validate=True,quiet=False,preloaded=False,**kwargs):
@@ -74,6 +77,7 @@ class ScatterPlot(BaseAction):
         vals = self.form_outputs
 
         if not quiet:
+            # Get data set the users input
             dataset = App.get_running_app().get_dataset_by_name(vals["dataset"])
 
             if dataset == False:
@@ -84,23 +88,26 @@ class ScatterPlot(BaseAction):
             # Get's the position in each row for the desired columns
             x_pos = list(dataset.get_header_structure().keys()).index(vals["x_var"])
             y_pos = list(dataset.get_header_structure().keys()).index(vals["y_var"])
+            # Create lists of the x and y column data
             for row in dataset.get_data():
                 x.append(row[x_pos])
                 y.append(row[y_pos])
-
+            # Create graph figure and subplot
             fig = plt.figure()
             axis = plt.subplot(111)
-
+            # Create scatter plot
             axis.scatter(x,y,color=App.get_running_app().graph_colors[0])
             # Set axis labels
             axis.set_xlabel(vals["x_var"])
             axis.set_ylabel(vals["y_var"])
 
             axis.legend()
+            # Find path to save the graph image and save it
             path = os.path.join(App.get_running_app().tmp_folder, "plot.png")
             fig.savefig(path)
 
             self.result_output.clear_outputs()
+            # Show the graph
             self.result_output.add_widget(ExportableGraph(source=path, fig=fig, axis=[axis], nocache=True,
                                                           size_hint_y=None))
 

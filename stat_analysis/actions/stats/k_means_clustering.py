@@ -87,10 +87,13 @@ K is the amount of clusters that the algorithm will try and split the dataset in
         self.stored_model = None
 
     def set_tmp_dataset(self, val):
+        """Set temporary data set so it can be accessed by form inputs"""
         self.tmp_dataset = val
+        # Update the form inputs that are listening for the data set being changed
         [form_item.try_populate(quiet=True) for form_item in self.tmp_dataset_listeners]
 
     def add_dataset_listener(self, val):
+        # Add form input to list of listeners for the data set change
         self.tmp_dataset_listeners.append(val)
 
     def run(self,validate=True,quiet=False,use_cached=False,**kwargs):
@@ -110,13 +113,13 @@ K is the amount of clusters that the algorithm will try and split the dataset in
                 self.make_err_message("Invalid value of k: {}".format(vals["k"]))
             return False
 
-
+        # Get data set from the users input
         dataset = App.get_running_app().get_dataset_by_name(vals["dataset"])
         # Get indexes of x and y variables
         x_pos = list(dataset.get_header_structure().keys()).index(vals["x_var"])
         y_pos = list(dataset.get_header_structure().keys()).index(vals["y_var"])
         x,y = [],[]
-
+        # Get x and y column data in separate lists
         for row in dataset.get_data():
             x.append(row[x_pos])
             y.append(row[y_pos])
@@ -130,9 +133,10 @@ K is the amount of clusters that the algorithm will try and split the dataset in
             model = KMeans(k=int(vals["k"]),init_rnd_point=vals["init_rnd_num"])
             model.fit(x,y)
             self.stored_model = model
-
+        # Get colors to be used in the graph
         cols = App.get_running_app().graph_colors
         if not quiet:
+            # Create graph figure and subplot
             fig = plt.figure()
             axis = plt.subplot(111)
             cols = cols*int(vals["k"])
@@ -146,12 +150,14 @@ K is the amount of clusters that the algorithm will try and split the dataset in
                     group_y.append(point[1])
 
                 plt.scatter(group_x,group_y,color=cols[i])
+                # Plot the centroid of that group with an "x"
                 plt.scatter(model.centroids[i][0],model.centroids[i][1],marker="x",color=cols[i])
 
             axis.legend()
+            # Set the labels for the graph axis
             axis.set_xlabel(vals["x_var"])
             axis.set_ylabel(vals["y_var"])
-
+            # Make the path for the graph image and save it
             path = os.path.join(App.get_running_app().tmp_folder, "plot.png")
             fig.savefig(path)
             self.result_output.clear_outputs()
@@ -161,7 +167,7 @@ K is the amount of clusters that the algorithm will try and split the dataset in
                               data=[[str(model.centroids)],[str(model.iters_to_fit)]],row_default_height=60,
                               row_force_default=True,orientation="horizontal",size_hint_y=None,size_hint_x=1,
                               for_scroller=True))
-
+            # Show the graph
             self.result_output.add_widget(ExportableGraph(source=path, fig=fig, axis=[axis], nocache=True,
                                                           size_hint_y=None))
 
@@ -185,28 +191,34 @@ class KMeans(object):
         self.centroids = [None] * self.k
         for i in range(self.k):
             if self.init_rnd_point:
+                # Initialise the centroids with a random point within the range of the data set
                 self.centroids[i] = [random.random() * (max_x - min_x) + min_x,
                                      random.random() * (max_y - min_y) + min_y]
             else:
+                # Initialise the centroids with random points in the data set
                 pos = random.randrange(0,len(x))
                 self.centroids[i] = [x[pos],y[pos]]
 
         # Main loop for fitting centroids
         for i in range(self.max_iterations):
             self.classes = []
+            # Initialise the classes with empty lists for each cluster
             [self.classes.append([]) for x in range(self.k)]
 
             for data_pos in range(len(x)):
+                # Compute the euclidean distance between each point in the data set to each centroid
                 distances = [self.euclidean_dist([x[data_pos], y[data_pos]], centroid) for centroid in self.centroids]
                 # Get the smallest distance to a centroid, and add that to the centroid
                 opt_centroid = distances.index(min(distances))
+                # Add the data point to the class that corresponds to the closest centroid
                 self.classes[opt_centroid].append([x[data_pos], y[data_pos]])
-
+            # Make a copy of the current centroids, before recomputing the new centroid positions
             prev = self.centroids[:]
 
             # Average the cluster data points to get a new centroid
             for j, classification in enumerate(self.classes):
                 if len(classification) != 0:
+                    # Average all the data points in the centroid classes to get the new centroid position
                     ave_x = sum([_x[0] for _x in classification]) / len(classification)
                     ave_y = sum([_y[1] for _y in classification]) / len(classification)
                     self.centroids[j] = [ave_x, ave_y]
@@ -225,6 +237,7 @@ class KMeans(object):
                     try:
                         sum_delta += abs((curr[axis] - original[axis])/original[axis] * 100)
                     except ZeroDivisionError:
+                        # Catch zero division errors which can occasionally occur
                         pass
 
                 if sum_delta > self.tolerance:
@@ -233,6 +246,7 @@ class KMeans(object):
 
             if self.is_optimal:
                 self.iters_to_fit = i
+                # Centroids have converged
                 return True
 
         self.iters_to_fit = i

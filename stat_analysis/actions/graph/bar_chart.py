@@ -62,10 +62,13 @@ class BarChart(BaseAction):
         self.tmp_dataset_listeners = []
 
     def set_tmp_dataset(self, val):
+        """Set temporary data set so it can be accessed by form inputs"""
         self.tmp_dataset = val
+        # Update the form inputs that are listening for the data set being changed
         [form_item.try_populate(quiet=True) for form_item in self.tmp_dataset_listeners]
 
     def add_dataset_listener(self, val):
+        # Add form input to list of listeners for the data set change
         self.tmp_dataset_listeners.append(val)
 
     def run(self,validate=True,quiet=False,preloaded=False,**kwargs):
@@ -80,6 +83,7 @@ class BarChart(BaseAction):
                 logger.debug("Form validated, form outputs: {}".format(self.form_outputs))
 
         vals = self.form_outputs
+        # Get data set the users input
         dataset = App.get_running_app().get_dataset_by_name(vals["dataset"])
 
         if dataset == False:
@@ -94,15 +98,20 @@ class BarChart(BaseAction):
             # Use the amount of occurences as the height of bars
             for row in dataset.get_data():
                 if row[x_pos] in raw_data.keys():
+                    # Value already exists, so increment the count
                     raw_data[row[x_pos]] += 1
                 else:
+                    # Value doesn't exit so add it to the raw_data dict
                     raw_data[row[x_pos]] = 1
         else:
+            # Get position of y column
             y_pos = list(dataset.get_header_structure().keys()).index(vals["y_var"])
             for row in dataset.get_data():
                 if row[x_pos] in raw_data.keys():
+                    # Value already exists, so increment the count
                     raw_data[row[x_pos]] += row[y_pos]
                 else:
+                    # Value doesn't exit so add it to the raw_data dict
                     raw_data[row[x_pos]] = row[y_pos]
 
         if vals["sort_x"]:
@@ -110,10 +119,10 @@ class BarChart(BaseAction):
             y_data = OrderedDict(sorted(raw_data.items(),key=lambda x:x[1]))
         else:
             y_data = raw_data
-
+        # Create graph figure and subplot
         fig = plt.figure()
         axis = plt.subplot(111)
-
+        # Create bar chart
         axis.bar(y_data.keys(),y_data.values(),color=App.get_running_app().graph_colors[0])
 
         # Set axis labels
@@ -125,12 +134,13 @@ class BarChart(BaseAction):
             axis.set_ylabel(vals["y_var"])
 
         axis.legend()
+        # Find path to save the graph image and save it
         path = os.path.join(App.get_running_app().tmp_folder, "plot.png")
         fig.savefig(path)
 
         if not quiet:
-            # Create the graph
             self.result_output.clear_outputs()
+            # Show the graph
             self.result_output.add_widget(ExportableGraph(source=path, fig=fig, axis=[axis], nocache=True,
                                                           size_hint_y=None))
 

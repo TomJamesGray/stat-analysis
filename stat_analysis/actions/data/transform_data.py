@@ -89,7 +89,7 @@ class TransformData(BaseAction):
                 logger.debug("Form validated, form outputs: {}".format(self.form_outputs))
 
         vals = self.form_outputs
-        # Get data set the user chose
+        # Get data set the users input
         dataset = App.get_running_app().get_dataset_by_name(vals["dataset"])
 
         if dataset == False:
