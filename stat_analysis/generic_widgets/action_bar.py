@@ -15,6 +15,7 @@ class GenericActionBtn(ActionItem):
     def __init__(self,**kwargs):
         super().__init__(**kwargs)
         self.background_color = self.background_normal_color
+        # When the mouse moves run the mouse_pos method so the background can change on hover
         Window.bind(mouse_pos=self.mouse_pos)
 
     def mouse_pos(self,*args):
@@ -36,16 +37,20 @@ class GenericActionBtn(ActionItem):
         self.hovering = collision
 
     def on_exit(self):
+        # Set the background color to the normal color
         self.background_color = self.background_normal_color
 
     def on_enter(self):
+        # Set the background color the the hover color
         self.background_color = self.background_hover_color
 
 
 class CustomActionBtn(GenericActionBtn,ActionButton):
     def __init__(self,**kwargs):
+        # Remove Kivy's default styling for the button
         self.background_normal = ""
         self.background_down = ""
+
         super().__init__(**kwargs)
         self.height = 30
         self.size_hint_y = None
@@ -64,6 +69,7 @@ class CustomActionGroup(GenericActionBtn,ActionGroup):
             # Manually set the height of the children of the dropdown, otherwise heights
             # are inconsistent
             child.height = 28
+            # Remove Kivy's default styling
             child.background_normal = ""
 
     def on_is_open(self, instance, opened):
@@ -72,7 +78,10 @@ class CustomActionGroup(GenericActionBtn,ActionGroup):
         # Keep button highlighted when drop down is open
         if opened:
             self.background_color = self.background_hover_color
+            # Unbind the mouse_pos method otherwise the background color would be reset when
+            # the mouse is moved
             Window.unbind(mouse_pos=self.mouse_pos)
         elif not opened:
             self.background_color = self.background_normal_color
+            # Re-bind the mouse_pos method so the hover state will work again
             Window.bind(mouse_pos=self.mouse_pos)

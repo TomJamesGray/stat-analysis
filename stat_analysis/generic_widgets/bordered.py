@@ -40,18 +40,20 @@ class BorderedTable(GridLayout):
         super(BorderedTable,self).__init__(**kwargs)
         self.header_col = App.get_running_app().accent_col
         if for_scroller:
+            # Use all available height so it can work with scroll views
             self.bind(minimum_height=self.setter("height"))
 
         if self.table_data != []:
             if self.orientation == "vertical":
                 self.cols = len(self.headers)
-                # Create the headers
                 for header in self.headers:
+                    # Create the headers
                     self.add_widget(BorderedLabel(text=str(header), color=self.header_col, size_hint_x=None,
                                                   size_hint_y=None,height=30,markup=self.markup))
 
                 for row in self.table_data:
                     for val in row:
+                        # Create the Labels that display the information
                         self.add_widget(BorderedLabel(text=str(val), color=(0, 0, 0, 1), size_hint_x=None,
                                                       size_hint_y=None,height=30,markup=self.markup))
         elif self.data != []:
@@ -59,25 +61,30 @@ class BorderedTable(GridLayout):
                 # Create table for vertical orientation with normal data
                 self.cols = len(self.headers)
                 for header in self.headers:
+                    # Create the headers
                     self.add_widget(BorderedLabel(text=str(header),color=self.header_col,size_hint_x=None,
                                                   markup=self.markup))
 
                 for y in range(0,len(self.data[0])):
                     for x in range(0, len(self.data)):
+                        # Create the labels that display the information
                         self.add_widget(BorderedLabel(text=str(self.data[x][y]),color=(0,0,0,1),size_hint_x=None,
                                                       height=30,markup=self.markup))
 
             elif self.orientation == "horizontal":
-                # Create table for horizontal orientation with normal data
+                # Create table for horizontal orientation with data
                 self.rows = len(self.headers)
                 for x in range(0, len(self.data)):
+                    # Create the headers for each column
                     self.add_widget(
                         BorderedLabel(text=str(self.headers[x]), color=self.header_col, size_hint_x=None,
                                       markup=self.markup))
 
                     for y in range(0, len(self.data[0])):
+                        # Create the labels that display the information
                         x = BorderedLabel(text=str(self.data[x][y]), color=(0, 0, 0, 1), size_hint_x=1,height=30,
                                           halign="left",valign="middle",markup=self.markup)
+                        # Make the text size match the size of the widget so aligning works
                         x.bind(size=x.setter("text_size"))
                         self.add_widget(x)
 

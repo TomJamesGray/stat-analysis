@@ -10,7 +10,9 @@ class RightClickMenu(GridLayout):
         self.width = 150
         self.row_default_height = 30
         self.row_force_default = True
+        # Use all available height
         self.bind(minimum_height=self.setter("height"))
+        # Initialise list of options
         self.options = []
         super().__init__(**kwargs)
 
@@ -27,16 +29,20 @@ class RightClickMenu(GridLayout):
         Open the menu
         """
         for opt in self.options:
+            # When the mouse moves run the mouse_pos method so the background can change on hover
             Window.bind(mouse_pos=opt.mouse_pos)
             self.add_widget(opt)
+        # When mouse is pressed down decide if button is pressed or if mouse press was outside the menu
         Window.bind(on_touch_down=self.decide_clear_menu)
 
     def do_option(self,instance):
+        # Perform the action and close the menu
         instance.func()
         self.clear_menu()
 
     def decide_clear_menu(self,instance,touch):
         if not self.collide_point(touch.x,touch.y):
+            # Close the menu if the press it outside the menu and was a left click
             if touch.button == "left":
                 self.clear_menu()
 
@@ -45,9 +51,11 @@ class RightClickMenu(GridLayout):
         Clear the RightClickMenu so nothing is displayed, done when user clicks out of the menu
         :return:
         """
+        # Unbind methods
         Window.unbind(on_touch_down=self.decide_clear_menu)
         self.clear_widgets()
         self.remove_widget(self)
+        # Delete this widget
         del self
 
 class MenuBtn(BorderedHoverButton):

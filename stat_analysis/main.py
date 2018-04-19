@@ -45,6 +45,9 @@ Factory.register("CustomActionBtn",cls=CustomActionBtn)
 
 
 class LogViewOutputHandler(logging.StreamHandler):
+    """
+    Customer logging class that will output to the logging box in the program
+    """
     def emit(self,record):
         try:
             App.get_running_app().log_this(record.msg)
@@ -52,8 +55,9 @@ class LogViewOutputHandler(logging.StreamHandler):
             pass
 
 
+# Make the logging module aware of the custom log handler
 logging.handlers.log_view_output_handler = LogViewOutputHandler
-
+# Configure logging
 logging_config = {
     "version":1,
     "disable_existing_loggers":False,
@@ -93,6 +97,7 @@ logging_config = {
         }
     }
 }
+# Setup logging
 logging.config.dictConfig(logging_config)
 logger = logging.getLogger(__name__)
 
@@ -117,12 +122,16 @@ class ActionsScroller(ScrollView):
         super().__init__(**kwargs)
         self.bar_width = 5
         tv = TreeView(size_hint=(1,None),hide_root=True)
+        # Use all available height
         tv.bind(minimum_height=tv.setter("height"))
         for group in App.get_running_app().actions:
+            # Create parent group labels based off the actions property of the app
             parent_node = TreeViewLabel(text=group["group_name"],color=(0,0,0,1))
             tv.add_node(parent_node)
             for action in group["actions"]:
+                # Create the labels that display the individual actions
                 x = ActionTreeViewLabel(color=(0,0,0,1),text=action.view_name,stored_action=action)
+                # When the button is pressed, load the action by using the refresh method of the primary pane
                 x.bind(on_touch_down=lambda *args:self.primary_pane_edit.refresh(args[0].stored_action))
                 tv.add_node(x,parent_node)
 
@@ -161,17 +170,20 @@ class ActionsGrid(GridLayout):
     def __init__(self,btn_fn={},**kwargs):
         self.btn_fn = btn_fn
         super().__init__(**kwargs)
+        # Set headers
         self.headers = ["Name","Type"]
         self.cols = len(self.headers)
         self.click_menu_active = False
 
     def add_btn(self,text,header=False):
+        # Create button that changes the cursor to the "click" cursor on hover
         x = BorderedHoverButton(b_width=1, padding=(5, 5), size_hint_x=0.4, color=(0, 0, 0, 1), text=str(text),
                                 valign="middle", halign="left",background_color=(1,1,1,1),background_normal="",
                                 markup=True)
         if header:
+            # Set the color to red if this is a header
             x.color = App.get_running_app().accent_col
-
+        # Make the text use all available space so aligning works
         x.bind(size=x.setter("text_size"))
         self.add_widget(x)
         return x
@@ -184,16 +196,20 @@ class ActionsGrid(GridLayout):
         for x in self.data_tbl:
             if x.save_name != None:
                 empty = False
+                # A saved action that can be displayed has been found so exit the loop
                 break
 
         if empty:
+            # Display the empty message
             x = Label(text=self.empty_msg,color=(0,0,0,1))
+            # Make the text use all available space so aligning works
             x.bind(size=x.setter("text_size"))
             self.add_widget(x)
 
             return
 
         for header in self.headers:
+            # Add the headers
             self.add_btn(header,header=True)
 
         for action in self.data_tbl:
@@ -204,51 +220,69 @@ class ActionsGrid(GridLayout):
 
             col1 = self.add_btn(action.save_name)
             if 0 in self.btn_fn.keys():
+                # Add the function that is called when the button in the 1st column is pressed
                 col1.bind(on_touch_down=self.btn_fn[0])
+                # When the mouse moves run the mouse_pos method so the cursor can change
                 Window.bind(mouse_pos=col1.mouse_pos)
 
             col2 = self.add_btn(action.type)
             if 1 in self.btn_fn.keys():
+                # Add the function that is called when the button in the 2nd column is pressed
                 col2.bind(on_touch_down=self.btn_fn[1])
+                # When the mouse moves run the mouse_pos method so the cursor can change
                 Window.bind(mouse_pos=col2.mouse_pos)
 
     def view_dataset(self,instance,touch):
+        # Reset the cursor to the normal arrow cursor
         App.get_running_app().set_cursor("arrow")
+        # Check if the touch collides with the button
         if instance.collide_point(touch.x, touch.y):
             if self.click_menu_active != False:
+                # Check if user is instead just pressing a right click menu that just happens to be over this widget
                 if self.click_menu_active.collide_point(touch.x,touch.y):
                     return False
 
             if touch.button == "left":
+                # View the data set
                 App.get_running_app().root_widget.primary_pane.refresh(data.view_data.ViewData,dataset=instance.text)
 
             elif touch.button == "right":
+                # Get the position of the press
                 new_pos = self.to_window(touch.x,touch.y)
+                # Create the right click menu
                 menu = RightClickMenu(x=new_pos[0],y=new_pos[1])
+                # Add the option to delete the data set
                 menu.add_opt("Delete",lambda *args: App.get_running_app().get_dataset_by_name(instance.text).
                              delete_dataset(callback=self.delete_dataset_callback
                 ))
+                # Open the right click menu
                 menu.open()
                 self.click_menu_active = menu
+                # Display the right click menu
                 App.get_running_app().root_widget.add_widget(menu)
 
-
     def load_action(self,instance,touch):
+        # Reset the cursor to the normal arrow cursor
         App.get_running_app().set_cursor("arrow")
+        # Check if the touch collides with the button
         if instance.collide_point(touch.x,touch.y):
+            # Check if user is instead just pressing a right click menu that just happens to be over this widget
             if self.click_menu_active != False:
                 if self.click_menu_active.collide_point(touch.x,touch.y):
                     return False
 
             if touch.button == "left":
+                # Get the action that has been selected
                 action = App.get_running_app().get_action_by_name(instance.text)
                 if action == False:
                     # Action not found
                     return False
 
                 try:
+                    # Try and run the action
                     App.get_running_app().root_widget.primary_pane.reload_action(action)
                 except Exception as e:
+                    # The action hasn't run as expected
                     if not App.get_running_app().devel_mode:
                         # Not in development mode so don't crash
                         logger.error("Error in running action {}\nGoing back to home".format(repr(e)))
@@ -259,20 +293,27 @@ class ActionsGrid(GridLayout):
                         raise e
 
             elif touch.button == "right":
-                new_pos = self.to_window(touch.x,touch.y)
-                menu = RightClickMenu(x=new_pos[0],y=new_pos[1])
+                # Get the position of the press
+                new_pos = self.to_window(touch.x, touch.y)
+                # Create the right click menu
+                menu = RightClickMenu(x=new_pos[0], y=new_pos[1])
+                # Add the option to delete the action set
                 menu.add_opt("Delete",lambda *args: App.get_running_app().get_action_by_name(instance.text).delete_action(
                     callback=self.delete_action_callback
                 ))
+                # Open the right click menu
                 menu.open()
                 self.click_menu_active = menu
+                # Display the right click menu
                 App.get_running_app().root_widget.add_widget(menu)
 
     def delete_action_callback(self,*args):
+        # Refresh the table after a action has been deleted
         self.data_tbl = App.get_running_app().saved_actions
         self.render()
 
     def delete_dataset_callback(self,*args):
+        # Refresh the table after a data set has been deleted
         self.data_tbl = App.get_running_app().datasets
         self.render()
 
@@ -324,10 +365,14 @@ class PrimaryPane(GridLayout):
             # Remove all widgets that aren't the title pane
             if type(item) != TitlePane:
                 self.remove_widget(item)
+        # Set the title to the name of the action that is being loaded
         self.title = action.view_name
+        # Create the output widget
         output_widget = GridLayout(size_hint=(1,1),cols=2,spacing=(5,5))
         self.add_widget(output_widget)
+        # Initialise the action
         self.active_action = action(output_widget,**kwargs)
+        # Render the action
         self.active_action.render()
         self.home_view_active = False
 
@@ -337,14 +382,18 @@ class PrimaryPane(GridLayout):
             # Remove all widgets that aren't the title pane
             if type(item) != TitlePane:
                 self.remove_widget(item)
+        # Display the type of action and name of saved action in the title bar
         self.title = "{} - {}".format(action.view_name,action.save_name)
+        # Create the output widget
         output_widget = GridLayout(size_hint=(1, 1), cols=2,spacing=(5,5))
         self.add_widget(output_widget)
         self.active_action = action
         self.active_action.output_widget = output_widget
-
+        # Set the default form values in the form property based off the saved form outputs
         self.active_action.set_default_form_vals()
+        # Render the action
         self.active_action.render()
+        # Run the action without validating and use cached data
         self.active_action.run(quiet=False,validate=False,use_cached=True)
         self.home_view_active = False
 
@@ -353,19 +402,24 @@ class PrimaryPane(GridLayout):
         for item in self.children:
             # Remove all widgets that aren't the title pane
             if type(item) != TitlePane:
-                # item.clear_widgets()
                 self.remove_widget(item)
+        # Set the title to "Home"
         self.title = "Home"
         self.home_view_active = True
+        # Initialise the home view widget
         self.home_view = HomeView()
         self.add_widget(self.home_view)
         self.active_action = None
 
     def try_refresh_home_view(self):
         if self.home_view_active:
+            # Update the data used by the data sets grid
             self.home_view.datasets_grid.data_tbl = App.get_running_app().datasets
+            # Re-render it
             self.home_view.datasets_grid.render()
+            # Update the data used by the actions sets grid
             self.home_view.actions_grid.data_tbl = App.get_running_app().saved_actions
+            # Re-render it
             self.home_view.actions_grid.render()
 
 
@@ -387,10 +441,11 @@ class LogView(GridLayout):
 
     def log_msg(self,msg):
         if self.output.text != "":
+            # Separate messages by a new line
             self.output.text += "\n" + msg
         else:
             self.output.text += msg
-
+        # Scroll to the bottom of the log view when a message is logged
         self.scroll_view.scroll_y = 0
 
     def toggle_log_view(self):
@@ -404,6 +459,7 @@ class LogView(GridLayout):
 
             self.log_visible = False
         else:
+            # Show the log view
             self.height = 100
             self.parent.strip_size = "10pt"
             self.parent.size_hint_y = 0.2
@@ -432,6 +488,7 @@ class StatApp(App):
         super().__init__(**kwargs)
         self.devel_mode = False
         self.load_popup,self.save_popup = None, None
+        # Set the actions that are available to users
         self.actions = [
             {
                 "group_name": "Stats",
@@ -456,6 +513,7 @@ class StatApp(App):
         }
         # Get the absolute path of the "temporary" file directory
         self.tmp_folder = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),"tmp")
+        # Set the help text for the "general help"
         self.help_text =\
         """[size=16][b]Stat Analysis Help[/b][/size]
 
@@ -467,6 +525,7 @@ If you don't have any datasets of your own to use, you can use some of the pre-l
 
 Some actions also have additional help available via Help > 'Help for this action'.
         """
+        # Initialise properties
         self.startup_messages = ""
         self.started_up = False
         self.saved_actions = []
@@ -475,17 +534,22 @@ Some actions also have additional help available via Help > 'Help for this actio
         self.pygame_cursors = {}
         # Get cursor info setup, ie for pygame import the modules and any xbms
         if self.get_window_provider() == "pygame":
+            # Compile the resize cursor
             cursor, mask = pygame.cursors.compile(pygame.cursors.sizer_x_strings, "X", ".")
             self.pygame_cursors["size_we"] = ((24, 16), (7, 11), cursor, mask)
-
+            # Load the custom hand arrow cursor and compile it
             cursor = pygame.cursors.load_xbm(resource_find("res/handarrow.xbm"),resource_find("res/handarrow-mask.xbm"))
             self.pygame_cursors["hand"] = cursor
             self.pygame_cursors["arrow"] = pygame.cursors.arrow
 
     def build(self):
+        # Set the window title
         self.title = "Stat Analysis"
+        # Set the background color of the window
         Window.clearcolor = (.85,.85,.85,1)
+        # Set the size of the window
         Window.size = (1336,768)
+        # Create the root widget
         self.root_widget = StatAnalysis()
 
         if self.devel_mode:
@@ -501,28 +565,31 @@ Some actions also have additional help available via Help > 'Help for this actio
             self.open_settings = lambda *args:None
 
         self.started_up = True
+        # Log any important messages that occurred before the logging widget was initialised
         self.log_this(self.startup_messages)
         return self.root_widget
 
     def get_dataset_by_name(self,name):
-        # Find the data set
         dataset = None
         for d in self.datasets:
+            # Find the data set
             if d.save_name == name:
+                # Data set has been found so exit the loop
                 dataset = d
                 break
         if dataset == None:
-            logger.error("Dataset name {} from get_cols_from not found".format(name))
+            logger.error("Dataset name {} not found".format(name))
             return False
 
         return dataset
 
     def get_action_by_name(self,name):
-        # Find the data set
         action = None
         for a in self.saved_actions:
+            # Find the data set
             if a.save_name == name:
                 action = a
+                # Action has been found so exit the loop
                 break
         if action == None:
             logger.error("Action {} couldn't be found".format(name))
@@ -531,10 +598,13 @@ Some actions also have additional help available via Help > 'Help for this actio
         return action
 
     def load_example_dataset(self,name):
+        # Create input for the data set name
         str_input = PopupStringInput(label="Dataset name")
+        # Set the default name for the example data set
         str_input.text_input.text = self.example_datasets[name][0]
+        # Create the popup
         popup = Popup(size_hint=(None,None),size=(400,150),title="Example Dataset Save Name")
-
+        # When the submit button is pressed on the input run the submit_load_example method
         str_input.submit_btn.bind(on_press=lambda *args:self.submit_load_example(
             str_input,popup,self.example_datasets[name][1]))
         str_input.dismiss_btn.bind(on_press=lambda *args:popup.dismiss())
@@ -551,20 +621,27 @@ Some actions also have additional help available via Help > 'Help for this actio
         :param dataset_location: The location of the save file for the example dataset
         :return:
         """
+        # Load the save file that contains the instructions for the example data set
         self.load_file(dataset_location,override_dataset_name=str_input.text_input.text)
+        # Close the popup
         popup.dismiss()
+        # Refresh the widgets on the home view to show the new data sets
         self.root_widget.primary_pane.try_refresh_home_view()
 
     def load_btn(self):
         self.load_popup = Popup(size_hint=(None,None),size=(400,400),title="Load Save File")
+        # Create the file dialog, filter the files show it only shows .stat files
         f_chooser = FileChooserLoadDialog(filters=[lambda _,filename: filename.endswith(".stat")])
+        # When the load file button is pressed in the file chooser run the do_load method
         f_chooser.on_load = self.do_load
         f_chooser.on_cancel = lambda :self.load_popup.dismiss()
         self.load_popup.content = f_chooser
         self.load_popup.open()
 
     def do_load(self,path,filename):
+        # Load the file
         self.load_file(os.path.join(path,filename[0]))
+        # Refresh the widgets on the home view to show the new data sets
         self.root_widget.primary_pane.try_refresh_home_view()
 
     def load_file(self,fpath,**kwargs):
@@ -574,13 +651,17 @@ Some actions also have additional help available via Help > 'Help for this actio
         :return: The amount of actions successful loaded
         """
         if self.load_popup != None:
+            # Dismiss any popups
             self.load_popup.dismiss()
         actions = []
         for group in self.actions:
             for action in group["actions"]:
+                # Create a list of the actions
                 actions.append(action)
+        # Open the save file
         with open(fpath, "rb") as f:
             try:
+                # Load the data in with pickle
                 dump = pickle.load(f)
             except pickle.UnpicklingError:
                 logger.error("Error in loading save file {}, possibly corrupted".format(fpath))
@@ -588,18 +669,22 @@ Some actions also have additional help available via Help > 'Help for this actio
 
         actions_loaded = 0
         for item in dump:
-            # Find the correct action specified by "type"
+            # Find the correct action specified by "type" from the list of the actions
             type_action = None
             for action in actions:
                 if action.type == item[1]["type"]:
+                    # Initialise the action
                     type_action = action(None)
+                    # Action has been found so exit the loop
                     break
             if type_action == None:
                 logger.error("In loading save file action type {} not found, stopping load".format(item[1]["type"]))
                 continue
+            # Run the load method of the action
             success = type_action.load(item[1],**kwargs)
 
             if success == True:
+                # Action has been successfully loaded
                 actions_loaded += 1
             else:
                 # Error occured when loading the save file via a command line argument
@@ -612,43 +697,55 @@ Some actions also have additional help available via Help > 'Help for this actio
 
     def save_btn(self,*args):
         self.save_popup = Popup(size_hint=(None,None),size=(400,400),title="Save Project")
+        # Create the file chooser dialog
         f_chooser = FileChooserSaveDialog(default_file_name="Project.stat")
+        # When the save button in the file dialog is pressed run the do_save method
         f_chooser.on_save = self.do_save
         f_chooser.on_cancel = lambda: self.save_popup.dismiss()
         self.save_popup.content = f_chooser
         self.save_popup.open()
 
     def do_save(self,path,filename):
+        # Close the popup
         self.save_popup.dismiss()
+        # List to hold the data that is to be saved
         to_save = []
         for dataset in self.datasets:
+            # Serialize the data sets
             to_save.append(("dataset",dataset.serialize()))
 
         for action in self.saved_actions:
+            # Serialize the actions
             to_save.append(("action",action.serialize()))
 
         with open(os.path.join(path,filename),"wb") as f:
+            # Write the data to the save file
             pickle.dump(to_save,f)
 
     def log_this(self,msg):
         try:
+            # Add text to the log view
             self.root_widget.log_view.log_msg(msg)
         except:
+            # Catch any exceptions caused by logging before the log_view widget is initialised
             pass
 
     def add_dataset(self,dataset):
         for set in self.datasets:
             if dataset.save_name == set.save_name:
+                # Dataset with the same name exists so exit
                 raise ValueError("A dataset with that name already exists")
-
+        # Add the data set to the list of saved data sets
         self.datasets.append(dataset)
 
     def add_action(self,save_action):
+        # If save name is None, then allow duplicates
         if save_action.save_name != None:
             for set in self.saved_actions:
                 if save_action.save_name == set.save_name:
+                    # Action with the same name exists so exit
                     raise ValueError("An action with that name already exists")
-
+        # Add the action to the list of saved actions
         self.saved_actions.append(save_action)
 
     def show_app_help(self):
@@ -667,8 +764,10 @@ Some actions also have additional help available via Help > 'Help for this actio
         """
         provider = self.get_window_provider()
         if provider == "pygame":
+            # Set the mouse cursor with pygame
             pygame.mouse.set_cursor(*self.pygame_cursors[cursor_name])
         elif provider == "sdl2":
+            # Set the mouse cursor with sdl2
             Window.set_system_cursor(cursor_name)
         else:
             logger.warning("Window provider {} currently has no support to set cursor".format(provider))
@@ -690,10 +789,14 @@ Some actions also have additional help available via Help > 'Help for this actio
 
 def main(results):
     app = StatApp()
+    # Set the development mode property
     app.devel_mode = results.devel
+
     if results.save_file != None:
         if os.path.isfile(results.save_file):
+            # If the save file exists run the load_file method
             app.load_file(results.save_file)
         else:
             app.startup_messages += "Save file {} doesn't exist\n".format(results.save_file)
+    # Run the app
     app.run()

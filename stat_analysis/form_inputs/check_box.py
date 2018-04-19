@@ -8,6 +8,7 @@ class FormCheckBox(GridLayout):
         self.rows = 1
         self.size_hint_y = None
         self.size_hint_x = None
+        # Use all available height
         self.bind(minimum_height=self.setter("height"))
         self.width = 200
         self.input_dict = input_dict

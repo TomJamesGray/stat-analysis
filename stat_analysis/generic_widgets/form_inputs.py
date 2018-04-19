@@ -17,13 +17,16 @@ class FormInputLabel(GridLayout):
         self.size_hint_y = None
 
         if tip == None:
+            # If there's no tooltip specified just create the label
             main_lbl = FormInputLabelText(text=text)
             self.add_widget(main_lbl)
         else:
+            # Create the label
             main_lbl = FormInputLabelText(text=text,size_hint=(1,None))
             self.add_widget(main_lbl)
             # Create tool tip
             tooltip = ToolTip(source="res/tooltip.png",width=15,height=15,size_hint=(None,1),tip_text=tip)
+            # When the mouse position changes run the mouse_pos method of the tooltip so it can open on hover
             Window.bind(mouse_pos=tooltip.mouse_pos)
             self.add_widget(tooltip)
 

@@ -35,48 +35,51 @@ class DataSpreadsheet(GridLayout):
         self.adjuster_show_width = 2
         # Width of the box around width adjusters that trigger them
         self.adjuster_click_width = 10
+        # Initialise list for the buttons that can be used to adjust the width of columns
         self.width_adjusters = []
+        # Initialise list for the actual columns widgets that display the data
         self.data_columns = []
+        # Initialise list for the labels that display the headers of columns
         self.spreadsheet_header_labels = []
+        # Sets whether the columns resize cursor is active
         self.resize_cursor_active = False
-
+        # Create container for the spreadsheet headers
         self.spreadsheet_headers = GridLayout(rows=1,size_hint=(None,None),height=30,
                                               width=self.col_default_width*self.data_cols+(self.data_cols-1)*
                                                                                           self.adjuster_show_width)
-
+        # Create container for the recycle view widgets that display the actual columns data
         self.rv_container = GridLayout(rows=1,size_hint=(None,1),
                                        width=self.col_default_width*self.data_cols+(self.data_cols-1)*
                                                                                    self.adjuster_show_width)
 
-        # Transform data so each column is in seperate list
+        # Transform data so each column is in separate list
         self.columns = [[] for _ in range(self.data_cols)]
         for y in range(len(self.table_data)):
             for x in range(self.data_cols):
-                self.columns[x].append(
-                    self.table_data[y][x])
+                self.columns[x].append(self.table_data[y][x])
 
         for i,header in enumerate(self.headers):
             # Create headers, columns and width adjusters
-
             lbl = GridAdjustHeader(text=str(header),width=self.col_default_width)
 
             data_column = ColumnRV(raw_data=self.columns[i],size_hint=(None,1),
                                    width=self.col_default_width+self.adjuster_show_width)
-
             self.spreadsheet_headers.bind(height=data_column.setter("height"))
+
             if i == self.data_cols -1:
                 # Only show scroll bar for the very last column
                 data_column.bar_color = (.7,.7,.7,.9)
                 data_column.bar_inactive_color = (.7,.7,.7,.4)
                 data_column.bar_width = 15
-
+            # Create the width adjuster for this column
             split = WidthAdjust(size_hint_x=None,width=self.adjuster_show_width,adjust=[lbl,data_column])
 
             if i == 0:
-                # Only show left border if it's the 1st column
+                # Only show left border for label and column if it's the 1st column
                 lbl.left_border = True
                 data_column.left_border = True
 
+            # Add the widgets to their containers and lists so they can be referenced
             self.rv_container.add_widget(data_column)
             self.width_adjusters.append(split)
             self.data_columns.append(data_column)
@@ -87,7 +90,9 @@ class DataSpreadsheet(GridLayout):
         # Since all the Column RVs are separate, all the RVs need to be aware of each other
         # So the scrolls can be mirrored
         for col in self.data_columns:
+            # Set siblings property of each column
             col.siblings = self.data_columns
+        # Bind touch events
         Window.bind(on_touch_up=self.mouse_release)
         Window.bind(on_touch_move=self.mouse_move)
         Window.bind(on_touch_down=self.check_width_adjusters)
@@ -101,8 +106,10 @@ class DataSpreadsheet(GridLayout):
         bar and horiz scroll bar active properties on the columns and takes off the resize cursor
         """
         for split in self.width_adjusters:
+            # Reset all width adjusters so they're not pressed as mouse is released
             split.pressed = False
         for col in self.data_columns:
+            # Hide the scroll bars
             col.scroll_bar_active = False
             col.horiz_scroll_bar_active = False
 
@@ -113,6 +120,7 @@ class DataSpreadsheet(GridLayout):
         Called on touch down and handles the collision detection for the width adjusters
         """
         for a in self.width_adjusters:
+            # Checks if the width adjuster collides with the touch
             if a.collide_point(*a.to_widget(*touch.pos)):
                 a.pressed = True
                 # Since only one adjuster can be pressed at once exit
@@ -125,12 +133,15 @@ class DataSpreadsheet(GridLayout):
         """
         for split_no,split in enumerate(self.width_adjusters):
             if split.pressed:
+                # Splitter is pressed
                 self.resize_cursor_active = True
                 for item in split.adjust:
                     if item.width + touch.dx < self.col_min_width:
-                        # This adjustment would make the column too narrow
+                        # This adjustment would make the column too narrow so stop
                         return
                     item.width += touch.dx
+                # Update the width of the spreadsheet headers, data column containers and width of this widget
+                # (the parent)
                 self.spreadsheet_headers.width += touch.dx
                 self.rv_container.width += touch.dx
                 self.width += touch.dx
@@ -143,11 +154,13 @@ class DataSpreadsheet(GridLayout):
         """
         for split in self.width_adjusters:
             if split.collide_point(*split.to_widget(*pos)) and not self.resize_cursor_active:
+                # The current mouse position collides with a width adjuster and the current cursor is the normal arrow
                 # Set cursor to the column reisizer one, ie "<->"
                 App.get_running_app().set_cursor("size_we")
                 return
 
         if not self.resize_cursor_active:
+            # Reset cursor to the normal arrow
             App.get_running_app().set_cursor("arrow")
 
 
@@ -160,11 +173,14 @@ class ColumnRV(RecycleView):
 
     def __init__(self,**kwargs):
         super().__init__(**kwargs)
+        # Add the raw column data to the data property that is used by the recycle view
         self.data = [{"text":str(x)} for x in self.raw_data]
+        # Remove the over scroll effect
         self.effect_cls = ScrollEffect
         self.actual_bg_color = (0,0,0,1)
         self.scroll_bar_active = False
         self.horiz_scroll_bar_active = False
+        # Disable the scroll timeout
         self.scroll_timeout = -1
 
     def on_scroll_start(self, touch, check_children=True, root=True):
@@ -178,21 +194,28 @@ class ColumnRV(RecycleView):
             # The scroll bar has been pressed
             self.scroll_bar_active = True
             for sibling in self.siblings:
+                # Scroll all the sibling data columns by the same amount based of the dx property of the touch
                 sibling.scroll_bar_scroll(touch)
             return
 
         elif root and self.touch_collide_grid(touch) and not self.collide_with_horiz_scroll_bar(touch):
             # This is the "root" scroller and the touch is within the grid, so scroll the content
+            # This handles scrolling with the scroll wheel or scrolling with a touch/mouse drag
             for sibling in self.siblings:
+                # Scroll all other siblings as this column will be scrolled differently
                 if sibling is not self:
+                    # Fake the touch so the column thinks the touch is within the column
+                    # otherwise scrolling fails
                     touch.x = sibling.center_x
                     touch.y = sibling.center_y
                     touch.pos = (touch.x,touch.y)
                     if touch.button in ("scrollup","scrolldown"):
+                        # Run the native on_scroll_start method to scroll the widget
                         sibling.on_scroll_start(touch,check_children=check_children,root=False)
                     elif touch.button == "left":
+                        # Scroll the content
                         sibling.touch_scroll(touch)
-
+            # Scroll this column
             if touch.button in ("scrollup", "scrolldown"):
                 super().on_scroll_start(touch,check_children)
             elif touch.button == "left":
@@ -203,8 +226,9 @@ class ColumnRV(RecycleView):
             # scrolling until a mouse up event occurs
             self.horiz_scroll_bar_active = True
         else:
+            # Run the native on_scroll_start method, this is used for touch/button scrolling
             super().on_scroll_start(touch,check_children=check_children)
-
+        # Refresh this column so the widgets are moved
         self.refresh_from_layout()
 
     def on_touch_move(self, touch):
@@ -214,9 +238,11 @@ class ColumnRV(RecycleView):
         """
         if self.scroll_bar_active:
             for sibling in self.siblings:
+                # Scroll all the columns
                 sibling.scroll_bar_scroll(touch)
             return
         else:
+            # Scroll bar isn't active so run the native on_scroll_move method to scroll the content
             super().on_scroll_move(touch)
 
     def on_scroll_move(self, touch, root=True):
@@ -227,6 +253,7 @@ class ColumnRV(RecycleView):
         if self.scroll_bar_active:
             # Vertical scrollbar is active so scroll with that
             for sibling in self.siblings:
+                # Scroll all the columns
                 sibling.scroll_bar_scroll(touch)
             return
         elif self.touch_collide_grid(touch) and not self.collide_with_horiz_scroll_bar(touch) and\
@@ -235,13 +262,15 @@ class ColumnRV(RecycleView):
             # scroll bar isn't active so run a "touch scroll"
             for sibling in self.siblings:
                 if sibling is not self:
+                    # Fake the touch so the column thinks the touch is within the column
+                    # otherwise scrolling fails
                     touch.x = sibling.center_x
                     touch.y = sibling.center_y
                     touch.pos = (touch.x, touch.y)
                     sibling.touch_scroll(touch)
-
+            # Scroll this column
             self.touch_scroll(touch)
-
+        # Refresh this column so the widgets are moved
         self.refresh_from_layout()
 
     def collide_with_scroll_bar(self,touch):
@@ -262,14 +291,16 @@ class ColumnRV(RecycleView):
         """
         Determines if the given touch collides with the main grid that contains all the column RVs
         """
+        # Get the container grid for the column
         parent_grid = self.parent
+        # Get the positions of the grid and touch
         grid_pos = parent_grid.to_window(*parent_grid.pos)
         click_pos = parent_grid.to_window(*touch.pos)
 
         # Determine if the touch collides on the x and y axis
         horiz = grid_pos[0] <= click_pos[0] <= grid_pos[0] + parent_grid.width
         vertical = grid_pos[1] <= click_pos[1] <= grid_pos[1] + parent_grid.height
-
+        # For this to return True, the touch must collide on the horizontal and vertical axis
         return horiz and vertical
 
     def collide_with_horiz_scroll_bar(self,touch):
@@ -279,13 +310,16 @@ class ColumnRV(RecycleView):
         """
         # Width of the horizontal scroll bar for the result output
         scroll_width = 20
+        # Get the container grid for the column
         parent_grid = self.parent
+        # Get the positions of the grid and touch
         grid_pos = parent_grid.to_window(*parent_grid.pos)
         click_pos = parent_grid.to_window(*touch.pos)
 
         # Determine if the touch collides on the x and y axis
         horiz = grid_pos[0] <= click_pos[0] <= grid_pos[0] + parent_grid.width
         vertical = grid_pos[1] <= click_pos[1] <= grid_pos[1] + scroll_width
+        # For this to return True, the touch must collide on the horizontal and vertical axis
         return horiz and vertical
 
     def touch_scroll(self,touch):
@@ -297,6 +331,7 @@ class ColumnRV(RecycleView):
         if 0 > new_scroll_y or new_scroll_y > 1:
             # This scroll would be going further than allowed
             return
+        # Actually scroll the column
         self.scroll_y -= self.convert_distance_to_scroll(touch.dx, touch.dy)[1]
 
     def scroll_bar_scroll(self,touch):
@@ -306,7 +341,9 @@ class ColumnRV(RecycleView):
         :param touch:
         :return:
         """
+        # Get the container grid for the column
         parent_grid = self.parent
+        # Get the positions of the grid and touch
         grid_pos = parent_grid.to_window(*parent_grid.pos)
         click_pos = parent_grid.to_window(*touch.pos)
 
@@ -315,7 +352,7 @@ class ColumnRV(RecycleView):
         if 0 > new_scroll_y or new_scroll_y > 1:
             # This scroll would be going further than allowed
             return
-
+        # Actually scroll the column
         self.scroll_y = new_scroll_y
 
 
@@ -341,11 +378,14 @@ class ExportableGraph(GridLayout):
         """
         Method called when the user presses the "Save" button
         """
+        # Create the save popup
         self.save_popup = Popup(size_hint=(None, None), size=(400, 400),title="Save Graph")
         # Create save dialog
         f_chooser = FileChooserSaveDialog(default_file_name="graph.png")
         f_chooser.on_save = self.do_save
+        # Dismiss the Popup when the cancel button is pressed in the save dialog
         f_chooser.on_cancel = lambda :self.save_popup.dismiss()
+        # Set the content of the popup to the file dialog
         self.save_popup.content = f_chooser
         self.save_popup.open()
 
@@ -358,7 +398,9 @@ class ExportableGraph(GridLayout):
         """
         Method called when the user presses the "Graph options" button
         """
+        # Create the popup
         self.graph_options_popup = Popup(size_hint=(None,None),size=(400,400),title="Graph Options")
+        # Create the GraphOptions content
         opts = GraphOptions(fig=self.fig,axis=self.axis)
         opts.on_graph_update = self.update_graph
         self.graph_options_popup.content = opts
@@ -379,6 +421,7 @@ class ToolBoxButton(Button):
 
     def __init__(self,**kwargs):
         super().__init__(**kwargs)
+        # When the mouse moves run the mouse_pos method so the background can change on hover
         Window.bind(mouse_pos=self.mouse_pos)
 
     def mouse_pos(self,*args):
@@ -395,7 +438,6 @@ class ToolBoxButton(Button):
             return
         elif collision and not self.hovering:
             # Mouse enter button
-            # self.background_color = (210 / 255, 210 / 255, 210 / 255, 1)
             self.background_color = (.6,.6,.6,1)
             App.get_running_app().set_cursor("hand")
 
@@ -408,6 +450,7 @@ class ToolBoxButton(Button):
 
     def on_press(self):
         App.get_running_app().set_cursor("arrow")
+        # Run any on_press methods assigned to the super class
         super().on_press()
 
 
@@ -451,20 +494,21 @@ class GraphOptions(TabbedPanel):
                 "set": lambda x, val: x.set_ylim(ymin=float(val))
             }
         ]
-
+        # Stop Kivy from creating a default tab
         self.do_default_tab = False
         self.opts_out = []
 
         for i,axe in enumerate(self.axis):
             self.opts_out.append(self.opts_binds)
+            # Create Panel for each graph item within the parent graph
             panel = TabbedPanelItem(text="Figure {}".format(i+1))
 
             if i == 0:
                 # Set first axe as default tab
                 self.default_tab = panel
-
+            # Create container
             cont = GridLayout(cols=1,size_hint=(1,1))
-
+            # Create grid layout for the options
             grd = GridLayout(cols=2,size_hint=(1,1),row_default_height=30,row_force_default=True)
 
             for opt in self.opts_out[-1]:
@@ -474,6 +518,7 @@ class GraphOptions(TabbedPanel):
                 grd.add_widget(opt["form"])
 
             cont.add_widget(grd)
+            # Add button to update the graph
             cont.add_widget(Button(text="Update Graph",height=30,size_hint=(1,None),on_press=self.update_graph))
 
             panel.add_widget(cont)
@@ -485,5 +530,5 @@ class GraphOptions(TabbedPanel):
             # Set the graph options with the user specified options
             for opt in self.opts_out[i]:
                 opt["set"](self.axis[i],opt["form"].text)
-
+        # Run the on_graph_update property that will actually update the graph
         self.on_graph_update(self.fig,self.axis)
