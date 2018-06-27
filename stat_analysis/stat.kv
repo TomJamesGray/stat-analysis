@@ -687,42 +687,63 @@
         height:45
         size_hint_y:None
 
+<ShellContainer>:
+    size_hint_y:None
+    size_hint_x:1
+    cols:1
+    height:self.minimum_height
+    ShellInput:
+        shell:root.shell
+
+
 <ShellInput>:
     rows:1
     size_hint_y:None
-    height:40
-    padding:3,3
+    spacing:10,0
+    row_default_height:35
+    height:input_box.height if input_box.height > 35 else 35
     Label:
         color:0,0,0,1
-        height:35
-        width:60
+        text_size:70,None
+        size:self.texture_size
         text:"In[1]"
         size_hint_x:None
+        size_hint_y:None
         font_name:"res/Hack-Regular.ttf"
-    ShellInputBox
+    ShellInputBox:
+        id:input_box
 
 <ShellOutput>
+    lbl:lbl
     rows:1
     size_hint_y:None
-    height:40
-    padding:3,3
+    spacing:10,0
+    height:lbl.height if lbl.height > 35 else 35
+    row_default_height:35
     Label:
         color:0,0,0,1
-        height:35
+        text_size:70,None
+        size:self.texture_size
+        size_hint_y:None
         width:60
         text:"Out[1]"
         size_hint_x:None
         font_name:"res/Hack-Regular.ttf"
     Label:
+        id:lbl
         color:0,0,0,1
-        height:35
         size_hint_x:1
         text:root.text
+        size_hint_y:None
         font_name:"res/Hack-Regular.ttf"
+        text_size:self.width,None
+        size:self.texture_size
+        halign:"left"
 
 <ShellInputBox>:
     size_hint_x:1
     size_hiny_y:None
-    height:35
+    height:self.minimum_height
     font_name:"res/Hack-Regular.ttf"
     keyboard_on_key_down:self.test
+    multiline:True

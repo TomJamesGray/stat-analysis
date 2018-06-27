@@ -278,33 +278,52 @@ class Shell:
     def __init__(self,output_widget):
         self.output_widget = output_widget
         self.output_widget.cols = 1
+        self.lines = []
 
 
     def render(self):
         logger.debug("Initialising shell")
-        self.output_widget.add_widget(ShellInput(shell=self))
+        line1 = ShellContainer(shell=self)
+        self.lines.append(line1)
+        self.output_widget.add_widget(line1)
 
-    def parse(self,raw_lines):
+    def parse(self,line_container,raw_lines):
         """
         Parses a line of the input string
         "~" is used to define a variable and it's distribution
-        ";" can be used to insert multiple lines in one box
+        ";" can be used to insert multiple lines in one row
         :param raw_lines:
         :return:
         """
-        lines = raw_lines.split(";")
-        output = ""
+        lines = raw_lines.replace("\n",";").split(";")
+        outputs = []
         for line in lines:
-            line_out = parse_line(line)
-            if line_out != None:
-                output += str(line_out)
-                output += "\n"
-        if output != "":
-            self.output_widget.add_widget(ShellOutput(text=output))
-        self.add_line()
+            if line != "":
+                line_out = parse_line(line)
+                if line_out != None:
+                    outputs.append(str(line_out))
+
+        if outputs != []:
+            output = "\n".join(outputs)
+            if line_container.output_widget == None:
+                out_widget = ShellOutput(text=output)
+                line_container.add_widget(out_widget)
+                line_container.output_widget = out_widget
+            else:
+                line_container.output_widget.text = output
+        if line_container == self.lines[-1]:
+            self.add_line()
 
     def add_line(self):
-        self.output_widget.add_widget(ShellInput(shell=self))
+        line = ShellContainer(shell=self)
+        self.lines.append(line)
+        self.output_widget.add_widget(line)
+
+
+class ShellContainer(GridLayout):
+    shell = ObjectProperty()
+    input_widget = ObjectProperty()
+    output_widget = ObjectProperty(None)
 
 
 class ShellInput(GridLayout):
@@ -317,8 +336,10 @@ class ShellOutput(GridLayout):
 
 class ShellInputBox(TextInput):
     def test(self,window,keycode,text,modifiers):
-        if keycode[1] == "enter":
+        print("{} {}".format(keycode,modifiers))
+        if keycode[1] == "enter" and "shift" in modifiers:
             # Evaluate the text
             print("Start evaluate")
-            self.parent.shell.parse(self.text)
-        super().keyboard_on_key_down(window,keycode,text,modifiers)
+            self.parent.shell.parse(self.parent.parent,self.text)
+        else:
+            super().keyboard_on_key_down(window,keycode,text,modifiers)
