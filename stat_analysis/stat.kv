@@ -686,3 +686,24 @@
         text:"Submit"
         height:45
         size_hint_y:None
+
+<ShellInput>:
+    rows:1
+    size_hint_y:None
+    height:40
+    padding:3,3
+    Label:
+        color:0,0,0,1
+        height:35
+        width:60
+        text:"In[1]"
+        size_hint_x:None
+        font_name:"res/Hack-Regular.ttf"
+    ShellInputBox
+
+<ShellInputBox>:
+    size_hint_x:1
+    size_hiny_y:None
+    height:35
+    font_name:"res/Hack-Regular.ttf"
+    keyboard_on_key_down:self.test

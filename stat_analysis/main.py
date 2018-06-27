@@ -32,7 +32,7 @@ except ModuleNotFoundError:
 from kivy.properties import StringProperty,ObjectProperty,BooleanProperty,NumericProperty,ListProperty
 from kivy.modules import inspector
 from kivy.resources import resource_find
-from stat_analysis.actions import stats,data,graph
+from stat_analysis.actions import stats,data,graph,shell
 from stat_analysis.generic_widgets.action_bar import CustomActionBtn
 from stat_analysis.generic_widgets.bordered import BorderedButton
 from stat_analysis.generic_widgets.files import FileChooserSaveDialog,FileChooserLoadDialog
@@ -485,11 +485,11 @@ class StatApp(App):
                     (52/255,99/255,233/255)]
 
     def __init__(self,**kwargs):
-        super().__init__(**kwargs)
-        self.devel_mode = False
-        self.load_popup,self.save_popup = None, None
-        # Set the actions that are available to users
         self.actions = [
+            {
+                "group_name": "Probability Distributions",
+                "actions": [shell.main.Shell]
+            },
             {
                 "group_name": "Stats",
                 "actions": [stats.regression.Regression, stats.summary.Summary,
@@ -506,6 +506,10 @@ class StatApp(App):
                 "actions": [graph.bar_chart.BarChart,graph.scatter.ScatterPlot]
             }
         ]
+        super().__init__(**kwargs)
+        self.devel_mode = False
+        self.load_popup,self.save_popup = None, None
+        # Set the actions that are available to users
         self.example_datasets = {
             "heights": ("heights", resource_find("res/example_datasets/heights/heights_example_dataset.stat")),
             "exam_scores": ("exam_scores",
