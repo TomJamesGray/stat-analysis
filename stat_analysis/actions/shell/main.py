@@ -2,7 +2,7 @@ import logging
 import re
 import math
 import copy
-from kivy.properties import ObjectProperty
+from kivy.properties import ObjectProperty,StringProperty
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.textinput import TextInput
 from stat_analysis.actions.shell.distributions.binomial import Binomial
@@ -96,17 +96,19 @@ functions = {
         "level": 5,
         "regex_name": "arctan"
     },
-    "test":{
+    "~":{
+        "n":2,
+        "func":lambda name,dist:init_dist(name,dist),
+        "level":0,
+        "regex_name":"~"
+    },
+    "B":{
         "cs":True,
         "n":2,
-        "func":lambda x,y:x+y,
+        "func":lambda n,p:Binomial(n,p),
         "level":5,
         "regex_name":"test"
     }
-}
-
-cs_func = {
-
 }
 
 unary_operators = {
@@ -124,8 +126,10 @@ unary_operators = {
     },
 }
 
+
 def init_dist(name,dist):
-    logger.debug("Initialising distribution {}, name {}".format(dist,name))
+    print("Initialising distribution {}, name {}".format(dist,name))
+
 
 def parse_line(calc_line,evaluate=True,x=None,anim_vars=None):
     """
@@ -230,7 +234,17 @@ def eval_rpn(rpn_line,x,anim_vars=None):
             args = []
             for i in range(0,func["n"]):
                 # Retrieve required amount of arguments
-                args.append(float(eval_stack.pop()))
+                tmp_arg = eval_stack.pop()
+                if type(tmp_arg) == str:
+                    # If it's a string it's probably meant to be a number so try and cast it
+                    try:
+                        args.append(float(tmp_arg))
+                    except ValueError:
+                        # Could've been an identifier
+                        args.append(tmp_arg)
+                else:
+                    # Allow other types to be used, for instance distributions
+                    args.append(tmp_arg)
             # Reverse args so first argument would be towards bottom of stack
             args = args[::-1]
             logger.debug("Using args: {}".format(args))
@@ -255,8 +269,7 @@ def eval_rpn(rpn_line,x,anim_vars=None):
             eval_stack.append(c)
             logger.debug("eval_stack at {}".format(eval_stack))
 
-    return float(eval_stack[0])
-
+    return eval_stack[0]
 
 class Shell:
     type = "distributions.shell"
@@ -264,6 +277,7 @@ class Shell:
 
     def __init__(self,output_widget):
         self.output_widget = output_widget
+        self.output_widget.cols = 1
 
 
     def render(self):
@@ -279,18 +293,32 @@ class Shell:
         :return:
         """
         lines = raw_lines.split(";")
+        output = ""
+        for line in lines:
+            line_out = parse_line(line)
+            if line_out != None:
+                output += str(line_out)
+                output += "\n"
+        if output != "":
+            self.output_widget.add_widget(ShellOutput(text=output))
+        self.add_line()
 
+    def add_line(self):
+        self.output_widget.add_widget(ShellInput(shell=self))
 
 
 class ShellInput(GridLayout):
     shell = ObjectProperty()
-    pass
+
+
+class ShellOutput(GridLayout):
+    text = StringProperty("")
 
 
 class ShellInputBox(TextInput):
     def test(self,window,keycode,text,modifiers):
         if keycode[1] == "enter":
             # Evaluate the text
-            print("Evaluate")
-            print(self.parent.shell)
+            print("Start evaluate")
+            self.parent.shell.parse(self.text)
         super().keyboard_on_key_down(window,keycode,text,modifiers)
