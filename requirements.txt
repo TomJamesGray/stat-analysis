@@ -14,7 +14,7 @@ olefile==0.44
 pefile==2017.11.5
 Pillow==9.0.0
 pygame==1.9.5
-Pygments==2.2.0
+Pygments==2.7.4
 PyInstaller>=3.6
 pyparsing==2.2.0
 PySDL2==0.9.6
